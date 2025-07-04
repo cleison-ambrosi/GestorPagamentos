@@ -94,18 +94,10 @@ export default function Empresas() {
               <h2 className="text-2xl font-bold text-slate-800">Empresas</h2>
               <p className="text-slate-600">Gerenciar empresas cadastradas</p>
             </div>
-            <div className="flex items-center space-x-4">
-              <Button onClick={handleNew}>
-                <Plus className="h-4 w-4 mr-2" />
-                Nova Empresa
-              </Button>
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <User className="text-white text-sm" />
-                </div>
-                <span className="text-sm font-medium text-slate-700">Usuário</span>
-              </div>
-            </div>
+            <Button onClick={handleNew}>
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Empresa
+            </Button>
           </div>
         </header>
 

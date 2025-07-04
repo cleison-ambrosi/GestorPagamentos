@@ -30,12 +30,6 @@ export default function Dashboard() {
                 <Button variant="ghost" size="icon">
                   <Bell className="h-5 w-5" />
                 </Button>
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                    <User className="text-white text-sm" />
-                  </div>
-                  <span className="text-sm font-medium text-slate-700">Usuário</span>
-                </div>
               </div>
             </div>
           </header>
@@ -67,17 +61,9 @@ export default function Dashboard() {
               <h2 className="text-2xl font-bold text-slate-800">Dashboard</h2>
               <p className="text-slate-600">Visão geral do sistema</p>
             </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5" />
-              </Button>
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <User className="text-white text-sm" />
-                </div>
-                <span className="text-sm font-medium text-slate-700">Usuário</span>
-              </div>
-            </div>
+            <Button variant="ghost" size="icon">
+              <Bell className="h-5 w-5" />
+            </Button>
           </div>
         </header>
 
