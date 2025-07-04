@@ -11,6 +11,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import TituloModal from "@/components/titulo-modal";
 import ConfirmDialog from "@/components/confirm-dialog";
+import Sidebar from "@/components/sidebar";
 
 export default function Titulos() {
   const { toast } = useToast();
@@ -124,12 +125,13 @@ export default function Titulos() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
+    <div className="flex min-h-screen bg-slate-50">
+      <Sidebar />
+      <main className="flex-1 ml-64 p-8">
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Títulos</h1>
-            <p className="text-sm text-slate-500">Gerenciar títulos a pagar</p>
+            <h1 className="text-2xl font-bold text-slate-800">Títulos</h1>
+            <p className="text-slate-600">Gerenciar títulos a pagar</p>
           </div>
           <div className="flex items-center space-x-4">
             <Button 
@@ -213,22 +215,22 @@ export default function Titulos() {
             </TableBody>
           </Table>
         </div>
-      </div>
 
-      <TituloModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        titulo={editingTitulo}
-        onSave={handleSave}
-      />
+        <TituloModal
+          open={modalOpen}
+          onOpenChange={setModalOpen}
+          titulo={editingTitulo}
+          onSave={handleSave}
+        />
 
-      <ConfirmDialog
-        open={confirmDialog.open}
-        onOpenChange={(open) => setConfirmDialog(prev => ({ ...prev, open }))}
-        title={confirmDialog.title}
-        description={confirmDialog.description}
-        onConfirm={confirmDialog.onConfirm}
-      />
+        <ConfirmDialog
+          open={confirmDialog.open}
+          onOpenChange={(open) => setConfirmDialog(prev => ({ ...prev, open }))}
+          title={confirmDialog.title}
+          description={confirmDialog.description}
+          onConfirm={confirmDialog.onConfirm}
+        />
+      </main>
     </div>
   );
 }

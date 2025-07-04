@@ -2,15 +2,15 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Search, Edit, Trash2, Copy, User } from "lucide-react";
 import { fetchContratos } from "@/lib/api";
-import { formatCurrency } from "@/lib/format";
+import { formatCurrency, formatDate } from "@/lib/format";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import ContratoModal from "@/components/contrato-modal";
 import ConfirmDialog from "@/components/confirm-dialog";
+import Sidebar from "@/components/sidebar";
 
 export default function Contratos() {
   const { toast } = useToast();
@@ -86,7 +86,7 @@ export default function Contratos() {
     setConfirmDialog({
       open: true,
       title: "Confirmar exclusão",
-      description: `Tem certeza que deseja excluir o contrato "${contrato.numeroTitulo}"?`,
+      description: `Tem certeza que deseja excluir o contrato "${contrato.numero}"?`,
       onConfirm: () => {
         deleteContratoMutation.mutate(contrato.id);
         setConfirmDialog(prev => ({ ...prev, open: false }));
@@ -95,7 +95,7 @@ export default function Contratos() {
   };
 
   const handleCopy = (contrato: any) => {
-    const copy = { ...contrato, numeroTitulo: `${contrato.numeroTitulo} - Cópia` };
+    const copy = { ...contrato, numero: `${contrato.numero} - Cópia` };
     delete copy.id;
     createContratoMutation.mutate(copy);
   };
@@ -103,33 +103,21 @@ export default function Contratos() {
   const filteredContratos = contratos.filter((contrato: any) => {
     const searchLower = searchTerm.toLowerCase();
     return (
-      contrato.numeroTitulo?.toLowerCase().includes(searchLower) ||
+      contrato.numero?.toLowerCase().includes(searchLower) ||
       contrato.descricao?.toLowerCase().includes(searchLower) ||
       contrato.valor?.toString().includes(searchLower) ||
       contrato.fornecedor?.toLowerCase().includes(searchLower)
     );
   });
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'pendente':
-        return <Badge variant="outline" className="text-orange-600 border-orange-600">Pendente</Badge>;
-      case 'aprovado':
-        return <Badge variant="outline" className="text-green-600 border-green-600">Aprovado</Badge>;
-      case 'cancelado':
-        return <Badge variant="outline" className="text-red-600 border-red-600">Cancelado</Badge>;
-      default:
-        return <Badge variant="outline" className="text-slate-600 border-slate-600">Ativo</Badge>;
-    }
-  };
-
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
+    <div className="flex min-h-screen bg-slate-50">
+      <Sidebar />
+      <main className="flex-1 ml-64 p-8">
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Contratos</h1>
-            <p className="text-sm text-slate-500">Gerenciar contratos</p>
+            <h1 className="text-2xl font-bold text-slate-800">Contratos</h1>
+            <p className="text-slate-600">Gerenciar contratos</p>
           </div>
           <div className="flex items-center space-x-4">
             <Button 
@@ -150,7 +138,7 @@ export default function Contratos() {
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
             <Input
-              placeholder="Buscar por número, descrição, fornecedor ou valor..."
+              placeholder="Buscar por número, descrição ou fornecedor..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9 w-full border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
@@ -163,11 +151,11 @@ export default function Contratos() {
             <TableHeader>
               <TableRow className="bg-slate-50">
                 <TableHead className="font-medium text-slate-700">ID</TableHead>
-                <TableHead className="font-medium text-slate-700">Número do Contrato</TableHead>
+                <TableHead className="font-medium text-slate-700">Número</TableHead>
+                <TableHead className="font-medium text-slate-700">Descrição</TableHead>
                 <TableHead className="font-medium text-slate-700">Fornecedor</TableHead>
-                <TableHead className="font-medium text-slate-700">Data Início</TableHead>
                 <TableHead className="font-medium text-slate-700">Valor</TableHead>
-                <TableHead className="font-medium text-slate-700">Status</TableHead>
+                <TableHead className="font-medium text-slate-700">Data Início</TableHead>
                 <TableHead className="font-medium text-slate-700">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -175,11 +163,11 @@ export default function Contratos() {
               {filteredContratos.map((contrato: any) => (
                 <TableRow key={contrato.id} className="hover:bg-slate-50">
                   <TableCell className="font-medium">{contrato.id.toString().padStart(5, '0')}</TableCell>
-                  <TableCell className="font-medium">{contrato.numeroTitulo}</TableCell>
+                  <TableCell className="font-medium">{contrato.numero}</TableCell>
+                  <TableCell>{contrato.descricao}</TableCell>
                   <TableCell>{contrato.fornecedor || '-'}</TableCell>
-                  <TableCell>{contrato.dataInicio || '-'}</TableCell>
                   <TableCell>{formatCurrency(contrato.valor || 0)}</TableCell>
-                  <TableCell>{getStatusBadge(contrato.status || 'ativo')}</TableCell>
+                  <TableCell>{formatDate(contrato.dataInicio) || '-'}</TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
                       <Button
@@ -213,22 +201,22 @@ export default function Contratos() {
             </TableBody>
           </Table>
         </div>
-      </div>
 
-      <ContratoModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        contrato={editingContrato}
-        onSave={handleSave}
-      />
+        <ContratoModal
+          open={modalOpen}
+          onOpenChange={setModalOpen}
+          contrato={editingContrato}
+          onSave={handleSave}
+        />
 
-      <ConfirmDialog
-        open={confirmDialog.open}
-        onOpenChange={(open) => setConfirmDialog(prev => ({ ...prev, open }))}
-        title={confirmDialog.title}
-        description={confirmDialog.description}
-        onConfirm={confirmDialog.onConfirm}
-      />
+        <ConfirmDialog
+          open={confirmDialog.open}
+          onOpenChange={(open) => setConfirmDialog(prev => ({ ...prev, open }))}
+          title={confirmDialog.title}
+          description={confirmDialog.description}
+          onConfirm={confirmDialog.onConfirm}
+        />
+      </main>
     </div>
   );
 }
