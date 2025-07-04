@@ -1,0 +1,102 @@
+# Payment Management System
+
+## Overview
+
+This is a full-stack payment management system built with React, Express.js, and PostgreSQL. The application helps businesses manage contracts, suppliers, payment schedules, and financial tracking. It features a modern UI built with shadcn/ui components and Tailwind CSS, with a RESTful API backend using Drizzle ORM for database operations.
+
+## System Architecture
+
+### Frontend Architecture
+- **Framework**: React with TypeScript
+- **Build Tool**: Vite for fast development and optimized builds
+- **Routing**: Wouter for lightweight client-side routing
+- **State Management**: TanStack Query for server state management
+- **Styling**: Tailwind CSS with shadcn/ui component library
+- **UI Components**: Comprehensive set of accessible components using Radix UI primitives
+
+### Backend Architecture
+- **Runtime**: Node.js with Express.js framework
+- **Database**: PostgreSQL with Drizzle ORM
+- **Connection**: Neon serverless database connection
+- **Development**: Hot-reload development server with middleware logging
+- **Build**: ESBuild for production bundling
+
+## Key Components
+
+### Database Schema
+The system manages several core entities:
+- **Empresas (Companies)**: Business entities with name and CNPJ
+- **Fornecedores (Suppliers)**: Vendor information with contact details
+- **Plano de Contas (Chart of Accounts)**: Hierarchical account structure
+- **Tags**: Categorization system with color coding
+- **Contratos (Contracts)**: Contract management with payment terms
+- **Títulos (Payment Titles)**: Individual payment obligations
+- **Título Baixa (Payment Records)**: Payment execution tracking
+
+### Frontend Features
+- **Dashboard**: Overview with key metrics and upcoming payments
+- **Contract Management**: Create and manage payment contracts
+- **Supplier Management**: Vendor database with contact information
+- **Payment Tracking**: Monitor payment schedules and overdue amounts
+- **Financial Reports**: Generate various financial reports
+- **Responsive Design**: Mobile-friendly interface
+
+### API Endpoints
+- RESTful API structure with CRUD operations for all entities
+- Dashboard endpoint for aggregated financial data
+- Comprehensive error handling and logging
+- Request/response logging for debugging
+
+## Data Flow
+
+1. **Client Requests**: React components make API calls using TanStack Query
+2. **API Processing**: Express.js routes handle requests and validate data
+3. **Database Operations**: Drizzle ORM executes type-safe database queries
+4. **Response Handling**: Data is returned and cached on the client
+5. **UI Updates**: React components re-render with fresh data
+
+## External Dependencies
+
+### Database
+- **Neon Database**: Serverless PostgreSQL hosting
+- **Connection Pooling**: Efficient database connection management
+- **WebSocket Support**: Real-time connection capabilities
+
+### UI Framework
+- **Radix UI**: Accessible component primitives
+- **Tailwind CSS**: Utility-first CSS framework
+- **Lucide React**: Icon library for consistent iconography
+
+### Development Tools
+- **TypeScript**: Type safety across the entire stack
+- **ESLint**: Code quality and consistency
+- **Vite**: Fast development builds and HMR
+
+## Deployment Strategy
+
+### Development
+- Vite development server with hot module replacement
+- Express.js server with request logging
+- Database migrations using Drizzle Kit
+- Development environment detection for debugging tools
+
+### Production
+- Client-side build output to `dist/public`
+- Server-side bundle to `dist/index.js`
+- Static file serving from Express.js
+- Environment-based configuration
+
+### Build Process
+1. Client build: `vite build` creates optimized React bundle
+2. Server build: `esbuild` creates Node.js compatible bundle
+3. Database: `drizzle-kit push` applies schema changes
+4. Deployment: Single Node.js process serves both API and static files
+
+## Changelog
+
+Changelog:
+- July 04, 2025. Initial setup
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
