@@ -34,11 +34,10 @@ export default function Sidebar() {
             <Coins className="text-white text-lg" />
           </div>
           <div>
-            <h1 className="text-xl font-semibold text-slate-800">Gestor Pagamentos</h1>
+            <h1 className="font-semibold text-slate-800 text-[16px]">Gestor Pagamentos</h1>
           </div>
         </div>
       </div>
-      
       <nav className="mt-6">
         <div className="space-y-1 px-4">
           {navigationItems.map((item) => {
