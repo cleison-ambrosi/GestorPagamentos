@@ -2,9 +2,10 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Search, Edit, Trash2, Copy } from "lucide-react";
-import { fetchContratos } from "@/lib/api";
+import { fetchContratos, fetchEmpresas } from "@/lib/api";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -19,7 +20,13 @@ export default function Contratos() {
     queryFn: fetchContratos,
   });
 
+  const { data: empresas = [] } = useQuery({
+    queryKey: ["/api/empresas"],
+    queryFn: fetchEmpresas,
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
+  const [empresaFilter, setEmpresaFilter] = useState("all");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingContrato, setEditingContrato] = useState<any>(null);
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -102,12 +109,16 @@ export default function Contratos() {
 
   const filteredContratos = contratos.filter((contrato: any) => {
     const searchLower = searchTerm.toLowerCase();
-    return (
+    const matchesSearch = (
       contrato.numero?.toLowerCase().includes(searchLower) ||
       contrato.descricao?.toLowerCase().includes(searchLower) ||
       contrato.valor?.toString().includes(searchLower) ||
       contrato.fornecedor?.toLowerCase().includes(searchLower)
     );
+    
+    const matchesEmpresa = empresaFilter === "all" || contrato.idEmpresa?.toString() === empresaFilter;
+    
+    return matchesSearch && matchesEmpresa;
   });
 
   return (
@@ -132,6 +143,44 @@ export default function Contratos() {
         </div>
 
         <div className="p-8">
+          {/* Filtros */}
+          <div className="bg-white rounded-lg border border-slate-200 p-6 mb-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Empresa
+                </label>
+                <Select value={empresaFilter} onValueChange={setEmpresaFilter}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Todas as empresas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas as empresas</SelectItem>
+                    {empresas.map((empresa) => (
+                      <SelectItem key={empresa.id} value={empresa.id.toString()}>
+                        {empresa.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Pesquisar
+                </label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+                  <Input
+                    placeholder="Pesquisar por número, descrição ou fornecedor..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
             <Table>
             <TableHeader>

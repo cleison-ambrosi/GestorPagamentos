@@ -3,9 +3,10 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Search, Edit, Trash2, Copy } from "lucide-react";
-import { fetchTitulos } from "@/lib/api";
+import { fetchTitulos, fetchEmpresas } from "@/lib/api";
 import { formatCurrency } from "@/lib/format";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -20,7 +21,13 @@ export default function Titulos() {
     queryFn: fetchTitulos,
   });
 
+  const { data: empresas = [] } = useQuery({
+    queryKey: ["/api/empresas"],
+    queryFn: fetchEmpresas,
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
+  const [empresaFilter, setEmpresaFilter] = useState("all");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTitulo, setEditingTitulo] = useState<any>(null);
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -103,12 +110,16 @@ export default function Titulos() {
 
   const filteredTitulos = titulos.filter((titulo: any) => {
     const searchLower = searchTerm.toLowerCase();
-    return (
+    const matchesSearch = (
       titulo.numeroTitulo?.toLowerCase().includes(searchLower) ||
       titulo.descricao?.toLowerCase().includes(searchLower) ||
       titulo.valor?.toString().includes(searchLower) ||
       titulo.fornecedor?.toLowerCase().includes(searchLower)
     );
+    
+    const matchesEmpresa = empresaFilter === "all" || titulo.idEmpresa?.toString() === empresaFilter;
+    
+    return matchesSearch && matchesEmpresa;
   });
 
   const getStatusBadge = (status: string) => {
@@ -148,6 +159,44 @@ export default function Titulos() {
         </div>
 
         <div className="p-8">
+          {/* Filtros */}
+          <div className="bg-white rounded-lg border border-slate-200 p-6 mb-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Empresa
+                </label>
+                <Select value={empresaFilter} onValueChange={setEmpresaFilter}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Todas as empresas" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas as empresas</SelectItem>
+                    {empresas.map((empresa: any) => (
+                      <SelectItem key={empresa.id} value={empresa.id.toString()}>
+                        {empresa.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Pesquisar
+                </label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+                  <Input
+                    placeholder="Pesquisar por número, descrição ou fornecedor..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
             <Table>
               <TableHeader>
