@@ -1,0 +1,99 @@
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
+
+CREATE TABLE public.contrato (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  id_empresa bigint,
+  id_fornecedor bigint,
+  id_plano_conta bigint,
+  descricao text,
+  valor_contrato numeric,
+  valor_parcela numeric,
+  num_parcela bigint,
+  data_inicio date,
+  dia_vencimento bigint,
+  parcela_inicial bigint,
+  numero_titulo text,
+  tipo_mascara bigint,
+  status boolean,
+  observacoes text,
+  CONSTRAINT contrato_pkey PRIMARY KEY (id),
+  CONSTRAINT contrato_id_fornecedor_fkey FOREIGN KEY (id_fornecedor) REFERENCES public.fornecedor(id),
+  CONSTRAINT contrato_id_empresa_fkey FOREIGN KEY (id_empresa) REFERENCES public.empresa(id),
+  CONSTRAINT contrato_id_plano_conta_fkey FOREIGN KEY (id_plano_conta) REFERENCES public.plano_conta(id)
+);
+CREATE TABLE public.contrato_tag (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  id_tag bigint NOT NULL,
+  id_contrato bigint NOT NULL,
+  CONSTRAINT contrato_tag_pkey PRIMARY KEY (id),
+  CONSTRAINT contrato_tag_id_contrato_fkey FOREIGN KEY (id_contrato) REFERENCES public.contrato(id),
+  CONSTRAINT contrato_tag_id_tag_fkey FOREIGN KEY (id_tag) REFERENCES public.tag(id)
+);
+CREATE TABLE public.empresa (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  nome text NOT NULL,
+  cnpj text,
+  CONSTRAINT empresa_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.fornecedor (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  nome text NOT NULL,
+  email text,
+  telefone text,
+  observacoes text,
+  CONSTRAINT fornecedor_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.plano_conta (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  codigo text NOT NULL,
+  nome text NOT NULL,
+  id_conta_pai bigint,
+  CONSTRAINT plano_conta_pkey PRIMARY KEY (id),
+  CONSTRAINT plano_conta_id_conta_pai_fkey FOREIGN KEY (id_conta_pai) REFERENCES public.plano_conta(id)
+);
+CREATE TABLE public.tag (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  nome text NOT NULL,
+  cor text NOT NULL,
+  CONSTRAINT tag_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.titulo (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  id_empresa bigint NOT NULL,
+  id_fornecedor bigint NOT NULL,
+  numero_titulo text NOT NULL,
+  emissao timestamp with time zone NOT NULL,
+  vencimento date NOT NULL,
+  valor_total numeric NOT NULL DEFAULT '0'::numeric,
+  saldo_pagar numeric NOT NULL DEFAULT '0'::numeric,
+  id_plano_contas bigint NOT NULL,
+  descricao text NOT NULL,
+  observacoes text,
+  cancelado boolean DEFAULT false,
+  CONSTRAINT titulo_pkey PRIMARY KEY (id),
+  CONSTRAINT titulo_id_plano_contas_fkey FOREIGN KEY (id_plano_contas) REFERENCES public.plano_conta(id),
+  CONSTRAINT titulo_id_empresa_fkey FOREIGN KEY (id_empresa) REFERENCES public.empresa(id),
+  CONSTRAINT titulo_id_fornecedor_fkey FOREIGN KEY (id_fornecedor) REFERENCES public.fornecedor(id)
+);
+CREATE TABLE public.titulo_baixa (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  id_titulo bigint NOT NULL,
+  data_baixa timestamp without time zone NOT NULL,
+  valor_baixa numeric NOT NULL DEFAULT '0'::numeric,
+  valor_pago numeric NOT NULL DEFAULT '0'::numeric,
+  juros numeric NOT NULL DEFAULT '0'::numeric,
+  desconto numeric NOT NULL DEFAULT '0'::numeric,
+  observacao text,
+  cancelado boolean NOT NULL DEFAULT false,
+  CONSTRAINT titulo_baixa_pkey PRIMARY KEY (id),
+  CONSTRAINT titulo_baixa_id_titulo_fkey FOREIGN KEY (id_titulo) REFERENCES public.titulo(id)
+);
+CREATE TABLE public.titulo_tag (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  id_titulo bigint NOT NULL,
+  id_tag bigint NOT NULL,
+  CONSTRAINT titulo_tag_pkey PRIMARY KEY (id),
+  CONSTRAINT titulo_tag_id_tag_fkey FOREIGN KEY (id_tag) REFERENCES public.tag(id),
+  CONSTRAINT titulo_tag_id_titulo_fkey FOREIGN KEY (id_titulo) REFERENCES public.titulo(id)
+);
