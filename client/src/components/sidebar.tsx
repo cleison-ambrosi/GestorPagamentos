@@ -35,7 +35,6 @@ export default function Sidebar() {
           </div>
           <div>
             <h1 className="text-xl font-semibold text-slate-800">Gestor Pagamentos</h1>
-            <p className="text-sm text-slate-500">Visão geral do sistema</p>
           </div>
         </div>
       </div>
