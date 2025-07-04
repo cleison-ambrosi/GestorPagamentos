@@ -58,6 +58,13 @@ export default function Empresas() {
     setModalOpen(false);
   };
 
+  const handleDelete = (empresa: any) => {
+    if (window.confirm(`Tem certeza que deseja excluir a empresa "${empresa.nome}"?`)) {
+      console.log("Excluindo empresa:", empresa.id);
+      // Implementar exclusão aqui
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
@@ -100,7 +107,7 @@ export default function Empresas() {
                     <TableHead>Nome</TableHead>
                     <TableHead>CNPJ</TableHead>
                     <TableHead>Cadastrado em</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
+                    <TableHead className="text-center">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -128,7 +135,12 @@ export default function Empresas() {
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => handleDelete(empresa)}
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>

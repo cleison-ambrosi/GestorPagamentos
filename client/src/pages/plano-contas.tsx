@@ -30,6 +30,18 @@ export default function PlanoContas() {
     conta.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleDelete = (conta: any) => {
+    if (window.confirm(`Tem certeza que deseja excluir a conta "${conta.nome}"?`)) {
+      console.log("Excluindo conta:", conta.id);
+      // Implementar exclusão aqui
+    }
+  };
+
+  const handleDuplicate = (conta: any) => {
+    console.log("Duplicando conta:", conta);
+    // Implementar duplicação aqui
+  };
+
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
@@ -84,7 +96,7 @@ export default function PlanoContas() {
                     <TableHead>Nome</TableHead>
                     <TableHead>Conta Pai</TableHead>
                     <TableHead>Data Criação</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
+                    <TableHead className="text-center">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -107,10 +119,20 @@ export default function PlanoContas() {
                           <Button variant="ghost" size="icon" className="h-8 w-8">
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => handleDuplicate(conta)}
+                          >
                             <Copy className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => handleDelete(conta)}
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>

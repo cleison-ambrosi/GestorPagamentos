@@ -61,6 +61,13 @@ export default function Fornecedores() {
     setModalOpen(false);
   };
 
+  const handleDelete = (fornecedor: any) => {
+    if (window.confirm(`Tem certeza que deseja excluir o fornecedor "${fornecedor.nome}"?`)) {
+      console.log("Excluindo fornecedor:", fornecedor.id);
+      // Implementar exclusão aqui
+    }
+  };
+
   const filteredFornecedores = displayFornecedores.filter((fornecedor: any) =>
     fornecedor.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     fornecedor.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -121,7 +128,7 @@ export default function Fornecedores() {
                     <TableHead>Nome</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Telefone</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
+                    <TableHead className="text-center">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -150,7 +157,12 @@ export default function Fornecedores() {
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => handleDelete(fornecedor)}
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>

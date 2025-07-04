@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import TituloModal from "@/components/titulo-modal";
-import { Plus, Bell, User, Eye, Edit, Trash2, DollarSign } from "lucide-react";
+import { Plus, Bell, User, Eye, Edit, Trash2, DollarSign, Copy } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useState } from "react";
 
@@ -84,6 +84,18 @@ export default function Titulos() {
     setModalOpen(false);
   };
 
+  const handleDelete = (titulo: any) => {
+    if (window.confirm(`Tem certeza que deseja excluir o título "${titulo.numeroTitulo}"?`)) {
+      console.log("Excluindo título:", titulo.id);
+      // Implementar exclusão aqui
+    }
+  };
+
+  const handleDuplicate = (titulo: any) => {
+    console.log("Duplicando título:", titulo);
+    // Implementar duplicação aqui
+  };
+
   const filteredTitulos = displayTitulos.filter((titulo: any) => {
     if (statusFilter !== "todos" && titulo.status !== statusFilter) return false;
     if (empresaFilter !== "todas" && titulo.empresa !== empresaFilter) return false;
@@ -121,7 +133,7 @@ export default function Titulos() {
           <TableHead>Valor</TableHead>
           <TableHead>Vencimento</TableHead>
           <TableHead>Status</TableHead>
-          <TableHead className="text-right">Ações</TableHead>
+          <TableHead className="text-center">Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -160,7 +172,20 @@ export default function Titulos() {
                 >
                   <Edit className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8"
+                  onClick={() => handleDuplicate(titulo)}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8"
+                  onClick={() => handleDelete(titulo)}
+                >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>

@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import ContratoModal from "@/components/contrato-modal";
-import { Plus, Bell, User, Eye, Edit, Trash2 } from "lucide-react";
+import { Plus, Bell, User, Eye, Edit, Trash2, Copy } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useState } from "react";
 
@@ -86,6 +86,18 @@ export default function Contratos() {
   const contratosAtivos = filteredContratos.filter((c: any) => c.status === "ativo");
   const contratosCancelados = filteredContratos.filter((c: any) => c.status === "cancelado");
 
+  const handleDelete = (contrato: any) => {
+    if (window.confirm(`Tem certeza que deseja excluir o contrato "${contrato.descricao}"?`)) {
+      console.log("Excluindo contrato:", contrato.id);
+      // Implementar exclusão aqui
+    }
+  };
+
+  const handleDuplicate = (contrato: any) => {
+    console.log("Duplicando contrato:", contrato);
+    // Implementar duplicação aqui
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "ativo":
@@ -108,7 +120,7 @@ export default function Contratos() {
           <TableHead>Valor Mensal</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Próximo Vencimento</TableHead>
-          <TableHead className="text-right">Ações</TableHead>
+          <TableHead className="text-center">Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -147,7 +159,20 @@ export default function Contratos() {
                 >
                   <Edit className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8"
+                  onClick={() => handleDuplicate(contrato)}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8"
+                  onClick={() => handleDelete(contrato)}
+                >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
