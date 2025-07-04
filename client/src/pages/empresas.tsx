@@ -137,8 +137,8 @@ export default function Empresas() {
                       <TableCell>
                         {formatDate(empresa.createdAt || new Date())}
                       </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex items-center justify-end space-x-2">
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center space-x-2">
                           <Button 
                             variant="ghost" 
                             size="icon" 

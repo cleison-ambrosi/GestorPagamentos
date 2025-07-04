@@ -168,8 +168,8 @@ export default function Titulos() {
             <TableCell>
               {getStatusBadge(titulo.status)}
             </TableCell>
-            <TableCell className="text-right">
-              <div className="flex items-center justify-end space-x-2">
+            <TableCell className="text-center">
+              <div className="flex items-center justify-center space-x-2">
                 <Button variant="ghost" size="icon" className="h-8 w-8">
                   <Eye className="h-4 w-4" />
                 </Button>
