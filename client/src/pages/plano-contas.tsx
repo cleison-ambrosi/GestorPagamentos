@@ -98,9 +98,9 @@ export default function PlanoContas() {
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
-      <main className="flex-1 ml-64 p-8">
+      <main className="flex-1 ml-64">
         {/* Header Panel */}
-        <div className="bg-white rounded-lg border border-slate-200 p-6 mb-6">
+        <div className="bg-white border-b border-slate-200 p-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-slate-800">Plano de Contas</h1>
@@ -122,8 +122,9 @@ export default function PlanoContas() {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
-          <Table>
+        <div className="p-8">
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <Table>
             <TableHeader>
               <TableRow className="bg-slate-50">
                 <TableHead className="font-medium text-slate-700">ID</TableHead>
@@ -164,6 +165,7 @@ export default function PlanoContas() {
               ))}
             </TableBody>
           </Table>
+          </div>
         </div>
 
         <PlanoContasModal
