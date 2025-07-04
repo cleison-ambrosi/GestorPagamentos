@@ -1,10 +1,7 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Download, Filter, User } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Download, User } from 'lucide-react';
 import Sidebar from '@/components/sidebar';
 
 export default function Relatorios() {
@@ -28,74 +25,29 @@ export default function Relatorios() {
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
-      <main className="flex-1 ml-64 p-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-800">Relatórios</h1>
-            <p className="text-slate-600">Relatórios e análises financeiras</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button className="bg-green-600 hover:bg-green-700">
-              <Download className="mr-2 h-4 w-4" />
-              Exportar CSV
-            </Button>
-            <div className="flex items-center space-x-3">
-              <User className="h-5 w-5 text-slate-600" />
-              <span className="text-sm font-medium text-slate-700">Usuário</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Filtros */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Filter className="h-5 w-5" />
-              Filtros
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="periodo">Período</Label>
-                <Select value={periodo} onValueChange={setPeriodo}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o período" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Em Aberto">Em Aberto</SelectItem>
-                    <SelectItem value="Pagos">Pagos</SelectItem>
-                    <SelectItem value="Vencidos">Vencidos</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="pesquisa">Pesquisar</Label>
-                <Input
-                  id="pesquisa"
-                  placeholder="Pesquisar por fornecedor, número do título ou valor..."
-                  value={pesquisa}
-                  onChange={(e) => setPesquisa(e.target.value)}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Resumo do Período */}
-        <div className="bg-slate-50 p-4 rounded-lg mb-6">
+      <main className="flex-1 ml-64">
+        {/* Header Panel */}
+        <div className="bg-white border-b border-slate-200 p-6">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-slate-700">Vencimento: 23/07/2025</h3>
-            <div className="text-right">
-              <p className="text-sm text-slate-600">Total do Dia</p>
-              <p className="text-2xl font-bold text-slate-900">R$ 34.444,00</p>
+            <div>
+              <h1 className="text-2xl font-bold text-slate-800">Relatórios</h1>
+              <p className="text-slate-600">Relatórios e análises financeiras</p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Button className="bg-green-600 hover:bg-green-700">
+                <Download className="mr-2 h-4 w-4" />
+                Exportar CSV
+              </Button>
+              <div className="flex items-center space-x-3">
+                <User className="h-5 w-5 text-slate-600" />
+                <span className="text-sm font-medium text-slate-700">Usuário</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Tabela de Resultados */}
-        <Card className="mb-6">
+        <div className="p-8">
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full">
