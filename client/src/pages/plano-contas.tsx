@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Search, Edit, Trash2, User } from "lucide-react";
+import { Plus, Edit, Trash2, User } from "lucide-react";
 import { fetchPlanoContas } from "@/lib/api";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -18,7 +18,7 @@ export default function PlanoContas() {
     queryFn: fetchPlanoContas,
   });
 
-  const [searchTerm, setSearchTerm] = useState("");
+
   const [modalOpen, setModalOpen] = useState(false);
   const [editingConta, setEditingConta] = useState<any>(null);
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -93,13 +93,7 @@ export default function PlanoContas() {
     });
   };
 
-  const filteredContas = planoContas.filter((conta: any) => {
-    const searchLower = searchTerm.toLowerCase();
-    return (
-      conta.nome?.toLowerCase().includes(searchLower) ||
-      conta.codigo?.toLowerCase().includes(searchLower)
-    );
-  });
+  const filteredContas = data || [];
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -122,18 +116,6 @@ export default function PlanoContas() {
               <User className="h-5 w-5 text-slate-600" />
               <span className="text-sm font-medium text-slate-700">Usuário</span>
             </div>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <Input
-              placeholder="Buscar por nome ou código..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 w-full border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
-            />
           </div>
         </div>
 
