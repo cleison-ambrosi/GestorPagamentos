@@ -3,6 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Plus, Edit, Copy, Trash2, Search, Eye, User, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +13,7 @@ import ContratoModal from "@/components/contrato-modal";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useToast } from "@/hooks/use-toast";
+import { fetchEmpresas } from "@/lib/api";
 
 // Dados de exemplo dos contratos
 const contratosData = [
@@ -31,7 +33,13 @@ export default function Contratos() {
     queryKey: ["/api/contratos"],
   });
 
+  const { data: empresas } = useQuery({
+    queryKey: ["/api/empresas"],
+    queryFn: fetchEmpresas,
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedEmpresa, setSelectedEmpresa] = useState("BPrint");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingContrato, setEditingContrato] = useState<any>(null);
   const [confirmDialog, setConfirmDialog] = useState({
@@ -200,9 +208,27 @@ export default function Contratos() {
             <label className="block text-sm font-medium text-slate-700 mb-2">
               Empresa <span className="text-red-500">*</span>
             </label>
-            <select className="w-full border border-slate-300 rounded-lg px-3 py-2 focus:border-blue-500 focus:ring-blue-500">
-              <option>BPrint</option>
-            </select>
+            <Select value={selectedEmpresa} onValueChange={setSelectedEmpresa}>
+              <SelectTrigger className="w-full border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+                <SelectValue placeholder="Selecione uma empresa" />
+              </SelectTrigger>
+              <SelectContent>
+                {empresas && empresas.length > 0 ? (
+                  empresas.map((empresa) => (
+                    <SelectItem key={empresa.id} value={empresa.nome}>
+                      {empresa.nome}
+                    </SelectItem>
+                  ))
+                ) : (
+                  <>
+                    <SelectItem value="BPrint">BPrint</SelectItem>
+                    <SelectItem value="Bremen">Bremen</SelectItem>
+                    <SelectItem value="CL2G">CL2G</SelectItem>
+                    <SelectItem value="Wingraph">Wingraph</SelectItem>
+                  </>
+                )}
+              </SelectContent>
+            </Select>
           </div>
           <div className="lg:col-span-3">
             <label className="block text-sm font-medium text-slate-700 mb-2">
