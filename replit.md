@@ -104,6 +104,12 @@ Changelog:
   * Replaced dashboard bottom cards with títulos recentes table
   * Standardized deletion icon colors across all pages (slate instead of red)
   * Updated contratos and titulos layouts per design specifications
+- July 04, 2025. Layout simplification: 
+  * Implemented clean simple layout for títulos, contratos, and plano de contas pages
+  * Removed complex tabs and empresa selection combos from main listing views
+  * Added simple search bar and direct table view matching design requirements
+  * Created configurações system for saving empresa selections with database persistence
+  * Implemented automatic toast notifications for user feedback
 
 ## User Preferences
 
