@@ -155,117 +155,94 @@ export default function PlanoContas() {
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
-      <main className="flex-1 ml-64">
-        <header className="bg-white shadow-sm border-b border-slate-200 px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-800">Plano de Contas</h2>
-              <p className="text-slate-600">Gerenciar plano de contas</p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button onClick={handleNew}>
-                <Plus className="h-4 w-4 mr-2" />
-                Nova Conta
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5" />
-              </Button>
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <User className="text-white text-sm" />
-                </div>
-                <span className="text-sm font-medium text-slate-700">Usuário</span>
-              </div>
+      <main className="flex-1 ml-64 p-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-800">Plano de Contas</h1>
+            <p className="text-slate-600">Gerenciar plano de contas</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Button onClick={handleNew} className="bg-blue-600 hover:bg-blue-700">
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Conta
+            </Button>
+            <div className="flex items-center space-x-3">
+              <User className="h-5 w-5 text-slate-600" />
+              <span className="text-sm font-medium text-slate-700">Usuário</span>
             </div>
           </div>
-        </header>
+        </div>
 
-        <div className="p-8">
-          <div className="bg-white rounded-lg shadow-sm">
-            <div className="p-6 border-b border-slate-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-800">Contas</h3>
-                  <p className="text-sm text-slate-600">
-                    {filteredContas.length} conta(s) encontrada(s)
-                  </p>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                    <Input
-                      placeholder="Buscar contas..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-9 w-64"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Input
+              placeholder="Buscar por código ou nome..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9 w-full max-w-lg border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+            />
+          </div>
+        </div>
 
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Código</TableHead>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Conta Pai</TableHead>
-                  <TableHead>Data Criação</TableHead>
-                  <TableHead className="text-center">Ações</TableHead>
+        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-slate-50">
+                <TableHead className="font-medium text-slate-700">ID</TableHead>
+                <TableHead className="font-medium text-slate-700">Código</TableHead>
+                <TableHead className="font-medium text-slate-700">Nome</TableHead>
+                <TableHead className="font-medium text-slate-700">Conta Pai</TableHead>
+                <TableHead className="text-center font-medium text-slate-700">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredContas.map((conta, index) => (
+                <TableRow key={conta.id} className="hover:bg-slate-50">
+                  <TableCell className="font-medium text-slate-600">
+                    {String(index + 1).padStart(5, '0')}
+                  </TableCell>
+                  <TableCell className="font-medium text-slate-900">
+                    {conta.codigo}
+                  </TableCell>
+                  <TableCell className="text-slate-900">
+                    {conta.nome}
+                  </TableCell>
+                  <TableCell className="text-slate-600">
+                    {conta.contaPai ? conta.contaPai : "-"}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <div className="flex items-center justify-center space-x-1">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 hover:bg-slate-100"
+                        onClick={() => handleEdit(conta)}
+                      >
+                        <Edit className="h-4 w-4 text-slate-600" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 hover:bg-slate-100"
+                        onClick={() => handleDuplicate(conta)}
+                      >
+                        <Copy className="h-4 w-4 text-slate-600" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 hover:bg-red-50"
+                        onClick={() => handleDelete(conta)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-600" />
+                      </Button>
+                    </div>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredContas.map((conta) => (
-                  <TableRow key={conta.id}>
-                    <TableCell className="font-medium">
-                      {conta.codigo}
-                    </TableCell>
-                    <TableCell>
-                      {conta.nome}
-                    </TableCell>
-                    <TableCell>
-                      {conta.contaPai ? (
-                        <span className="text-slate-600">{conta.contaPai}</span>
-                      ) : (
-                        <span className="text-slate-400">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {formatDate(conta.dataCriacao || new Date())}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex items-center justify-center space-x-2">
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8"
-                          onClick={() => handleEdit(conta)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8"
-                          onClick={() => handleDuplicate(conta)}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8"
-                          onClick={() => handleDelete(conta)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+              ))}
+            </TableBody>
+          </Table>
         </div>
 
         {/* Modal de Plano de Contas */}
