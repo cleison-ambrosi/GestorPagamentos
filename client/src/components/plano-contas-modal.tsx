@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -42,7 +42,7 @@ export default function PlanoContasModal({ open, onOpenChange, conta, onSave }: 
     const contaData = {
       codigo,
       nome,
-      idContaPai: contaPai ? parseInt(contaPai) : null,
+      idContaPai: contaPai && contaPai !== "0" ? parseInt(contaPai) : null,
     };
 
     onSave(contaData);
@@ -56,6 +56,9 @@ export default function PlanoContasModal({ open, onOpenChange, conta, onSave }: 
           <DialogTitle>
             {conta ? "Editar Conta" : "Nova Conta"}
           </DialogTitle>
+          <DialogDescription>
+            {conta ? "Editar informações da conta" : "Criar uma nova conta no plano de contas"}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
@@ -85,7 +88,7 @@ export default function PlanoContasModal({ open, onOpenChange, conta, onSave }: 
                 <SelectValue placeholder="Selecione uma conta pai (opcional)" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Nenhuma (Conta raiz)</SelectItem>
+                <SelectItem value="0">Nenhuma (Conta raiz)</SelectItem>
                 {planoContas?.map((c) => (
                   <SelectItem key={c.id} value={c.id.toString()}>
                     {c.codigo} - {c.nome}

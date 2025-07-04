@@ -19,7 +19,7 @@ const tagsData = [
 
 const colorPalette = [
   "#EF4444", "#F97316", "#F59E0B", "#84CC16", "#10B981", "#06B6D4", "#3B82F6",
-  "#6366F1", "#8B5CF6", "#EC4899", "#F59E0B", "#6B7280", "#374151"
+  "#6366F1", "#8B5CF6", "#EC4899", "#6B7280", "#374151", "#F43F5E"
 ];
 
 export default function Tags() {
