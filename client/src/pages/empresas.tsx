@@ -22,6 +22,7 @@ const empresasData = [
 export default function Empresas() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEmpresa, setEditingEmpresa] = useState<any>(null);
+  const [id, setId] = useState("");
   const [nome, setNome] = useState("");
   const [cnpj, setCnpj] = useState("");
   const [telefone, setTelefone] = useState("");
@@ -43,6 +44,7 @@ export default function Empresas() {
 
   const handleEdit = (empresa: any) => {
     setEditingEmpresa(empresa);
+    setId(empresa.id.toString());
     setNome(empresa.nome);
     setCnpj(empresa.cnpj || "");
     setTelefone(empresa.telefone || "");
@@ -52,6 +54,7 @@ export default function Empresas() {
 
   const handleNew = () => {
     setEditingEmpresa(null);
+    setId("");
     setNome("");
     setCnpj("");
     setTelefone("");
@@ -61,7 +64,11 @@ export default function Empresas() {
 
   const handleSave = () => {
     // Aqui seria a lógica para salvar no backend
-    console.log("Salvando empresa:", { nome, cnpj, telefone, email });
+    const empresaData = editingEmpresa 
+      ? { id: parseInt(id), nome, cnpj, telefone, email }
+      : { nome, cnpj, telefone, email };
+    
+    console.log("Salvando empresa:", empresaData);
     setModalOpen(false);
   };
 
@@ -177,8 +184,14 @@ export default function Empresas() {
               <div className="space-y-4">
                 {editingEmpresa && (
                   <div>
-                    <Label>ID</Label>
-                    <Input value={editingEmpresa.id} disabled className="bg-gray-50" />
+                    <Label htmlFor="id">ID *</Label>
+                    <Input
+                      id="id"
+                      value={id}
+                      onChange={(e) => setId(e.target.value)}
+                      placeholder="ID da empresa"
+                      type="number"
+                    />
                   </div>
                 )}
 
@@ -226,7 +239,7 @@ export default function Empresas() {
               <div className="flex justify-end pt-4">
                 <Button 
                   onClick={handleSave} 
-                  disabled={!nome.trim()}
+                  disabled={!nome.trim() || (editingEmpresa && !id.trim())}
                   className="w-full"
                 >
                   Salvar Empresa
