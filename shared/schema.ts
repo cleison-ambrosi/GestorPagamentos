@@ -30,6 +30,12 @@ export const tag = pgTable("tag", {
   cor: text("cor").notNull(),
 });
 
+export const configuracao = pgTable("configuracao", {
+  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+  idEmpresaContratos: bigint("id_empresa_contratos", { mode: "number" }),
+  idEmpresaTitulos: bigint("id_empresa_titulos", { mode: "number" }),
+});
+
 export const contrato = pgTable("contrato", {
   id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
   idEmpresa: bigint("id_empresa", { mode: "number" }),
@@ -182,6 +188,7 @@ export const insertTagSchema = createInsertSchema(tag).omit({ id: true });
 export const insertContratoSchema = createInsertSchema(contrato).omit({ id: true });
 export const insertTituloSchema = createInsertSchema(titulo).omit({ id: true });
 export const insertTituloBaixaSchema = createInsertSchema(tituloBaixa).omit({ id: true });
+export const insertConfiguracaoSchema = createInsertSchema(configuracao).omit({ id: true });
 
 // Types
 export type Empresa = typeof empresa.$inferSelect;
@@ -198,3 +205,5 @@ export type Titulo = typeof titulo.$inferSelect;
 export type InsertTitulo = z.infer<typeof insertTituloSchema>;
 export type TituloBaixa = typeof tituloBaixa.$inferSelect;
 export type InsertTituloBaixa = z.infer<typeof insertTituloBaixaSchema>;
+export type Configuracao = typeof configuracao.$inferSelect;
+export type InsertConfiguracao = z.infer<typeof insertConfiguracaoSchema>;

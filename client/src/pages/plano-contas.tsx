@@ -180,7 +180,7 @@ export default function PlanoContas() {
               placeholder="Buscar por código ou nome..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 w-full max-w-lg border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
+              className="pl-9 w-full border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
             />
           </div>
         </div>
