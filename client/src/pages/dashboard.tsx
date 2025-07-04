@@ -82,7 +82,12 @@ export default function Dashboard() {
         </header>
 
         <div className="p-8">
-          <DashboardCards data={dashboardData} />
+          <DashboardCards data={dashboardData || {
+            titulosHoje: 0,
+            valorAtraso: 0,
+            vencimentosHoje: 0,
+            vencimentosAmanha: 0
+          }} />
 
           {/* Layout principal com dois cards lado a lado */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">

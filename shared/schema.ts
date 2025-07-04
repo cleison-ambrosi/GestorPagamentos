@@ -181,14 +181,14 @@ export const tagRelations = relations(tag, ({ many }) => ({
 }));
 
 // Insert schemas
-export const insertEmpresaSchema = createInsertSchema(empresa).omit({ id: true });
-export const insertFornecedorSchema = createInsertSchema(fornecedor).omit({ id: true });
-export const insertPlanoContasSchema = createInsertSchema(planoContas).omit({ id: true });
-export const insertTagSchema = createInsertSchema(tag).omit({ id: true });
-export const insertContratoSchema = createInsertSchema(contrato).omit({ id: true });
-export const insertTituloSchema = createInsertSchema(titulo).omit({ id: true });
-export const insertTituloBaixaSchema = createInsertSchema(tituloBaixa).omit({ id: true });
-export const insertConfiguracaoSchema = createInsertSchema(configuracao).omit({ id: true });
+export const insertEmpresaSchema = createInsertSchema(empresa);
+export const insertFornecedorSchema = createInsertSchema(fornecedor);
+export const insertPlanoContasSchema = createInsertSchema(planoContas);
+export const insertTagSchema = createInsertSchema(tag);
+export const insertContratoSchema = createInsertSchema(contrato);
+export const insertTituloSchema = createInsertSchema(titulo);
+export const insertTituloBaixaSchema = createInsertSchema(tituloBaixa);
+export const insertConfiguracaoSchema = createInsertSchema(configuracao);
 
 // Types
 export type Empresa = typeof empresa.$inferSelect;
