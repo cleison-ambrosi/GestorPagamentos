@@ -1,15 +1,34 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchPlanoContas } from "@/lib/api";
 import Sidebar from "@/components/sidebar";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Bell, User } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Plus, Bell, User, Edit, Copy, Trash2, Search } from "lucide-react";
+import { formatDate } from "@/lib/format";
+import { useState } from "react";
+
+// Dados de exemplo do plano de contas
+const planoContasData = [
+  { id: 1, codigo: "1", nome: "Principal", contaPai: null, dataCriacao: "2025-06-25" },
+  { id: 2, codigo: "1.01.001", nome: "Conta Teste", contaPai: "1 - Principal", dataCriacao: "2025-06-25" }
+];
 
 export default function PlanoContas() {
+  const [searchTerm, setSearchTerm] = useState("");
+  
   const { data: planoContas, isLoading } = useQuery({
     queryKey: ['/api/plano-contas'],
     queryFn: fetchPlanoContas
   });
+
+  // Usando dados de exemplo enquanto não há dados reais
+  const displayPlanoContas = planoContas && planoContas.length > 0 ? planoContas : planoContasData;
+
+  const filteredPlanoContas = displayPlanoContas.filter(conta =>
+    conta.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    conta.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -19,7 +38,7 @@ export default function PlanoContas() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-slate-800">Plano de Contas</h2>
-              <p className="text-slate-600">Gerenciamento do plano de contas</p>
+              <p className="text-slate-600">Gerenciar plano de contas</p>
             </div>
             <div className="flex items-center space-x-4">
               <Button>
@@ -40,21 +59,68 @@ export default function PlanoContas() {
         </header>
 
         <div className="p-8">
-          <Card>
-            <CardHeader>
-              <h3 className="text-lg font-semibold">Lista de Contas</h3>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
+          <div className="mb-6">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Buscar por código ou nome..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg border border-slate-200 shadow-sm">
+            {isLoading ? (
+              <div className="text-center py-8">
                 <p>Carregando...</p>
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-slate-600">Nenhuma conta encontrada</p>
-                  <p className="text-sm text-slate-500 mt-1">Clique em "Nova Conta" para começar</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Código</TableHead>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Conta Pai</TableHead>
+                    <TableHead>Data Criação</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredPlanoContas.map((conta) => (
+                    <TableRow key={conta.id}>
+                      <TableCell className="font-medium">{conta.codigo}</TableCell>
+                      <TableCell>{conta.nome}</TableCell>
+                      <TableCell>
+                        {conta.contaPai ? (
+                          <span className="text-slate-600">{conta.contaPai}</span>
+                        ) : (
+                          <span className="text-slate-400">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {formatDate(conta.dataCriacao || new Date())}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end space-x-2">
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </div>
         </div>
       </main>
     </div>

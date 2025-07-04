@@ -1,15 +1,27 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchEmpresas } from "@/lib/api";
 import Sidebar from "@/components/sidebar";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, Bell, User } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Plus, Bell, User, Edit, Trash2 } from "lucide-react";
+import { formatDate } from "@/lib/format";
+
+// Dados de exemplo das empresas
+const empresasData = [
+  { id: 1, nome: "CL2G", cnpj: null, createdAt: "2025-07-02" },
+  { id: 2, nome: "Wingraph", cnpj: null, createdAt: "2025-07-02" },
+  { id: 3, nome: "Bremen", cnpj: null, createdAt: "2025-07-02" },
+  { id: 4, nome: "BPrint", cnpj: null, createdAt: "2025-07-02" }
+];
 
 export default function Empresas() {
   const { data: empresas, isLoading } = useQuery({
     queryKey: ['/api/empresas'],
     queryFn: fetchEmpresas
   });
+
+  // Usando dados de exemplo enquanto não há dados reais
+  const displayEmpresas = empresas && empresas.length > 0 ? empresas : empresasData;
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -19,7 +31,7 @@ export default function Empresas() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-slate-800">Empresas</h2>
-              <p className="text-slate-600">Gerenciamento de empresas</p>
+              <p className="text-slate-600">Gerenciar empresas cadastradas</p>
             </div>
             <div className="flex items-center space-x-4">
               <Button>
@@ -40,21 +52,53 @@ export default function Empresas() {
         </header>
 
         <div className="p-8">
-          <Card>
-            <CardHeader>
-              <h3 className="text-lg font-semibold">Lista de Empresas</h3>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
+          <div className="bg-white rounded-lg border border-slate-200 shadow-sm">
+            {isLoading ? (
+              <div className="text-center py-8">
                 <p>Carregando...</p>
-              ) : (
-                <div className="text-center py-8">
-                  <p className="text-slate-600">Nenhuma empresa encontrada</p>
-                  <p className="text-sm text-slate-500 mt-1">Clique em "Nova Empresa" para começar</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>CNPJ</TableHead>
+                    <TableHead>Cadastrado em</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {displayEmpresas.map((empresa) => (
+                    <TableRow key={empresa.id}>
+                      <TableCell className="font-medium">
+                        {String(empresa.id).padStart(2, '0')}
+                      </TableCell>
+                      <TableCell>{empresa.nome}</TableCell>
+                      <TableCell>
+                        <span className="text-orange-500">
+                          {empresa.cnpj || "Não informado"}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        {formatDate(empresa.createdAt || new Date())}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end space-x-2">
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </div>
         </div>
       </main>
     </div>
