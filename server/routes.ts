@@ -153,6 +153,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/plano-contas/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const data = insertPlanoContasSchema.partial().parse(req.body);
+      const planoContas = await storage.updatePlanoContas(id, data);
+      res.json(planoContas);
+    } catch (error) {
+      res.status(400).json({ error: "Dados inválidos" });
+    }
+  });
+
   app.delete("/api/plano-contas/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
