@@ -317,6 +317,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Configurações
+  app.get("/api/configuracao", async (req, res) => {
+    try {
+      const configuracao = await storage.getConfiguracao();
+      res.json(configuracao);
+    } catch (error) {
+      res.status(500).json({ error: "Erro ao buscar configuração" });
+    }
+  });
+
+  app.post("/api/configuracao/empresa-contratos", async (req, res) => {
+    try {
+      const { idEmpresa } = req.body;
+      if (!idEmpresa) {
+        return res.status(400).json({ error: "idEmpresa é obrigatório" });
+      }
+      await storage.updateEmpresaContratos(idEmpresa);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Erro ao atualizar empresa dos contratos" });
+    }
+  });
+
+  app.post("/api/configuracao/empresa-titulos", async (req, res) => {
+    try {
+      const { idEmpresa } = req.body;
+      if (!idEmpresa) {
+        return res.status(400).json({ error: "idEmpresa é obrigatório" });
+      }
+      await storage.updateEmpresaTitulos(idEmpresa);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Erro ao atualizar empresa dos títulos" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

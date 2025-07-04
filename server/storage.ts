@@ -1,12 +1,13 @@
 import { 
-  empresa, fornecedor, planoContas, tag, contrato, titulo, tituloBaixa,
+  empresa, fornecedor, planoContas, tag, contrato, titulo, tituloBaixa, configuracao,
   type Empresa, type InsertEmpresa,
   type Fornecedor, type InsertFornecedor,
   type PlanoContas, type InsertPlanoContas,
   type Tag, type InsertTag,
   type Contrato, type InsertContrato,
   type Titulo, type InsertTitulo,
-  type TituloBaixa, type InsertTituloBaixa
+  type TituloBaixa, type InsertTituloBaixa,
+  type Configuracao, type InsertConfiguracao
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gte, lte, desc, asc, sql } from "drizzle-orm";
@@ -60,6 +61,13 @@ export interface IStorage {
   createTituloBaixa(data: InsertTituloBaixa): Promise<TituloBaixa>;
   updateTituloBaixa(id: number, data: Partial<InsertTituloBaixa>): Promise<TituloBaixa>;
   deleteTituloBaixa(id: number): Promise<void>;
+
+  // Configurações
+  getConfiguracao(): Promise<Configuracao | undefined>;
+  createConfiguracao(data: InsertConfiguracao): Promise<Configuracao>;
+  updateConfiguracao(id: number, data: Partial<InsertConfiguracao>): Promise<Configuracao>;
+  updateEmpresaContratos(idEmpresa: number): Promise<void>;
+  updateEmpresaTitulos(idEmpresa: number): Promise<void>;
 
   // Dashboard specific queries
   getDashboardData(): Promise<{
@@ -359,6 +367,44 @@ export class DatabaseStorage implements IStorage {
         proximoVencimento: Number(item.proximoVencimento)
       }))
     };
+  }
+
+  // Configurações
+  async getConfiguracao(): Promise<Configuracao | undefined> {
+    const [result] = await db.select().from(configuracao).limit(1);
+    return result || undefined;
+  }
+
+  async createConfiguracao(data: InsertConfiguracao): Promise<Configuracao> {
+    const [result] = await db.insert(configuracao).values(data).returning();
+    return result;
+  }
+
+  async updateConfiguracao(id: number, data: Partial<InsertConfiguracao>): Promise<Configuracao> {
+    const [result] = await db.update(configuracao).set(data).where(eq(configuracao.id, id)).returning();
+    return result;
+  }
+
+  async updateEmpresaContratos(idEmpresa: number): Promise<void> {
+    // Verificar se já existe configuração
+    const existing = await this.getConfiguracao();
+    
+    if (existing) {
+      await this.updateConfiguracao(existing.id, { idEmpresaContratos: idEmpresa });
+    } else {
+      await this.createConfiguracao({ idEmpresaContratos: idEmpresa });
+    }
+  }
+
+  async updateEmpresaTitulos(idEmpresa: number): Promise<void> {
+    // Verificar se já existe configuração
+    const existing = await this.getConfiguracao();
+    
+    if (existing) {
+      await this.updateConfiguracao(existing.id, { idEmpresaTitulos: idEmpresa });
+    } else {
+      await this.createConfiguracao({ idEmpresaTitulos: idEmpresa });
+    }
   }
 }
 

@@ -41,6 +41,27 @@ export default function Contratos() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedEmpresa, setSelectedEmpresa] = useState("BPrint");
   const [modalOpen, setModalOpen] = useState(false);
+
+  // Mutation para salvar empresa selecionada
+  const saveEmpresaContratosMutation = useMutation({
+    mutationFn: (empresaNome: string) => {
+      const empresa = empresas?.find((e: any) => e.nome === empresaNome);
+      if (!empresa) return Promise.reject(new Error("Empresa não encontrada"));
+      return apiRequest("/api/configuracao/empresa-contratos", "POST", { idEmpresa: empresa.id });
+    },
+    onSuccess: () => {
+      toast({ description: "Empresa selecionada salva com sucesso!" });
+    },
+    onError: () => {
+      toast({ description: "Erro ao salvar empresa selecionada", variant: "destructive" });
+    }
+  });
+
+  // Salvar empresa quando seleção mudar
+  const handleEmpresaChange = (empresaNome: string) => {
+    setSelectedEmpresa(empresaNome);
+    saveEmpresaContratosMutation.mutate(empresaNome);
+  };
   const [editingContrato, setEditingContrato] = useState<any>(null);
   const [confirmDialog, setConfirmDialog] = useState({
     open: false,
@@ -208,7 +229,7 @@ export default function Contratos() {
             <label className="block text-sm font-medium text-slate-700 mb-2">
               Empresa <span className="text-red-500">*</span>
             </label>
-            <Select value={selectedEmpresa} onValueChange={setSelectedEmpresa}>
+            <Select value={selectedEmpresa} onValueChange={handleEmpresaChange}>
               <SelectTrigger className="w-full border-slate-300 focus:border-blue-500 focus:ring-blue-500">
                 <SelectValue placeholder="Selecione uma empresa" />
               </SelectTrigger>
