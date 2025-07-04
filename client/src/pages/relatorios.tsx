@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Download, User } from 'lucide-react';
+import { Download } from 'lucide-react';
 import Sidebar from '@/components/sidebar';
 
 export default function Relatorios() {
@@ -39,10 +39,6 @@ export default function Relatorios() {
                 <Download className="mr-2 h-4 w-4" />
                 Exportar CSV
               </Button>
-              <div className="flex items-center space-x-3">
-                <User className="h-5 w-5 text-slate-600" />
-                <span className="text-sm font-medium text-slate-700">Usuário</span>
-              </div>
             </div>
           </div>
         </div>

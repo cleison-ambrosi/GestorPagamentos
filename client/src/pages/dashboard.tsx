@@ -21,16 +21,9 @@ export default function Dashboard() {
         <Sidebar />
         <main className="flex-1 ml-64">
           <header className="bg-white shadow-sm border-b border-slate-200 px-8 py-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold text-slate-800">Dashboard</h2>
-                <p className="text-slate-600">Visão geral do sistema</p>
-              </div>
-              <div className="flex items-center space-x-4">
-                <Button variant="ghost" size="icon">
-                  <Bell className="h-5 w-5" />
-                </Button>
-              </div>
+            <div>
+              <h2 className="text-2xl font-bold text-slate-800">Dashboard</h2>
+              <p className="text-slate-600">Visão geral do sistema</p>
             </div>
           </header>
           <div className="p-8">
@@ -56,14 +49,9 @@ export default function Dashboard() {
       <Sidebar />
       <main className="flex-1 ml-64">
         <header className="bg-white shadow-sm border-b border-slate-200 px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-800">Dashboard</h2>
-              <p className="text-slate-600">Visão geral do sistema</p>
-            </div>
-            <Button variant="ghost" size="icon">
-              <Bell className="h-5 w-5" />
-            </Button>
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800">Dashboard</h2>
+            <p className="text-slate-600">Visão geral do sistema</p>
           </div>
         </header>
 

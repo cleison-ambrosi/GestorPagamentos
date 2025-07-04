@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Search, Edit, Trash2, Copy, User } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Copy } from "lucide-react";
 import { fetchContratos } from "@/lib/api";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -121,19 +121,13 @@ export default function Contratos() {
               <h1 className="text-2xl font-bold text-slate-800">Contratos</h1>
               <p className="text-slate-600">Gerenciar contratos</p>
             </div>
-            <div className="flex items-center space-x-4">
-              <Button 
-                onClick={() => { setEditingContrato(null); setModalOpen(true); }}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Novo Contrato
-              </Button>
-              <div className="flex items-center space-x-3">
-                <User className="h-5 w-5 text-slate-600" />
-                <span className="text-sm font-medium text-slate-700">Usuário</span>
-              </div>
-            </div>
+            <Button 
+              onClick={() => { setEditingContrato(null); setModalOpen(true); }}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Novo Contrato
+            </Button>
           </div>
         </div>
 

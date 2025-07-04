@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Search, Edit, Trash2, Copy, User } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Copy } from "lucide-react";
 import { fetchTitulos } from "@/lib/api";
 import { formatCurrency } from "@/lib/format";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -143,10 +143,6 @@ export default function Titulos() {
                 <Plus className="h-4 w-4 mr-2" />
                 Novo Título
               </Button>
-              <div className="flex items-center space-x-3">
-                <User className="h-5 w-5 text-slate-600" />
-                <span className="text-sm font-medium text-slate-700">Usuário</span>
-              </div>
             </div>
           </div>
         </div>
