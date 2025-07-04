@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Bell, User, Edit, Trash2, Search } from "lucide-react";
 import { useState } from "react";
+import ConfirmDialog from "@/components/confirm-dialog";
 
 // Dados de exemplo dos fornecedores
 const fornecedoresData = [
@@ -27,6 +28,12 @@ export default function Fornecedores() {
   const [telefone, setTelefone] = useState("");
   const [endereco, setEndereco] = useState("");
   const [observacoes, setObservacoes] = useState("");
+  const [confirmDialog, setConfirmDialog] = useState({
+    open: false,
+    title: "",
+    description: "",
+    onConfirm: () => {}
+  });
   
   const { data: fornecedores, isLoading } = useQuery({
     queryKey: ['/api/fornecedores'],
@@ -62,10 +69,15 @@ export default function Fornecedores() {
   };
 
   const handleDelete = (fornecedor: any) => {
-    if (window.confirm(`Tem certeza que deseja excluir o fornecedor "${fornecedor.nome}"?`)) {
-      console.log("Excluindo fornecedor:", fornecedor.id);
-      // Implementar exclusão aqui
-    }
+    setConfirmDialog({
+      open: true,
+      title: "Confirmar Exclusão",
+      description: `Tem certeza que deseja excluir o fornecedor "${fornecedor.nome}"? Esta ação não pode ser desfeita.`,
+      onConfirm: () => {
+        console.log("Excluindo fornecedor:", fornecedor.id);
+        // Implementar exclusão aqui
+      }
+    });
   };
 
   const filteredFornecedores = displayFornecedores.filter((fornecedor: any) =>
@@ -249,6 +261,15 @@ export default function Fornecedores() {
               </div>
             </DialogContent>
           </Dialog>
+
+          {/* Diálogo de Confirmação */}
+          <ConfirmDialog
+            open={confirmDialog.open}
+            onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}
+            title={confirmDialog.title}
+            description={confirmDialog.description}
+            onConfirm={confirmDialog.onConfirm}
+          />
         </div>
       </main>
     </div>

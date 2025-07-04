@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Bell, User, Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
+import ConfirmDialog from "@/components/confirm-dialog";
 
 // Dados de exemplo das tags
 const tagsData = [
@@ -27,6 +28,12 @@ export default function Tags() {
   const [nome, setNome] = useState("");
   const [cor, setCor] = useState("#3B82F6");
   const [corPersonalizada, setCorPersonalizada] = useState("");
+  const [confirmDialog, setConfirmDialog] = useState({
+    open: false,
+    title: "",
+    description: "",
+    onConfirm: () => {}
+  });
 
   const { data: tags, isLoading } = useQuery({
     queryKey: ['/api/tags'],
@@ -59,10 +66,15 @@ export default function Tags() {
   };
 
   const handleDelete = (tag: any) => {
-    if (window.confirm(`Tem certeza que deseja excluir a tag "${tag.nome}"?`)) {
-      console.log("Excluindo tag:", tag.id);
-      // Implementar exclusão aqui
-    }
+    setConfirmDialog({
+      open: true,
+      title: "Confirmar Exclusão",
+      description: `Tem certeza que deseja excluir a tag "${tag.nome}"? Esta ação não pode ser desfeita.`,
+      onConfirm: () => {
+        console.log("Excluindo tag:", tag.id);
+        // Implementar exclusão aqui
+      }
+    });
   };
 
   const handleCorChange = (novaCor: string) => {
@@ -213,6 +225,15 @@ export default function Tags() {
               </div>
             </DialogContent>
           </Dialog>
+
+          {/* Diálogo de Confirmação */}
+          <ConfirmDialog
+            open={confirmDialog.open}
+            onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}
+            title={confirmDialog.title}
+            description={confirmDialog.description}
+            onConfirm={confirmDialog.onConfirm}
+          />
         </div>
       </main>
     </div>

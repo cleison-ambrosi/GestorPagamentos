@@ -10,6 +10,7 @@ import ContratoModal from "@/components/contrato-modal";
 import { Plus, Bell, User, Eye, Edit, Trash2, Copy } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useState } from "react";
+import ConfirmDialog from "@/components/confirm-dialog";
 
 // Dados de exemplo dos contratos
 const contratosData = [
@@ -53,6 +54,12 @@ export default function Contratos() {
   const [empresaFilter, setEmpresaFilter] = useState("todas");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingContrato, setEditingContrato] = useState<any>(null);
+  const [confirmDialog, setConfirmDialog] = useState({
+    open: false,
+    title: "",
+    description: "",
+    onConfirm: () => {}
+  });
   
   const { data: contratos, isLoading } = useQuery({
     queryKey: ['/api/contratos'],
@@ -87,10 +94,15 @@ export default function Contratos() {
   const contratosCancelados = filteredContratos.filter((c: any) => c.status === "cancelado");
 
   const handleDelete = (contrato: any) => {
-    if (window.confirm(`Tem certeza que deseja excluir o contrato "${contrato.descricao}"?`)) {
-      console.log("Excluindo contrato:", contrato.id);
-      // Implementar exclusão aqui
-    }
+    setConfirmDialog({
+      open: true,
+      title: "Confirmar Exclusão",
+      description: `Tem certeza que deseja excluir o contrato "${contrato.descricao}"? Esta ação não pode ser desfeita.`,
+      onConfirm: () => {
+        console.log("Excluindo contrato:", contrato.id);
+        // Implementar exclusão aqui
+      }
+    });
   };
 
   const handleDuplicate = (contrato: any) => {
@@ -287,6 +299,15 @@ export default function Contratos() {
             onOpenChange={setModalOpen}
             contrato={editingContrato}
             onSave={handleSave}
+          />
+
+          {/* Diálogo de Confirmação */}
+          <ConfirmDialog
+            open={confirmDialog.open}
+            onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}
+            title={confirmDialog.title}
+            description={confirmDialog.description}
+            onConfirm={confirmDialog.onConfirm}
           />
         </div>
       </main>

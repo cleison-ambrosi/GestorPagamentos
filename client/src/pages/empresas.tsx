@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Plus, Bell, User, Edit, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import { useState } from "react";
+import ConfirmDialog from "@/components/confirm-dialog";
 
 // Dados de exemplo das empresas
 const empresasData = [
@@ -25,6 +26,12 @@ export default function Empresas() {
   const [cnpj, setCnpj] = useState("");
   const [telefone, setTelefone] = useState("");
   const [email, setEmail] = useState("");
+  const [confirmDialog, setConfirmDialog] = useState({
+    open: false,
+    title: "",
+    description: "",
+    onConfirm: () => {}
+  });
 
   const { data: empresas, isLoading } = useQuery({
     queryKey: ['/api/empresas'],
@@ -59,10 +66,15 @@ export default function Empresas() {
   };
 
   const handleDelete = (empresa: any) => {
-    if (window.confirm(`Tem certeza que deseja excluir a empresa "${empresa.nome}"?`)) {
-      console.log("Excluindo empresa:", empresa.id);
-      // Implementar exclusão aqui
-    }
+    setConfirmDialog({
+      open: true,
+      title: "Confirmar Exclusão",
+      description: `Tem certeza que deseja excluir a empresa "${empresa.nome}"? Esta ação não pode ser desfeita.`,
+      onConfirm: () => {
+        console.log("Excluindo empresa:", empresa.id);
+        // Implementar exclusão aqui
+      }
+    });
   };
 
   return (
@@ -222,6 +234,15 @@ export default function Empresas() {
               </div>
             </DialogContent>
           </Dialog>
+
+          {/* Diálogo de Confirmação */}
+          <ConfirmDialog
+            open={confirmDialog.open}
+            onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}
+            title={confirmDialog.title}
+            description={confirmDialog.description}
+            onConfirm={confirmDialog.onConfirm}
+          />
         </div>
       </main>
     </div>

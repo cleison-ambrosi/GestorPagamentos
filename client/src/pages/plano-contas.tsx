@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, Bell, User, Edit, Copy, Trash2, Search } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import { useState } from "react";
+import ConfirmDialog from "@/components/confirm-dialog";
 
 // Dados de exemplo do plano de contas
 const planoContasData = [
@@ -16,6 +17,12 @@ const planoContasData = [
 
 export default function PlanoContas() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [confirmDialog, setConfirmDialog] = useState({
+    open: false,
+    title: "",
+    description: "",
+    onConfirm: () => {}
+  });
   
   const { data: planoContas, isLoading } = useQuery({
     queryKey: ['/api/plano-contas'],
@@ -31,10 +38,15 @@ export default function PlanoContas() {
   );
 
   const handleDelete = (conta: any) => {
-    if (window.confirm(`Tem certeza que deseja excluir a conta "${conta.nome}"?`)) {
-      console.log("Excluindo conta:", conta.id);
-      // Implementar exclusão aqui
-    }
+    setConfirmDialog({
+      open: true,
+      title: "Confirmar Exclusão",
+      description: `Tem certeza que deseja excluir a conta "${conta.nome}"? Esta ação não pode ser desfeita.`,
+      onConfirm: () => {
+        console.log("Excluindo conta:", conta.id);
+        // Implementar exclusão aqui
+      }
+    });
   };
 
   const handleDuplicate = (conta: any) => {
@@ -143,6 +155,14 @@ export default function PlanoContas() {
               </Table>
             )}
           </div>
+          {/* Diálogo de Confirmação */}
+          <ConfirmDialog
+            open={confirmDialog.open}
+            onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}
+            title={confirmDialog.title}
+            description={confirmDialog.description}
+            onConfirm={confirmDialog.onConfirm}
+          />
         </div>
       </main>
     </div>

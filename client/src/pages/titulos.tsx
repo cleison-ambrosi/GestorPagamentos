@@ -10,6 +10,7 @@ import TituloModal from "@/components/titulo-modal";
 import { Plus, Bell, User, Eye, Edit, Trash2, DollarSign, Copy } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useState } from "react";
+import ConfirmDialog from "@/components/confirm-dialog";
 
 // Dados de exemplo dos títulos
 const titulosData = [
@@ -60,6 +61,12 @@ export default function Titulos() {
   const [empresaFilter, setEmpresaFilter] = useState("todas");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTitulo, setEditingTitulo] = useState<any>(null);
+  const [confirmDialog, setConfirmDialog] = useState({
+    open: false,
+    title: "",
+    description: "",
+    onConfirm: () => {}
+  });
   
   const { data: titulos, isLoading } = useQuery({
     queryKey: ['/api/titulos'],
@@ -85,10 +92,15 @@ export default function Titulos() {
   };
 
   const handleDelete = (titulo: any) => {
-    if (window.confirm(`Tem certeza que deseja excluir o título "${titulo.numeroTitulo}"?`)) {
-      console.log("Excluindo título:", titulo.id);
-      // Implementar exclusão aqui
-    }
+    setConfirmDialog({
+      open: true,
+      title: "Confirmar Exclusão",
+      description: `Tem certeza que deseja excluir o título "${titulo.numeroTitulo}"? Esta ação não pode ser desfeita.`,
+      onConfirm: () => {
+        console.log("Excluindo título:", titulo.id);
+        // Implementar exclusão aqui
+      }
+    });
   };
 
   const handleDuplicate = (titulo: any) => {
@@ -320,6 +332,15 @@ export default function Titulos() {
             onOpenChange={setModalOpen}
             titulo={editingTitulo}
             onSave={handleSave}
+          />
+
+          {/* Diálogo de Confirmação */}
+          <ConfirmDialog
+            open={confirmDialog.open}
+            onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}
+            title={confirmDialog.title}
+            description={confirmDialog.description}
+            onConfirm={confirmDialog.onConfirm}
           />
         </div>
       </main>
