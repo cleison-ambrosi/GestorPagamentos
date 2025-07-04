@@ -99,22 +99,25 @@ export default function PlanoContas() {
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
       <main className="flex-1 ml-64 p-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-800">Plano de Contas</h1>
-            <p className="text-slate-600">Gerenciar plano de contas</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button 
-              onClick={() => { setEditingConta(null); setModalOpen(true); }}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Nova Conta
-            </Button>
-            <div className="flex items-center space-x-3">
-              <User className="h-5 w-5 text-slate-600" />
-              <span className="text-sm font-medium text-slate-700">Usuário</span>
+        {/* Header Panel */}
+        <div className="bg-white rounded-lg border border-slate-200 p-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-slate-800">Plano de Contas</h1>
+              <p className="text-slate-600">Gerenciar plano de contas</p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Button 
+                onClick={() => { setEditingConta(null); setModalOpen(true); }}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Nova Conta
+              </Button>
+              <div className="flex items-center space-x-3">
+                <User className="h-5 w-5 text-slate-600" />
+                <span className="text-sm font-medium text-slate-700">Usuário</span>
+              </div>
             </div>
           </div>
         </div>
