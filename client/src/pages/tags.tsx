@@ -92,18 +92,10 @@ export default function Tags() {
               <h2 className="text-2xl font-bold text-slate-800">Tags</h2>
               <p className="text-slate-600">Tags para títulos e contratos</p>
             </div>
-            <div className="flex items-center space-x-4">
-              <Button onClick={handleNew}>
-                <Plus className="h-4 w-4 mr-2" />
-                Nova Tag
-              </Button>
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <User className="text-white text-sm" />
-                </div>
-                <span className="text-sm font-medium text-slate-700">Usuário</span>
-              </div>
-            </div>
+            <Button onClick={handleNew}>
+              <Plus className="h-4 w-4 mr-2" />
+              Nova Tag
+            </Button>
           </div>
         </header>
 
