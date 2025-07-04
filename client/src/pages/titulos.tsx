@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import TituloModal from "@/components/titulo-modal";
 import { Plus, Bell, User, Eye, Edit, Trash2, DollarSign } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useState } from "react";
@@ -57,6 +58,8 @@ const titulosData = [
 export default function Titulos() {
   const [statusFilter, setStatusFilter] = useState("todos");
   const [empresaFilter, setEmpresaFilter] = useState("todas");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingTitulo, setEditingTitulo] = useState<any>(null);
   
   const { data: titulos, isLoading } = useQuery({
     queryKey: ['/api/titulos'],
@@ -65,6 +68,21 @@ export default function Titulos() {
 
   // Usando dados de exemplo enquanto não há dados reais
   const displayTitulos = titulos && titulos.length > 0 ? titulos : titulosData;
+
+  const handleEdit = (titulo: any) => {
+    setEditingTitulo(titulo);
+    setModalOpen(true);
+  };
+
+  const handleNew = () => {
+    setEditingTitulo(null);
+    setModalOpen(true);
+  };
+
+  const handleSave = (tituloData: any) => {
+    console.log("Salvando título:", tituloData);
+    setModalOpen(false);
+  };
 
   const filteredTitulos = displayTitulos.filter((titulo: any) => {
     if (statusFilter !== "todos" && titulo.status !== statusFilter) return false;
@@ -134,7 +152,12 @@ export default function Titulos() {
                 <Button variant="ghost" size="icon" className="h-8 w-8">
                   <DollarSign className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8"
+                  onClick={() => handleEdit(titulo)}
+                >
                   <Edit className="h-4 w-4" />
                 </Button>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -159,7 +182,7 @@ export default function Titulos() {
               <p className="text-slate-600">Gerenciar títulos a pagar</p>
             </div>
             <div className="flex items-center space-x-4">
-              <Button>
+              <Button onClick={handleNew}>
                 <Plus className="h-4 w-4 mr-2" />
                 Novo Título
               </Button>
@@ -265,6 +288,14 @@ export default function Titulos() {
               </div>
             </TabsContent>
           </Tabs>
+
+          {/* Modal de Título */}
+          <TituloModal
+            open={modalOpen}
+            onOpenChange={setModalOpen}
+            titulo={editingTitulo}
+            onSave={handleSave}
+          />
         </div>
       </main>
     </div>

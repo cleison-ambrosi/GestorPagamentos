@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import ContratoModal from "@/components/contrato-modal";
 import { Plus, Bell, User, Eye, Edit, Trash2 } from "lucide-react";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useState } from "react";
@@ -50,6 +51,8 @@ const contratosData = [
 export default function Contratos() {
   const [statusFilter, setStatusFilter] = useState("todos");
   const [empresaFilter, setEmpresaFilter] = useState("todas");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingContrato, setEditingContrato] = useState<any>(null);
   
   const { data: contratos, isLoading } = useQuery({
     queryKey: ['/api/contratos'],
@@ -58,6 +61,21 @@ export default function Contratos() {
 
   // Usando dados de exemplo enquanto não há dados reais
   const displayContratos = contratos && contratos.length > 0 ? contratos : contratosData;
+
+  const handleEdit = (contrato: any) => {
+    setEditingContrato(contrato);
+    setModalOpen(true);
+  };
+
+  const handleNew = () => {
+    setEditingContrato(null);
+    setModalOpen(true);
+  };
+
+  const handleSave = (contratoData: any) => {
+    console.log("Salvando contrato:", contratoData);
+    setModalOpen(false);
+  };
 
   const filteredContratos = displayContratos.filter((contrato: any) => {
     if (statusFilter !== "todos" && contrato.status !== statusFilter) return false;
@@ -121,7 +139,12 @@ export default function Contratos() {
                 <Button variant="ghost" size="icon" className="h-8 w-8">
                   <Eye className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-8 w-8"
+                  onClick={() => handleEdit(contrato)}
+                >
                   <Edit className="h-4 w-4" />
                 </Button>
                 <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -146,7 +169,7 @@ export default function Contratos() {
               <p className="text-slate-600">Gerenciar contratos</p>
             </div>
             <div className="flex items-center space-x-4">
-              <Button>
+              <Button onClick={handleNew}>
                 <Plus className="h-4 w-4 mr-2" />
                 Novo Contrato
               </Button>
@@ -232,6 +255,14 @@ export default function Contratos() {
               </div>
             </TabsContent>
           </Tabs>
+
+          {/* Modal de Contrato */}
+          <ContratoModal
+            open={modalOpen}
+            onOpenChange={setModalOpen}
+            contrato={editingContrato}
+            onSave={handleSave}
+          />
         </div>
       </main>
     </div>

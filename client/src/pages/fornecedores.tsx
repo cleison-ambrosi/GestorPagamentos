@@ -4,6 +4,9 @@ import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Plus, Bell, User, Edit, Trash2, Search } from "lucide-react";
 import { useState } from "react";
 
@@ -17,6 +20,13 @@ const fornecedoresData = [
 
 export default function Fornecedores() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingFornecedor, setEditingFornecedor] = useState<any>(null);
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [endereco, setEndereco] = useState("");
+  const [observacoes, setObservacoes] = useState("");
   
   const { data: fornecedores, isLoading } = useQuery({
     queryKey: ['/api/fornecedores'],
@@ -25,6 +35,31 @@ export default function Fornecedores() {
 
   // Usando dados de exemplo enquanto não há dados reais
   const displayFornecedores = fornecedores && fornecedores.length > 0 ? fornecedores : fornecedoresData;
+
+  const handleEdit = (fornecedor: any) => {
+    setEditingFornecedor(fornecedor);
+    setNome(fornecedor.nome);
+    setEmail(fornecedor.email || "");
+    setTelefone(fornecedor.telefone || "");
+    setEndereco(fornecedor.endereco || "");
+    setObservacoes(fornecedor.observacoes || "");
+    setModalOpen(true);
+  };
+
+  const handleNew = () => {
+    setEditingFornecedor(null);
+    setNome("");
+    setEmail("");
+    setTelefone("");
+    setEndereco("");
+    setObservacoes("");
+    setModalOpen(true);
+  };
+
+  const handleSave = () => {
+    console.log("Salvando fornecedor:", { nome, email, telefone, endereco, observacoes });
+    setModalOpen(false);
+  };
 
   const filteredFornecedores = displayFornecedores.filter((fornecedor: any) =>
     fornecedor.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -43,7 +78,7 @@ export default function Fornecedores() {
               <p className="text-slate-600">Gerenciar fornecedores</p>
             </div>
             <div className="flex items-center space-x-4">
-              <Button>
+              <Button onClick={handleNew}>
                 <Plus className="h-4 w-4 mr-2" />
                 Novo Fornecedor
               </Button>
@@ -107,7 +142,12 @@ export default function Fornecedores() {
                       <TableCell>{fornecedor.telefone}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end space-x-2">
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => handleEdit(fornecedor)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -121,6 +161,82 @@ export default function Fornecedores() {
               </Table>
             )}
           </div>
+
+          {/* Modal de Edição de Fornecedor */}
+          <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Editar Fornecedor</DialogTitle>
+                <p className="text-sm text-muted-foreground">
+                  Altere os dados do fornecedor conforme necessário
+                </p>
+              </DialogHeader>
+
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="nome">Nome do Fornecedor *</Label>
+                  <Input
+                    id="nome"
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
+                    placeholder="Nome do fornecedor"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="email">E-mail</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="email@exemplo.com"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="telefone">Telefone</Label>
+                  <Input
+                    id="telefone"
+                    value={telefone}
+                    onChange={(e) => setTelefone(e.target.value)}
+                    placeholder="(11) 99999-9999"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="endereco">Endereço</Label>
+                  <Input
+                    id="endereco"
+                    value={endereco}
+                    onChange={(e) => setEndereco(e.target.value)}
+                    placeholder="Endereço completo"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="observacoes">Observações</Label>
+                  <Textarea
+                    id="observacoes"
+                    value={observacoes}
+                    onChange={(e) => setObservacoes(e.target.value)}
+                    placeholder="Observações adicionais"
+                    rows={3}
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-4">
+                <Button 
+                  onClick={handleSave} 
+                  disabled={!nome.trim()}
+                  className="w-full"
+                >
+                  Salvar Fornecedor
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </main>
     </div>
