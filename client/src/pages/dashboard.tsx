@@ -84,32 +84,111 @@ export default function Dashboard() {
         <div className="p-8">
           <DashboardCards data={dashboardData} />
 
-          {/* Resumo por Empresa */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <ResumoEmpresaCard
-              empresa="BPrint"
-              emAtraso={0}
-              venceHoje={0}
-              proximoVencimento={34444.00}
-            />
-            <ResumoEmpresaCard
-              empresa="Bremen"
-              emAtraso={0}
-              venceHoje={0}
-              proximoVencimento={0}
-            />
-            <ResumoEmpresaCard
-              empresa="CL2G"
-              emAtraso={0}
-              venceHoje={0}
-              proximoVencimento={0}
-            />
-            <ResumoEmpresaCard
-              empresa="Wingraph"
-              emAtraso={0}
-              venceHoje={0}
-              proximoVencimento={0}
-            />
+          {/* Layout principal com dois cards lado a lado */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* Próximos Vencimentos */}
+            <Card className="bg-white border border-gray-200">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900">Próximos Vencimentos</h3>
+                  <button className="text-blue-600 text-sm hover:underline">Ver todos</button>
+                </div>
+                
+                <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+                  <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <p className="text-sm">Nenhum vencimento próximo</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Resumo por Empresa */}
+            <Card className="bg-white border border-gray-200">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-6">Resumo por Empresa</h3>
+                
+                <div className="space-y-6">
+                  {/* BPrint */}
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <h4 className="font-semibold text-gray-900 mb-4">BPrint</h4>
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      <div>
+                        <p className="text-xs text-red-600 mb-1">Em Atraso</p>
+                        <p className="text-lg font-bold text-red-600">R$ 0,00</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-yellow-600 mb-1">Vence Hoje</p>
+                        <p className="text-lg font-bold text-yellow-600">R$ 0,00</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-blue-600 mb-1">Amanhã - Fim do Mês</p>
+                        <p className="text-lg font-bold text-blue-600">R$ 34.444,00</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bremen */}
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <h4 className="font-semibold text-gray-900 mb-4">Bremen</h4>
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      <div>
+                        <p className="text-xs text-red-600 mb-1">Em Atraso</p>
+                        <p className="text-lg font-bold text-red-600">R$ 0,00</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-yellow-600 mb-1">Vence Hoje</p>
+                        <p className="text-lg font-bold text-yellow-600">R$ 0,00</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-blue-600 mb-1">Amanhã - Fim do Mês</p>
+                        <p className="text-lg font-bold text-blue-600">R$ 0,00</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CL2G */}
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <h4 className="font-semibold text-gray-900 mb-4">CL2G</h4>
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      <div>
+                        <p className="text-xs text-red-600 mb-1">Em Atraso</p>
+                        <p className="text-lg font-bold text-red-600">R$ 0,00</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-yellow-600 mb-1">Vence Hoje</p>
+                        <p className="text-lg font-bold text-yellow-600">R$ 0,00</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-blue-600 mb-1">Amanhã - Fim do Mês</p>
+                        <p className="text-lg font-bold text-blue-600">R$ 0,00</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Wingraph */}
+                  <div className="border border-gray-200 rounded-lg p-4">
+                    <h4 className="font-semibold text-gray-900 mb-4">Wingraph</h4>
+                    <div className="grid grid-cols-3 gap-4 text-center">
+                      <div>
+                        <p className="text-xs text-red-600 mb-1">Em Atraso</p>
+                        <p className="text-lg font-bold text-red-600">R$ 0,00</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-yellow-600 mb-1">Vence Hoje</p>
+                        <p className="text-lg font-bold text-yellow-600">R$ 0,00</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-blue-600 mb-1">Amanhã - Fim do Mês</p>
+                        <p className="text-lg font-bold text-blue-600">R$ 0,00</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Títulos Cadastrados Recentemente */}
