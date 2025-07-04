@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Bell, User, Edit, Trash2 } from "lucide-react";
+import { Plus, User, Edit, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import { useState } from "react";
 import ConfirmDialog from "@/components/confirm-dialog";
@@ -98,9 +98,6 @@ export default function Empresas() {
               <Button onClick={handleNew}>
                 <Plus className="h-4 w-4 mr-2" />
                 Nova Empresa
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Bell className="h-5 w-5" />
               </Button>
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
