@@ -127,42 +127,34 @@ export default function Titulos() {
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
-      <main className="flex-1 ml-64 p-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-800">Títulos</h1>
-            <p className="text-slate-600">Gerenciar títulos a pagar</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button 
-              onClick={() => { setEditingTitulo(null); setModalOpen(true); }}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Título
-            </Button>
-            <div className="flex items-center space-x-3">
-              <User className="h-5 w-5 text-slate-600" />
-              <span className="text-sm font-medium text-slate-700">Usuário</span>
+      <main className="flex-1 ml-64">
+        {/* Header Panel */}
+        <div className="bg-white border-b border-slate-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-slate-800">Títulos</h1>
+              <p className="text-slate-600">Gerenciar títulos a pagar</p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Button 
+                onClick={() => { setEditingTitulo(null); setModalOpen(true); }}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Novo Título
+              </Button>
+              <div className="flex items-center space-x-3">
+                <User className="h-5 w-5 text-slate-600" />
+                <span className="text-sm font-medium text-slate-700">Usuário</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="mb-6">
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-            <Input
-              placeholder="Buscar por descrição, número, fornecedor ou valor..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 w-full border-slate-300 focus:border-blue-500 focus:ring-blue-500 rounded-lg"
-            />
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
-          <Table>
-            <TableHeader>
+        <div className="p-8">
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <Table>
+              <TableHeader>
               <TableRow className="bg-slate-50">
                 <TableHead className="font-medium text-slate-700">ID</TableHead>
                 <TableHead className="font-medium text-slate-700">Número do Título</TableHead>
@@ -214,6 +206,7 @@ export default function Titulos() {
               ))}
             </TableBody>
           </Table>
+          </div>
         </div>
 
         <TituloModal
