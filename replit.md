@@ -96,6 +96,14 @@ The system manages several core entities:
 
 Changelog:
 - July 04, 2025. Initial setup
+- July 04, 2025. Major UI updates: 
+  * Fixed plano de contas deletion icon color for consistency
+  * Updated header colors in fornecedores and empresas pages
+  * Completely redesigned relatorios page with new layout
+  * Added resumo por empresa cards to dashboard
+  * Replaced dashboard bottom cards with títulos recentes table
+  * Standardized deletion icon colors across all pages (slate instead of red)
+  * Updated contratos and titulos layouts per design specifications
 
 ## User Preferences
 

@@ -114,12 +114,12 @@ export default function Empresas() {
             ) : (
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>CNPJ</TableHead>
-                    <TableHead>Cadastrado em</TableHead>
-                    <TableHead className="text-center">Ações</TableHead>
+                  <TableRow className="bg-slate-50">
+                    <TableHead className="font-medium text-slate-700">ID</TableHead>
+                    <TableHead className="font-medium text-slate-700">Nome</TableHead>
+                    <TableHead className="font-medium text-slate-700">CNPJ</TableHead>
+                    <TableHead className="font-medium text-slate-700">Cadastrado em</TableHead>
+                    <TableHead className="text-center font-medium text-slate-700">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

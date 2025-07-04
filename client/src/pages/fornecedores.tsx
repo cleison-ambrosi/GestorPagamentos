@@ -135,12 +135,12 @@ export default function Fornecedores() {
             ) : (
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Telefone</TableHead>
-                    <TableHead className="text-center">Ações</TableHead>
+                  <TableRow className="bg-slate-50">
+                    <TableHead className="font-medium text-slate-700">ID</TableHead>
+                    <TableHead className="font-medium text-slate-700">Nome</TableHead>
+                    <TableHead className="font-medium text-slate-700">Email</TableHead>
+                    <TableHead className="font-medium text-slate-700">Telefone</TableHead>
+                    <TableHead className="text-center font-medium text-slate-700">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
