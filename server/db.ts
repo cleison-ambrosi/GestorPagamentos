@@ -19,7 +19,7 @@ const sslConfig = () => {
 };
 
 const mysqlConfig = {
-  host: process.env.MYSQL_HOST || "mysql8free-gestor-f.aivencloud.com",
+  host: process.env.MYSQL_HOST || "95.111.213.45",
   port: parseInt(process.env.MYSQL_PORT || "18411"),
   user: process.env.MYSQL_USER || "avnadmin", 
   password: process.env.MYSQL_PASSWORD || "AVNS_mv1K1_d_Hr_ZbRKQWMs",

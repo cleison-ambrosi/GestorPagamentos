@@ -9,7 +9,7 @@ import Sidebar from "@/components/sidebar";
 
 export default function MySQLConfig() {
   const [config, setConfig] = useState({
-    host: "mysql8free-gestor-f.aivencloud.com",
+    host: "95.111.213.45",
     port: "18411",
     user: "avnadmin",
     password: "AVNS_mv1K1_d_Hr_ZbRKQWMs",
