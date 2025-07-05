@@ -10,7 +10,7 @@ export default defineConfig({
     port: 18411,
     user: "avnadmin",
     password: "AVNS_mv1K1_d_Hr_ZbRKQWMs",
-    database: "defaultdb",
+    database: "pagamentos",
     ssl: { rejectUnauthorized: true }
   },
 });
