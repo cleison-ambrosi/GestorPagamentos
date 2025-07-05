@@ -7,12 +7,14 @@ import * as fs from 'fs';
 // MySQL connection configuration with enhanced SSL options
 const sslConfig = () => {
   if (fs.existsSync('./ca.pem')) {
+    console.log('Using SSL certificate ca.pem for MySQL connection');
     return {
       rejectUnauthorized: false,
       ca: fs.readFileSync('./ca.pem'),
       secureProtocol: 'TLSv1_2_method'
     };
   }
+  console.log('SSL certificate ca.pem not found, using basic SSL');
   return { rejectUnauthorized: false };
 };
 
