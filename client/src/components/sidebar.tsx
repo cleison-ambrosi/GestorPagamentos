@@ -8,7 +8,8 @@ import {
   Table, 
   Building, 
   Tags,
-  Coins
+  Coins,
+  Database
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +22,7 @@ const navigationItems = [
   { href: "/plano-contas", label: "Plano de Contas", icon: Table },
   { href: "/empresas", label: "Empresas", icon: Building },
   { href: "/tags", label: "Tags", icon: Tags },
+  { href: "/mysql-config", label: "Config MySQL", icon: Database },
 ];
 
 export default function Sidebar() {

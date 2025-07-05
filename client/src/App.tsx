@@ -11,6 +11,7 @@ import Empresas from "@/pages/empresas";
 import PlanoContas from "@/pages/plano-contas";
 import Tags from "@/pages/tags";
 import Relatorios from "@/pages/relatorios";
+import MySQLConfig from "@/pages/mysql-config";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -25,6 +26,7 @@ function Router() {
       <Route path="/plano-contas" component={PlanoContas} />
       <Route path="/tags" component={Tags} />
       <Route path="/relatorios" component={Relatorios} />
+      <Route path="/mysql-config" component={MySQLConfig} />
       <Route component={NotFound} />
     </Switch>
   );

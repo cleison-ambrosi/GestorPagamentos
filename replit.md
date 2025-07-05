@@ -110,6 +110,19 @@ Changelog:
   * Added simple search bar and direct table view matching design requirements
   * Created configurações system for saving empresa selections with database persistence
   * Implemented automatic toast notifications for user feedback
+- July 05, 2025. Enhanced filtering system:
+  * Added empresa dropdown filter and search input to contratos and titulos pages
+  * Implemented responsive layout with proper labels for filter controls
+  * Both filters work simultaneously for precise data filtering
+- July 05, 2025. MySQL configuration system:
+  * Converted entire system architecture from PostgreSQL to MySQL
+  * Updated schema definitions to use MySQL syntax with proper data types
+  * Implemented SSL certificate support using ca.pem file
+  * Created comprehensive MySQL connection diagnostics
+  * Added /mysql-config page for connection status monitoring
+  * Configured environment variable support for flexible MySQL connections
+  * Added retry logic and detailed error reporting for connection issues
+  * Note: Current MySQL server (mysql8free-gestor-f.aivencloud.com:18411) has DNS resolution issues in Replit environment
 
 ## User Preferences
 

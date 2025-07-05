@@ -1,11 +1,11 @@
 
-import { pgTable, text, serial, integer, boolean, decimal, date, timestamp } from "drizzle-orm/pg-core";
+import { mysqlTable, text, serial, int, boolean, decimal, date, timestamp, bigint } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const empresa = pgTable("empresa", {
-  id: serial("id").primaryKey(),
+export const empresa = mysqlTable("empresa", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   nome: text("nome").notNull(),
   cnpj: text("cnpj"),
 });

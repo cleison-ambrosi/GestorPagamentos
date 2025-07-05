@@ -1,15 +1,28 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { getConnectionStatus } from "./db";
 import { insertEmpresaSchema, insertFornecedorSchema, insertPlanoContasSchema, insertTagSchema, insertContratoSchema, insertTituloSchema, insertTituloBaixaSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // MySQL Connection Status
+  app.get("/api/mysql-status", async (req, res) => {
+    const status = getConnectionStatus();
+    res.json({
+      connected: status.isConnected,
+      error: status.error,
+      config: status.config,
+      timestamp: new Date().toISOString()
+    });
+  });
+
   // Dashboard
   app.get("/api/dashboard", async (req, res) => {
     try {
       const data = await storage.getDashboardData();
       res.json(data);
     } catch (error) {
+      console.error("Dashboard error:", error);
       res.status(500).json({ error: "Erro ao buscar dados do dashboard" });
     }
   });
