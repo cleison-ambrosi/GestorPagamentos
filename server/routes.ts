@@ -5,7 +5,7 @@ import { getConnectionStatus } from "./db";
 import { insertEmpresaSchema, insertFornecedorSchema, insertPlanoContasSchema, insertTagSchema, insertContratoSchema, insertTituloSchema, insertTituloBaixaSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // MySQL Connection Status
+  // MySQL status endpoint
   app.get("/api/mysql-status", async (req, res) => {
     const status = getConnectionStatus();
     res.json({
@@ -14,6 +14,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
       config: status.config,
       timestamp: new Date().toISOString()
     });
+  });
+
+  // Network info endpoint
+  app.get("/api/network-info", async (req, res) => {
+    try {
+      const fetch = (await import('node-fetch')).default;
+      const [ipResponse, httpbinResponse] = await Promise.allSettled([
+        fetch('https://api.ipify.org?format=json'),
+        fetch('https://httpbin.org/ip')
+      ]);
+
+      const result: any = {
+        timestamp: new Date().toISOString(),
+        requestHeaders: {
+          'x-forwarded-for': req.headers['x-forwarded-for'],
+          'x-real-ip': req.headers['x-real-ip'],
+          'user-agent': req.headers['user-agent']
+        }
+      };
+
+      if (ipResponse.status === 'fulfilled') {
+        const ipData = await ipResponse.value.json();
+        result.externalIP = ipData;
+      }
+
+      if (httpbinResponse.status === 'fulfilled') {
+        const httpbinData = await httpbinResponse.value.json();
+        result.httpbinIP = httpbinData;
+      }
+
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ error: "Erro ao obter informações de rede" });
+    }
   });
 
   // Dashboard
