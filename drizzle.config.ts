@@ -1,14 +1,16 @@
-import { defineConfig } from "drizzle-kit";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL, ensure the database is provisioned");
-}
+import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
   out: "./migrations",
   schema: "./shared/schema.ts",
-  dialect: "postgresql",
+  dialect: "mysql",
   dbCredentials: {
-    url: process.env.DATABASE_URL,
+    host: "mysql8free-gestor-f.aivencloud.com",
+    port: 18411,
+    user: "avnadmin",
+    password: "AVNS_mv1K1_d_Hr_ZbRKQWMs",
+    database: "defaultdb",
+    ssl: { rejectUnauthorized: true }
   },
 });

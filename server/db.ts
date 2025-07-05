@@ -1,15 +1,16 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
-import ws from "ws";
+
+import { drizzle } from 'drizzle-orm/mysql2';
+import mysql from 'mysql2/promise';
 import * as schema from "@shared/schema";
 
-neonConfig.webSocketConstructor = ws;
+const connection = mysql.createPool({
+  host: "mysql8free-gestor-f.aivencloud.com",
+  port: 18411,
+  user: "avnadmin",
+  password: "AVNS_mv1K1_d_Hr_ZbRKQWMs",
+  database: "defaultdb",
+  ssl: { rejectUnauthorized: true },
+  connectionLimit: 10
+});
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
-}
-
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, schema });
+export const db = drizzle(connection, { schema, mode: 'default' });

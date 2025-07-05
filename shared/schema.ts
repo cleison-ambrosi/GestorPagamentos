@@ -1,49 +1,50 @@
-import { pgTable, text, serial, integer, boolean, numeric, date, timestamp, bigint } from "drizzle-orm/pg-core";
+
+import { mysqlTable, text, serial, int, boolean, decimal, date, timestamp, bigint } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const empresa = pgTable("empresa", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+export const empresa = mysqlTable("empresa", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   nome: text("nome").notNull(),
   cnpj: text("cnpj"),
 });
 
-export const fornecedor = pgTable("fornecedor", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+export const fornecedor = mysqlTable("fornecedor", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   nome: text("nome").notNull(),
   email: text("email"),
   telefone: text("telefone"),
   observacoes: text("observacoes"),
 });
 
-export const planoContas = pgTable("plano_conta", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+export const planoContas = mysqlTable("plano_conta", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   codigo: text("codigo").notNull(),
   nome: text("nome").notNull(),
   idContaPai: bigint("id_conta_pai", { mode: "number" }),
 });
 
-export const tag = pgTable("tag", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+export const tag = mysqlTable("tag", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   nome: text("nome").notNull(),
   cor: text("cor").notNull(),
 });
 
-export const configuracao = pgTable("configuracao", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+export const configuracao = mysqlTable("configuracao", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   idEmpresaContratos: bigint("id_empresa_contratos", { mode: "number" }),
   idEmpresaTitulos: bigint("id_empresa_titulos", { mode: "number" }),
 });
 
-export const contrato = pgTable("contrato", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+export const contrato = mysqlTable("contrato", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   idEmpresa: bigint("id_empresa", { mode: "number" }),
   idFornecedor: bigint("id_fornecedor", { mode: "number" }),
   idPlanoContas: bigint("id_plano_conta", { mode: "number" }),
   descricao: text("descricao"),
-  valorContrato: numeric("valor_contrato"),
-  valorParcela: numeric("valor_parcela"),
+  valorContrato: decimal("valor_contrato", { precision: 10, scale: 2 }),
+  valorParcela: decimal("valor_parcela", { precision: 10, scale: 2 }),
   numParcela: bigint("num_parcela", { mode: "number" }),
   dataInicio: date("data_inicio"),
   diaVencimento: bigint("dia_vencimento", { mode: "number" }),
@@ -54,46 +55,46 @@ export const contrato = pgTable("contrato", {
   observacoes: text("observacoes"),
 });
 
-export const titulo = pgTable("titulo", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+export const titulo = mysqlTable("titulo", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   idEmpresa: bigint("id_empresa", { mode: "number" }).notNull(),
   idFornecedor: bigint("id_fornecedor", { mode: "number" }).notNull(),
   numeroTitulo: text("numero_titulo").notNull(),
-  emissao: timestamp("emissao", { withTimezone: true }).notNull(),
+  emissao: timestamp("emissao").notNull(),
   vencimento: date("vencimento").notNull(),
-  valorTotal: numeric("valor_total").notNull().default("0"),
-  saldoPagar: numeric("saldo_pagar").notNull().default("0"),
+  valorTotal: decimal("valor_total", { precision: 10, scale: 2 }).notNull().default("0"),
+  saldoPagar: decimal("saldo_pagar", { precision: 10, scale: 2 }).notNull().default("0"),
   idPlanoContas: bigint("id_plano_contas", { mode: "number" }).notNull(),
   descricao: text("descricao").notNull(),
   observacoes: text("observacoes"),
   cancelado: boolean("cancelado").default(false),
 });
 
-export const tituloBaixa = pgTable("titulo_baixa", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+export const tituloBaixa = mysqlTable("titulo_baixa", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   idTitulo: bigint("id_titulo", { mode: "number" }).notNull(),
-  dataBaixa: timestamp("data_baixa", { withTimezone: false }).notNull(),
-  valorBaixa: numeric("valor_baixa").notNull().default("0"),
-  valorPago: numeric("valor_pago").notNull().default("0"),
-  juros: numeric("juros").notNull().default("0"),
-  desconto: numeric("desconto").notNull().default("0"),
+  dataBaixa: timestamp("data_baixa").notNull(),
+  valorBaixa: decimal("valor_baixa", { precision: 10, scale: 2 }).notNull().default("0"),
+  valorPago: decimal("valor_pago", { precision: 10, scale: 2 }).notNull().default("0"),
+  juros: decimal("juros", { precision: 10, scale: 2 }).notNull().default("0"),
+  desconto: decimal("desconto", { precision: 10, scale: 2 }).notNull().default("0"),
   observacao: text("observacao"),
   cancelado: boolean("cancelado").notNull().default(false),
 });
 
-export const contratoTag = pgTable("contrato_tag", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+export const contratoTag = mysqlTable("contrato_tag", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   idTag: bigint("id_tag", { mode: "number" }).notNull(),
   idContrato: bigint("id_contrato", { mode: "number" }).notNull(),
 });
 
-export const tituloTag = pgTable("titulo_tag", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+export const tituloTag = mysqlTable("titulo_tag", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   idTitulo: bigint("id_titulo", { mode: "number" }).notNull(),
   idTag: bigint("id_tag", { mode: "number" }).notNull(),
 });
 
-// Relations
+// Relations (mantêm a mesma estrutura)
 export const empresaRelations = relations(empresa, ({ many }) => ({
   contratos: many(contrato),
   titulos: many(titulo),
