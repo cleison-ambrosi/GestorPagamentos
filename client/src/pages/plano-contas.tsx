@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Edit, Trash2, User } from "lucide-react";
+import { Plus, Edit, Trash2, User, Search } from "lucide-react";
 import { fetchPlanoContas } from "@/lib/api";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -21,6 +21,7 @@ export default function PlanoContas() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editingConta, setEditingConta] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean;
     title: string;
@@ -93,7 +94,10 @@ export default function PlanoContas() {
     });
   };
 
-  const filteredContas = planoContas || [];
+  const filteredContas = planoContas?.filter((conta: any) =>
+    conta.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    conta.codigo?.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -120,6 +124,17 @@ export default function PlanoContas() {
 
         <div className="p-8">
           <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <div className="p-4 border-b border-slate-200">
+              <div className="relative">
+                <Search className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
+                <Input
+                  placeholder="Buscar contas..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
             <Table>
             <TableHeader>
               <TableRow className="bg-slate-50">

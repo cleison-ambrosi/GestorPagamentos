@@ -156,6 +156,17 @@ export default function Fornecedores() {
 
         <div className="p-8">
           <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <div className="p-4 border-b border-slate-200">
+              <div className="relative">
+                <Search className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
+                <Input
+                  placeholder="Buscar fornecedores..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
             <Table>
               <TableHeader>
                 <TableRow className="bg-slate-50">

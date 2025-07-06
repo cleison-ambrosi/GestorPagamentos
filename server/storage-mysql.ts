@@ -236,7 +236,8 @@ export class MySQLStorage {
 
   async createTitulo(data: InsertTitulo): Promise<Titulo> {
     const result = await db.insert(titulo).values(data);
-    const [created] = await db.select().from(titulo).where(eq(titulo.id, Number((result as any).insertId)));
+    const insertId = (result as any)[0].insertId;
+    const [created] = await db.select().from(titulo).where(eq(titulo.id, insertId));
     return created;
   }
 
@@ -262,7 +263,8 @@ export class MySQLStorage {
 
   async createTituloBaixa(data: InsertTituloBaixa): Promise<TituloBaixa> {
     const result = await db.insert(tituloBaixa).values(data);
-    const [created] = await db.select().from(tituloBaixa).where(eq(tituloBaixa.id, Number((result as any).insertId)));
+    const insertId = (result as any)[0].insertId;
+    const [created] = await db.select().from(tituloBaixa).where(eq(tituloBaixa.id, insertId));
     return created;
   }
 
@@ -305,7 +307,8 @@ export class MySQLStorage {
 
   async createConfiguracao(data: InsertConfiguracao): Promise<Configuracao> {
     const result = await db.insert(configuracao).values(data);
-    const [created] = await db.select().from(configuracao).where(eq(configuracao.id, Number((result as any).insertId)));
+    const insertId = (result as any)[0].insertId;
+    const [created] = await db.select().from(configuracao).where(eq(configuracao.id, insertId));
     return created;
   }
 
