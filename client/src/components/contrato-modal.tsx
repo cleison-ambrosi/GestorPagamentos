@@ -50,8 +50,26 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
   });
 
   const handleSave = () => {
-    console.log('Salvando contrato:', dadosContrato);
-    onSave(dadosContrato);
+    // Converter tipos apropriadamente antes de salvar
+    const contratoFormatado = {
+      idEmpresa: parseInt(dadosContrato.idEmpresa) || null,
+      idFornecedor: parseInt(dadosContrato.idFornecedor) || null,
+      idPlanoContas: parseInt(dadosContrato.idPlanoContas) || null,
+      descricao: dadosContrato.descricao || '',
+      valorContrato: parseFloat(dadosContrato.valorContrato) || 0,
+      valorParcela: parseFloat(dadosContrato.valorParcela) || 0,
+      numParcela: parseInt(dadosContrato.numParcela) || 0,
+      diaVencimento: parseInt(dadosContrato.diaVencimento) || 0,
+      parcelaInicial: parseInt(dadosContrato.parcelaInicial) || 1,
+      dataInicio: dadosContrato.dataInicio ? new Date(dadosContrato.dataInicio) : new Date(),
+      numeroTitulo: dadosContrato.numeroTitulo || '',
+      tipoMascara: dadosContrato.tipoMascara === 'sequencial' ? 1 : 2,
+      status: dadosContrato.status === 'Ativo',
+      observacoes: dadosContrato.observacoes || ''
+    };
+    
+    console.log('Salvando contrato:', contratoFormatado);
+    onSave(contratoFormatado);
     onOpenChange(false);
   };
 
