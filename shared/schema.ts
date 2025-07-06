@@ -186,7 +186,23 @@ export const insertEmpresaSchema = createInsertSchema(empresa);
 export const insertFornecedorSchema = createInsertSchema(fornecedor);
 export const insertPlanoContasSchema = createInsertSchema(planoContas);
 export const insertTagSchema = createInsertSchema(tag);
-export const insertContratoSchema = createInsertSchema(contrato);
+// Custom schema for contrato that accepts string dates
+export const insertContratoSchema = z.object({
+  idEmpresa: z.number(),
+  idFornecedor: z.number(),
+  idPlanoContas: z.number(),
+  descricao: z.string(),
+  valorContrato: z.string(),
+  valorParcela: z.string(),
+  numParcela: z.number(),
+  diaVencimento: z.number(),
+  parcelaInicial: z.number(),
+  dataInicio: z.string().transform((val) => new Date(val)),
+  numeroTitulo: z.string(),
+  tipoMascara: z.number(),
+  status: z.boolean(),
+  observacoes: z.string().optional()
+});
 export const insertTituloSchema = createInsertSchema(titulo);
 export const insertTituloBaixaSchema = createInsertSchema(tituloBaixa);
 export const insertConfiguracaoSchema = createInsertSchema(configuracao);

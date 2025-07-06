@@ -209,7 +209,8 @@ export class MySQLStorage {
 
   async createContrato(data: InsertContrato): Promise<Contrato> {
     const result = await db.insert(contrato).values(data);
-    const [created] = await db.select().from(contrato).where(eq(contrato.id, Number((result as any).insertId)));
+    const insertId = (result as any)[0].insertId;
+    const [created] = await db.select().from(contrato).where(eq(contrato.id, insertId));
     return created;
   }
 

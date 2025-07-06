@@ -2,7 +2,26 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage-mysql";
 import { getConnectionStatus } from "./db";
-import { insertEmpresaSchema, insertFornecedorSchema, insertPlanoContasSchema, insertTagSchema, insertContratoSchema, insertTituloSchema, insertTituloBaixaSchema } from "@shared/schema";
+import { insertEmpresaSchema, insertFornecedorSchema, insertPlanoContasSchema, insertTagSchema, insertTituloSchema, insertTituloBaixaSchema } from "@shared/schema";
+import { z } from "zod";
+
+// Custom schema for contrato that handles date transformation
+const customContratoSchema = z.object({
+  idEmpresa: z.number(),
+  idFornecedor: z.number(),
+  idPlanoContas: z.number(),
+  descricao: z.string(),
+  valorContrato: z.string(),
+  valorParcela: z.string(),
+  numParcela: z.number(),
+  diaVencimento: z.number(),
+  parcelaInicial: z.number(),
+  dataInicio: z.string().transform((val) => new Date(val)),
+  numeroTitulo: z.string(),
+  tipoMascara: z.number(),
+  status: z.boolean(),
+  observacoes: z.string().optional()
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // MySQL status endpoint
@@ -293,11 +312,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/contratos", async (req, res) => {
     try {
-      console.log('Dados recebidos para contrato:', req.body);
-      const data = insertContratoSchema.parse(req.body);
-      console.log('Dados validados:', data);
-      const contrato = await storage.createContrato(data);
-      console.log('Contrato criado:', contrato);
+      const result = customContratoSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: "Dados inválidos", details: result.error.issues });
+      }
+      const contrato = await storage.createContrato(result.data);
       res.status(201).json(contrato);
     } catch (error) {
       console.error('Erro ao criar contrato:', error);
@@ -308,8 +327,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/contratos/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const data = insertContratoSchema.partial().parse(req.body);
-      const contrato = await storage.updateContrato(id, data);
+      const result = customContratoSchema.partial().safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: "Dados inválidos", details: JSON.stringify(result.error.issues, null, 2) });
+      }
+      const contrato = await storage.updateContrato(id, result.data);
       res.json(contrato);
     } catch (error) {
       res.status(400).json({ error: "Dados inválidos" });
