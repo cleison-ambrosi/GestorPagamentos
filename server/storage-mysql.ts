@@ -124,9 +124,25 @@ export class MySQLStorage {
   }
 
   async createFornecedor(data: InsertFornecedor): Promise<Fornecedor> {
-    const result = await db.insert(fornecedor).values(data);
-    const [created] = await db.select().from(fornecedor).where(eq(fornecedor.id, Number((result as any).insertId)));
-    return created;
+    console.log('Executando inserção MySQL para fornecedor:', data);
+    
+    try {
+      const result = await db.insert(fornecedor).values(data);
+      console.log('Resultado da inserção MySQL:', result);
+      
+      // Buscar o último registro inserido ordenado por ID
+      const [created] = await db.select().from(fornecedor).orderBy(desc(fornecedor.id)).limit(1);
+      console.log('Fornecedor criado encontrado:', created);
+      
+      if (!created) {
+        throw new Error('Falha ao criar fornecedor - não foi possível recuperar registro');
+      }
+      
+      return created;
+    } catch (error) {
+      console.error('Erro detalhado na criação de fornecedor:', error);
+      throw error;
+    }
   }
 
   async updateFornecedor(id: number, data: Partial<InsertFornecedor>): Promise<Fornecedor> {

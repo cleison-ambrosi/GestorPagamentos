@@ -147,11 +147,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/fornecedores", async (req, res) => {
     try {
+      console.log('Dados recebidos para fornecedor:', req.body);
       const data = insertFornecedorSchema.parse(req.body);
+      console.log('Dados validados:', data);
       const fornecedor = await storage.createFornecedor(data);
+      console.log('Fornecedor criado:', fornecedor);
       res.status(201).json(fornecedor);
     } catch (error) {
-      res.status(400).json({ error: "Dados inválidos" });
+      console.error('Erro ao criar fornecedor:', error);
+      res.status(400).json({ error: "Dados inválidos", details: (error as any).message });
     }
   });
 

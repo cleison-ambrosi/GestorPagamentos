@@ -1,5 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchFornecedores } from "@/lib/api";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,14 +13,6 @@ import { Plus, Bell, User, Edit, Trash2, Search } from "lucide-react";
 import { useState } from "react";
 import ConfirmDialog from "@/components/confirm-dialog";
 
-// Dados de exemplo dos fornecedores
-const fornecedoresData = [
-  { id: 1, nome: "Viena Updated", email: "updated@teste.com", telefone: "123456789" },
-  { id: 2, nome: "Tech Solutions Ltda", email: "contato@techsolutions.com", telefone: "(11) 2345-6789" },
-  { id: 3, nome: "Papelaria Central", email: "vendas@papelariacentral.com", telefone: "(11) 3456-7890" },
-  { id: 4, nome: "Energia SP", email: "atendimento@energiasp.com", telefone: "0800-123-456" }
-];
-
 export default function Fornecedores() {
   const [searchTerm, setSearchTerm] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -26,7 +20,6 @@ export default function Fornecedores() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
-  const [endereco, setEndereco] = useState("");
   const [observacoes, setObservacoes] = useState("");
   const [confirmDialog, setConfirmDialog] = useState({
     open: false,
@@ -35,232 +28,281 @@ export default function Fornecedores() {
     onConfirm: () => {}
   });
   
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
   const { data: fornecedores, isLoading } = useQuery({
     queryKey: ['/api/fornecedores'],
     queryFn: fetchFornecedores
   });
 
-  // Usando dados de exemplo enquanto não há dados reais
-  const displayFornecedores = fornecedores && fornecedores.length > 0 ? fornecedores : fornecedoresData;
+  const createMutation = useMutation({
+    mutationFn: (data: any) => apiRequest('/api/fornecedores', 'POST', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/fornecedores'] });
+      toast({ description: 'Fornecedor criado com sucesso!' });
+      setModalOpen(false);
+      resetForm();
+    },
+    onError: () => {
+      toast({ description: 'Erro ao criar fornecedor', variant: 'destructive' });
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: any }) => 
+      apiRequest(`/api/fornecedores/${id}`, 'PUT', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/fornecedores'] });
+      toast({ description: 'Fornecedor atualizado com sucesso!' });
+      setModalOpen(false);
+      resetForm();
+    },
+    onError: () => {
+      toast({ description: 'Erro ao atualizar fornecedor', variant: 'destructive' });
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => apiRequest(`/api/fornecedores/${id}`, 'DELETE'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/fornecedores'] });
+      toast({ description: 'Fornecedor excluído com sucesso!' });
+    },
+    onError: () => {
+      toast({ description: 'Erro ao excluir fornecedor', variant: 'destructive' });
+    }
+  });
+
+  const resetForm = () => {
+    setNome("");
+    setEmail("");
+    setTelefone("");
+    setObservacoes("");
+    setEditingFornecedor(null);
+  };
 
   const handleEdit = (fornecedor: any) => {
     setEditingFornecedor(fornecedor);
     setNome(fornecedor.nome);
     setEmail(fornecedor.email || "");
     setTelefone(fornecedor.telefone || "");
-    setEndereco(fornecedor.endereco || "");
     setObservacoes(fornecedor.observacoes || "");
     setModalOpen(true);
   };
 
-  const handleNew = () => {
-    setEditingFornecedor(null);
-    setNome("");
-    setEmail("");
-    setTelefone("");
-    setEndereco("");
-    setObservacoes("");
-    setModalOpen(true);
-  };
-
-  const handleSave = () => {
-    console.log("Salvando fornecedor:", { nome, email, telefone, endereco, observacoes });
-    setModalOpen(false);
-  };
-
   const handleDelete = (fornecedor: any) => {
+    console.log('Excluindo fornecedor:', fornecedor.id);
     setConfirmDialog({
       open: true,
-      title: "Confirmar Exclusão",
-      description: `Tem certeza que deseja excluir o fornecedor "${fornecedor.nome}"? Esta ação não pode ser desfeita.`,
+      title: "Confirmar exclusão",
+      description: `Tem certeza que deseja excluir o fornecedor "${fornecedor.nome}"?`,
       onConfirm: () => {
-        console.log("Excluindo fornecedor:", fornecedor.id);
-        // Implementar exclusão aqui
+        deleteMutation.mutate(fornecedor.id);
+        setConfirmDialog({ ...confirmDialog, open: false });
       }
     });
   };
 
-  const filteredFornecedores = displayFornecedores.filter((fornecedor: any) =>
+  const handleSave = () => {
+    const data = {
+      nome,
+      email,
+      telefone,
+      observacoes
+    };
+
+    console.log('Salvando fornecedor:', data);
+
+    if (editingFornecedor) {
+      updateMutation.mutate({ id: editingFornecedor.id, data });
+    } else {
+      createMutation.mutate(data);
+    }
+  };
+
+  const handleAddNew = () => {
+    resetForm();
+    setModalOpen(true);
+  };
+
+  const filteredFornecedores = fornecedores?.filter((fornecedor: any) =>
     fornecedor.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    fornecedor.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    fornecedor.telefone.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    fornecedor.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
-      <main className="flex-1 ml-64">
-        <header className="bg-white shadow-sm border-b border-slate-200 px-8 py-4">
-          <div className="flex items-center justify-between">
+      
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <div className="bg-blue-600 text-white p-6 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <User className="h-8 w-8" />
             <div>
-              <h2 className="text-2xl font-bold text-slate-800">Fornecedores</h2>
-              <p className="text-slate-600">Gerenciar fornecedores</p>
-            </div>
-            <Button onClick={handleNew}>
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Fornecedor
-            </Button>
-          </div>
-        </header>
-
-        <div className="p-8">
-          <div className="mb-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder="Buscar por nome, email ou telefone..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
+              <h1 className="text-2xl font-bold">Fornecedores</h1>
+              <p className="text-blue-100">Gerenciamento de fornecedores</p>
             </div>
           </div>
+          <div className="flex items-center space-x-4">
+            <Bell className="h-6 w-6" />
+            <div className="w-8 h-8 bg-blue-500 rounded-full" />
+          </div>
+        </div>
 
-          <div className="bg-white rounded-lg border border-slate-200 shadow-sm">
-            {isLoading ? (
-              <div className="text-center py-8">
-                <p>Carregando...</p>
+        {/* Content */}
+        <div className="flex-1 p-6">
+          <div className="max-w-7xl mx-auto">
+            {/* Search and Add */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="relative flex-1 max-w-md">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
+                <Input
+                  placeholder="Buscar fornecedores..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
               </div>
-            ) : (
+              <Button onClick={handleAddNew} className="ml-4">
+                <Plus className="h-4 w-4 mr-2" />
+                Novo Fornecedor
+              </Button>
+            </div>
+
+            {/* Table */}
+            <div className="bg-white rounded-lg border border-slate-200">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-slate-50">
-                    <TableHead className="font-medium text-slate-700">ID</TableHead>
-                    <TableHead className="font-medium text-slate-700">Nome</TableHead>
-                    <TableHead className="font-medium text-slate-700">Email</TableHead>
-                    <TableHead className="font-medium text-slate-700">Telefone</TableHead>
-                    <TableHead className="text-center font-medium text-slate-700">Ações</TableHead>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Telefone</TableHead>
+                    <TableHead>Observações</TableHead>
+                    <TableHead className="w-24">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredFornecedores.map((fornecedor: any) => (
-                    <TableRow key={fornecedor.id}>
-                      <TableCell className="font-medium">
-                        {String(fornecedor.id).padStart(5, '0')}
-                      </TableCell>
-                      <TableCell>{fornecedor.nome}</TableCell>
-                      <TableCell>
-                        <a 
-                          href={`mailto:${fornecedor.email}`}
-                          className="text-blue-600 hover:underline"
-                        >
-                          {fornecedor.email}
-                        </a>
-                      </TableCell>
-                      <TableCell>{fornecedor.telefone}</TableCell>
-                      <TableCell className="text-center">
-                        <div className="flex items-center justify-center space-x-2">
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-8 w-8"
-                            onClick={() => handleEdit(fornecedor)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-8 w-8"
-                            onClick={() => handleDelete(fornecedor)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-8">
+                        <p className="text-slate-500">Carregando...</p>
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) : filteredFornecedores.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-8">
+                        <p className="text-slate-500">Nenhum fornecedor encontrado</p>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    filteredFornecedores.map((fornecedor: any) => (
+                      <TableRow key={fornecedor.id}>
+                        <TableCell className="font-medium">{fornecedor.nome}</TableCell>
+                        <TableCell className="text-slate-600">{fornecedor.email || '-'}</TableCell>
+                        <TableCell className="text-slate-600">{fornecedor.telefone || '-'}</TableCell>
+                        <TableCell className="text-slate-600">{fornecedor.observacoes || '-'}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => handleEdit(fornecedor)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-slate-500 hover:text-slate-700"
+                              onClick={() => handleDelete(fornecedor)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
                 </TableBody>
               </Table>
-            )}
+            </div>
           </div>
-
-          {/* Modal de Edição de Fornecedor */}
-          <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Editar Fornecedor</DialogTitle>
-                <p className="text-sm text-muted-foreground">
-                  Altere os dados do fornecedor conforme necessário
-                </p>
-              </DialogHeader>
-
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="nome">Nome do Fornecedor *</Label>
-                  <Input
-                    id="nome"
-                    value={nome}
-                    onChange={(e) => setNome(e.target.value)}
-                    placeholder="Nome do fornecedor"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="email">E-mail</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="email@exemplo.com"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="telefone">Telefone</Label>
-                  <Input
-                    id="telefone"
-                    value={telefone}
-                    onChange={(e) => setTelefone(e.target.value)}
-                    placeholder="(11) 99999-9999"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="endereco">Endereço</Label>
-                  <Input
-                    id="endereco"
-                    value={endereco}
-                    onChange={(e) => setEndereco(e.target.value)}
-                    placeholder="Endereço completo"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="observacoes">Observações</Label>
-                  <Textarea
-                    id="observacoes"
-                    value={observacoes}
-                    onChange={(e) => setObservacoes(e.target.value)}
-                    placeholder="Observações adicionais"
-                    rows={3}
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-end pt-4">
-                <Button 
-                  onClick={handleSave} 
-                  disabled={!nome.trim()}
-                  className="w-full"
-                >
-                  Salvar Fornecedor
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-
-          {/* Diálogo de Confirmação */}
-          <ConfirmDialog
-            open={confirmDialog.open}
-            onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}
-            title={confirmDialog.title}
-            description={confirmDialog.description}
-            onConfirm={confirmDialog.onConfirm}
-          />
         </div>
-      </main>
+      </div>
+
+      {/* Modal */}
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editingFornecedor ? 'Editar Fornecedor' : 'Novo Fornecedor'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="nome">Nome *</Label>
+              <Input
+                id="nome"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                placeholder="Nome do fornecedor"
+              />
+            </div>
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="email@exemplo.com"
+              />
+            </div>
+            <div>
+              <Label htmlFor="telefone">Telefone</Label>
+              <Input
+                id="telefone"
+                value={telefone}
+                onChange={(e) => setTelefone(e.target.value)}
+                placeholder="(11) 99999-9999"
+              />
+            </div>
+            <div>
+              <Label htmlFor="observacoes">Observações</Label>
+              <Textarea
+                id="observacoes"
+                value={observacoes}
+                onChange={(e) => setObservacoes(e.target.value)}
+                placeholder="Observações sobre o fornecedor"
+                rows={3}
+              />
+            </div>
+            <div className="flex justify-end space-x-2 pt-4">
+              <Button variant="outline" onClick={() => setModalOpen(false)}>
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleSave}
+                disabled={!nome || createMutation.isPending || updateMutation.isPending}
+              >
+                {createMutation.isPending || updateMutation.isPending ? 'Salvando...' : 'Salvar'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        open={confirmDialog.open}
+        onOpenChange={(open) => setConfirmDialog({ ...confirmDialog, open })}
+        title={confirmDialog.title}
+        description={confirmDialog.description}
+        onConfirm={confirmDialog.onConfirm}
+      />
     </div>
   );
 }
