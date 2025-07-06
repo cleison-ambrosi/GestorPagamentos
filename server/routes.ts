@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { storage } from "./storage-mysql";
 import { getConnectionStatus } from "./db";
 import { insertEmpresaSchema, insertFornecedorSchema, insertPlanoContasSchema, insertTagSchema, insertContratoSchema, insertTituloSchema, insertTituloBaixaSchema } from "@shared/schema";
 
@@ -86,10 +86,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/empresas", async (req, res) => {
     try {
+      console.log('Dados recebidos para empresa:', req.body);
       const data = insertEmpresaSchema.parse(req.body);
+      console.log('Dados validados:', data);
       const empresa = await storage.createEmpresa(data);
+      console.log('Empresa criada:', empresa);
       res.status(201).json(empresa);
     } catch (error) {
+      console.error('Erro ao criar empresa:', error);
       res.status(400).json({ error: "Dados inválidos" });
     }
   });
@@ -233,10 +237,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/tags", async (req, res) => {
     try {
+      console.log('Dados recebidos para tag:', req.body);
       const data = insertTagSchema.parse(req.body);
+      console.log('Dados validados:', data);
       const tag = await storage.createTag(data);
       res.status(201).json(tag);
     } catch (error) {
+      console.error('Erro ao criar tag:', error);
       res.status(400).json({ error: "Dados inválidos" });
     }
   });

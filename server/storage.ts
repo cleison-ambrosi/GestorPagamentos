@@ -104,12 +104,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createEmpresa(data: InsertEmpresa): Promise<Empresa> {
-    const [result] = await db.insert(empresa).values(data).returning();
-    return result;
+    const result = await db.insert(empresa).values(data);
+    const [created] = await db.select().from(empresa).where(eq(empresa.id, Number(result.insertId)));
+    return created;
   }
 
   async updateEmpresa(id: number, data: Partial<InsertEmpresa>): Promise<Empresa> {
-    const [result] = await db.update(empresa).set(data).where(eq(empresa.id, id)).returning();
+    await db.update(empresa).set(data).where(eq(empresa.id, id));
+    const [result] = await db.select().from(empresa).where(eq(empresa.id, id));
     return result;
   }
 
@@ -176,8 +178,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createTag(data: InsertTag): Promise<Tag> {
-    const [result] = await db.insert(tag).values(data).returning();
-    return result;
+    const result = await db.insert(tag).values(data);
+    const [created] = await db.select().from(tag).where(eq(tag.id, result.insertId));
+    return created;
   }
 
   async updateTag(id: number, data: Partial<InsertTag>): Promise<Tag> {
