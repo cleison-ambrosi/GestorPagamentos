@@ -6,6 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { formatCurrency, formatDate } from "@/lib/format";
 
 interface TituloModalProps {
   open: boolean;
@@ -84,7 +87,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
           </TabsList>
 
           <TabsContent value="dados" className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div>
                 <Label>Empresa *</Label>
                 <Select value={dadosTitulo.idEmpresa} onValueChange={(value) => handleInputChange('idEmpresa', value)}>
@@ -113,18 +116,18 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
                   </SelectContent>
                 </Select>
               </div>
+
+              <div>
+                <Label>Número do Título *</Label>
+                <Input
+                  value={dadosTitulo.numeroTitulo}
+                  onChange={(e) => handleInputChange('numeroTitulo', e.target.value)}
+                  placeholder="Número do título"
+                />
+              </div>
             </div>
 
-            <div>
-              <Label>Número do Título *</Label>
-              <Input
-                value={dadosTitulo.numeroTitulo}
-                onChange={(e) => handleInputChange('numeroTitulo', e.target.value)}
-                placeholder="Número do título"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div>
                 <Label>Data de Emissão *</Label>
                 <Input
@@ -142,9 +145,36 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
                   onChange={(e) => handleInputChange('vencimento', e.target.value)}
                 />
               </div>
+
+              <div>
+                <Label>Plano de Contas</Label>
+                <Select value={dadosTitulo.idPlanoContas} onValueChange={(value) => handleInputChange('idPlanoContas', value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecionar conta" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1 - Principal</SelectItem>
+                    <SelectItem value="2">1.1 - Ativo</SelectItem>
+                    <SelectItem value="3">2 - Resultado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <Label>Valor Total</Label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                  <Input
+                    className="pl-8"
+                    value={dadosTitulo.valorTotal}
+                    onChange={(e) => handleInputChange('valorTotal', e.target.value)}
+                    placeholder="0,00"
+                  />
+                </div>
+              </div>
+
               <div>
                 <Label>Saldo a Pagar</Label>
                 <div className="relative">
@@ -159,32 +189,21 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
               </div>
 
               <div>
-                <Label>Valor Total</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
-                  <Input
-                    className="pl-8"
-                    value={dadosTitulo.valorTotal}
-                    onChange={(e) => handleInputChange('valorTotal', e.target.value)}
-                    placeholder="0,00"
-                  />
-                </div>
+                <Label>Status</Label>
+                <Select defaultValue="pendente">
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pendente">Pendente</SelectItem>
+                    <SelectItem value="pago">Pago</SelectItem>
+                    <SelectItem value="vencido">Vencido</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
-            <div>
-              <Label>Plano de Contas</Label>
-              <Select value={dadosTitulo.idPlanoContas} onValueChange={(value) => handleInputChange('idPlanoContas', value)}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecionar conta" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1">1 - Principal</SelectItem>
-                  <SelectItem value="2">1.1 - Ativo</SelectItem>
-                  <SelectItem value="3">2 - Resultado</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+
 
             <div>
               <Label>Descrição</Label>
