@@ -132,106 +132,90 @@ export default function Fornecedores() {
   ) || [];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
-      
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <div className="bg-blue-600 text-white p-6 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <User className="h-8 w-8" />
+      <main className="flex-1 ml-64">
+        {/* Header Panel */}
+        <div className="bg-white border-b border-slate-200 p-6 pt-[16px] pb-[16px] pl-[32px] pr-[32px]">
+          <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold">Fornecedores</h1>
-              <p className="text-blue-100">Gerenciamento de fornecedores</p>
+              <h1 className="text-2xl font-bold text-slate-800">Fornecedores</h1>
+              <p className="text-slate-600">Gerenciar fornecedores</p>
             </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Bell className="h-6 w-6" />
-            <div className="w-8 h-8 bg-blue-500 rounded-full" />
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="flex-1 p-6">
-          <div className="max-w-7xl mx-auto">
-            {/* Search and Add */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-                <Input
-                  placeholder="Buscar fornecedores..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Button onClick={handleAddNew} className="ml-4">
+            <div className="flex items-center">
+              <Button 
+                onClick={handleAddNew}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Novo Fornecedor
               </Button>
             </div>
-
-            {/* Table */}
-            <div className="bg-white rounded-lg border border-slate-200">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Telefone</TableHead>
-                    <TableHead>Observações</TableHead>
-                    <TableHead className="w-24">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {isLoading ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center py-8">
-                        <p className="text-slate-500">Carregando...</p>
-                      </TableCell>
-                    </TableRow>
-                  ) : filteredFornecedores.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center py-8">
-                        <p className="text-slate-500">Nenhum fornecedor encontrado</p>
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    filteredFornecedores.map((fornecedor: any) => (
-                      <TableRow key={fornecedor.id}>
-                        <TableCell className="font-medium">{fornecedor.nome}</TableCell>
-                        <TableCell className="text-slate-600">{fornecedor.email || '-'}</TableCell>
-                        <TableCell className="text-slate-600">{fornecedor.telefone || '-'}</TableCell>
-                        <TableCell className="text-slate-600">{fornecedor.observacoes || '-'}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center space-x-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8"
-                              onClick={() => handleEdit(fornecedor)}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-slate-500 hover:text-slate-700"
-                              onClick={() => handleDelete(fornecedor)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
           </div>
         </div>
-      </div>
+
+        <div className="p-8">
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-slate-50">
+                  <TableHead className="font-medium text-slate-700">ID</TableHead>
+                  <TableHead className="font-medium text-slate-700">Nome</TableHead>
+                  <TableHead className="font-medium text-slate-700">Email</TableHead>
+                  <TableHead className="font-medium text-slate-700">Telefone</TableHead>
+                  <TableHead className="font-medium text-slate-700">Observações</TableHead>
+                  <TableHead className="font-medium text-slate-700">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8">
+                      <p className="text-slate-500">Carregando...</p>
+                    </TableCell>
+                  </TableRow>
+                ) : filteredFornecedores.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8">
+                      <p className="text-slate-500">Nenhum fornecedor encontrado</p>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredFornecedores.map((fornecedor: any) => (
+                    <TableRow key={fornecedor.id} className="hover:bg-slate-50">
+                      <TableCell className="font-medium">{fornecedor.id.toString().padStart(5, '0')}</TableCell>
+                      <TableCell className="font-medium">{fornecedor.nome}</TableCell>
+                      <TableCell className="text-slate-600">{fornecedor.email || '-'}</TableCell>
+                      <TableCell className="text-slate-600">{fornecedor.telefone || '-'}</TableCell>
+                      <TableCell className="text-slate-600">{fornecedor.observacoes || '-'}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEdit(fornecedor)}
+                            className="h-8 w-8 p-0 hover:bg-slate-100"
+                          >
+                            <Edit className="h-4 w-4 text-slate-600" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDelete(fornecedor)}
+                            className="h-8 w-8 p-0 hover:bg-slate-100"
+                          >
+                            <Trash2 className="h-4 w-4 text-slate-500" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      </main>
 
       {/* Modal */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>

@@ -129,6 +129,11 @@ Changelog:
   * Configured MySQL credentials via Replit secrets for security
   * System fully operational with MySQL database backend
   * All API endpoints working with MySQL data layer
+- July 06, 2025. UI standardization update:
+  * Updated fornecedores page to match plano de contas visual design
+  * Implemented consistent header panel with white background and blue accent button
+  * Applied standardized table styling with ID column and hover effects
+  * Used uniform spacing and typography following established design patterns
 
 ## User Preferences
 
