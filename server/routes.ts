@@ -185,11 +185,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/plano-contas", async (req, res) => {
     try {
+      console.log('Dados recebidos para plano de contas:', req.body);
       const data = insertPlanoContasSchema.parse(req.body);
+      console.log('Dados validados:', data);
       const planoContas = await storage.createPlanoContas(data);
+      console.log('Plano de contas criado:', planoContas);
       res.status(201).json(planoContas);
     } catch (error) {
-      res.status(400).json({ error: "Dados inválidos" });
+      console.error('Erro ao criar plano de contas:', error);
+      res.status(400).json({ error: "Dados inválidos", details: (error as any).message });
     }
   });
 
@@ -241,10 +245,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const data = insertTagSchema.parse(req.body);
       console.log('Dados validados:', data);
       const tag = await storage.createTag(data);
+      console.log('Tag criada:', tag);
       res.status(201).json(tag);
     } catch (error) {
       console.error('Erro ao criar tag:', error);
-      res.status(400).json({ error: "Dados inválidos" });
+      res.status(400).json({ error: "Dados inválidos", details: (error as any).message });
     }
   });
 

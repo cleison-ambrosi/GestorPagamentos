@@ -40,9 +40,25 @@ export class MySQLStorage {
   }
 
   async createEmpresa(data: InsertEmpresa): Promise<Empresa> {
-    const result = await db.insert(empresa).values(data);
-    const [created] = await db.select().from(empresa).where(eq(empresa.id, Number((result as any).insertId)));
-    return created;
+    console.log('Executando inserção MySQL para empresa:', data);
+    
+    try {
+      const result = await db.insert(empresa).values(data);
+      console.log('Resultado da inserção MySQL:', result);
+      
+      // Buscar o último registro inserido ordenado por ID
+      const [created] = await db.select().from(empresa).orderBy(desc(empresa.id)).limit(1);
+      console.log('Empresa criada encontrada:', created);
+      
+      if (!created) {
+        throw new Error('Falha ao criar empresa - não foi possível recuperar registro');
+      }
+      
+      return created;
+    } catch (error) {
+      console.error('Erro detalhado na criação de empresa:', error);
+      throw error;
+    }
   }
 
   async updateEmpresa(id: number, data: Partial<InsertEmpresa>): Promise<Empresa> {
@@ -66,9 +82,25 @@ export class MySQLStorage {
   }
 
   async createTag(data: InsertTag): Promise<Tag> {
-    const result = await db.insert(tag).values(data);
-    const [created] = await db.select().from(tag).where(eq(tag.id, Number((result as any).insertId)));
-    return created;
+    console.log('Executando inserção MySQL para tag:', data);
+    
+    try {
+      const result = await db.insert(tag).values(data);
+      console.log('Resultado da inserção MySQL:', result);
+      
+      // Buscar o último registro inserido ordenado por ID
+      const [created] = await db.select().from(tag).orderBy(desc(tag.id)).limit(1);
+      console.log('Tag criada encontrada:', created);
+      
+      if (!created) {
+        throw new Error('Falha ao criar tag - não foi possível recuperar registro');
+      }
+      
+      return created;
+    } catch (error) {
+      console.error('Erro detalhado na criação de tag:', error);
+      throw error;
+    }
   }
 
   async updateTag(id: number, data: Partial<InsertTag>): Promise<Tag> {
@@ -118,9 +150,25 @@ export class MySQLStorage {
   }
 
   async createPlanoContas(data: InsertPlanoContas): Promise<PlanoContas> {
-    const result = await db.insert(planoContas).values(data);
-    const [created] = await db.select().from(planoContas).where(eq(planoContas.id, Number((result as any).insertId)));
-    return created;
+    console.log('Executando inserção MySQL para plano de contas:', data);
+    
+    try {
+      const result = await db.insert(planoContas).values(data);
+      console.log('Resultado da inserção MySQL:', result);
+      
+      // Buscar o último registro inserido ordenado por ID
+      const [created] = await db.select().from(planoContas).orderBy(desc(planoContas.id)).limit(1);
+      console.log('Plano de contas criado encontrado:', created);
+      
+      if (!created) {
+        throw new Error('Falha ao criar plano de contas - não foi possível recuperar registro');
+      }
+      
+      return created;
+    } catch (error) {
+      console.error('Erro detalhado na criação de plano de contas:', error);
+      throw error;
+    }
   }
 
   async updatePlanoContas(id: number, data: Partial<InsertPlanoContas>): Promise<PlanoContas> {
