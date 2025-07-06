@@ -162,7 +162,7 @@ export default function Titulos() {
           {/* Filtros */}
           <div className="bg-white rounded-lg border border-slate-200 p-6 mb-6">
             <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
+              <div className="w-full sm:w-1/4">
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Empresa
                 </label>
@@ -180,7 +180,7 @@ export default function Titulos() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex-1">
+              <div className="w-full sm:w-3/4">
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Pesquisar
                 </label>

@@ -38,16 +38,16 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
   });
 
   const handleSave = () => {
-    // Converter string values para numbers onde necessário e formatar data
+    // Converter string values para o formato correto do backend
     const tituloData = {
       ...dadosTitulo,
       idEmpresa: parseInt(dadosTitulo.idEmpresa) || 1,
       idFornecedor: parseInt(dadosTitulo.idFornecedor) || 1,
       idPlanoContas: parseInt(dadosTitulo.idPlanoContas) || 1,
-      valorTotal: parseFloat(dadosTitulo.valorTotal.replace(',', '.')) || 0,
-      saldoPagar: parseFloat(dadosTitulo.saldoPagar.replace(',', '.')) || 0,
-      emissao: new Date(dadosTitulo.emissao).toISOString(),
-      vencimento: dadosTitulo.vencimento,
+      valorTotal: dadosTitulo.valorTotal.toString(),
+      saldoPagar: dadosTitulo.saldoPagar.toString(),
+      emissao: new Date(dadosTitulo.emissao),
+      vencimento: new Date(dadosTitulo.vencimento),
     };
     
     console.log('Dados formatados para envio:', tituloData);
