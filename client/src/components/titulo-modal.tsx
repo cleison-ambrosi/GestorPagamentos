@@ -16,14 +16,14 @@ interface TituloModalProps {
 
 export default function TituloModal({ open, onOpenChange, titulo, onSave }: TituloModalProps) {
   const [dadosTitulo, setDadosTitulo] = useState({
-    empresa: titulo?.empresa || "",
-    fornecedor: titulo?.fornecedor || "",
+    idEmpresa: titulo?.idEmpresa || "1",
+    idFornecedor: titulo?.idFornecedor || "1",
     numeroTitulo: titulo?.numeroTitulo || "",
-    dataEmissao: titulo?.dataEmissao || "",
-    dataVencimento: titulo?.dataVencimento || "",
-    valorTotal: titulo?.valorTotal || "",
-    saldoPagar: titulo?.saldoPagar || "",
-    planoContas: titulo?.planoContas || "",
+    emissao: titulo?.emissao ? titulo.emissao.split('T')[0] : new Date().toISOString().split('T')[0],
+    vencimento: titulo?.vencimento || "",
+    valorTotal: titulo?.valorTotal?.toString() || "0.00",
+    saldoPagar: titulo?.saldoPagar?.toString() || "0.00",
+    idPlanoContas: titulo?.idPlanoContas || "1",
     descricao: titulo?.descricao || "",
     observacoes: titulo?.observacoes || ""
   });
@@ -38,7 +38,20 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
   });
 
   const handleSave = () => {
-    onSave(dadosTitulo);
+    // Converter string values para numbers onde necessário e formatar data
+    const tituloData = {
+      ...dadosTitulo,
+      idEmpresa: parseInt(dadosTitulo.idEmpresa) || 1,
+      idFornecedor: parseInt(dadosTitulo.idFornecedor) || 1,
+      idPlanoContas: parseInt(dadosTitulo.idPlanoContas) || 1,
+      valorTotal: parseFloat(dadosTitulo.valorTotal.replace(',', '.')) || 0,
+      saldoPagar: parseFloat(dadosTitulo.saldoPagar.replace(',', '.')) || 0,
+      emissao: new Date(dadosTitulo.emissao).toISOString(),
+      vencimento: dadosTitulo.vencimento,
+    };
+    
+    console.log('Dados formatados para envio:', tituloData);
+    onSave(tituloData);
     onOpenChange(false);
   };
 
@@ -74,29 +87,29 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Empresa *</Label>
-                <Select value={dadosTitulo.empresa} onValueChange={(value) => handleInputChange('empresa', value)}>
+                <Select value={dadosTitulo.idEmpresa} onValueChange={(value) => handleInputChange('idEmpresa', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar empresa" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="BPrint">BPrint</SelectItem>
-                    <SelectItem value="CL2G">CL2G</SelectItem>
-                    <SelectItem value="Wingraph">Wingraph</SelectItem>
-                    <SelectItem value="Bremen">Bremen</SelectItem>
+                    <SelectItem value="1">BPrint</SelectItem>
+                    <SelectItem value="2">CL2G</SelectItem>
+                    <SelectItem value="3">Wingraph</SelectItem>
+                    <SelectItem value="4">Bremen</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
                 <Label>Fornecedor *</Label>
-                <Select value={dadosTitulo.fornecedor} onValueChange={(value) => handleInputChange('fornecedor', value)}>
+                <Select value={dadosTitulo.idFornecedor} onValueChange={(value) => handleInputChange('idFornecedor', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar fornecedor" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Energia SP">Energia SP</SelectItem>
-                    <SelectItem value="Águas SA">Águas SA</SelectItem>
-                    <SelectItem value="Tech Solutions">Tech Solutions</SelectItem>
+                    <SelectItem value="1">Energia SP</SelectItem>
+                    <SelectItem value="2">Águas SA</SelectItem>
+                    <SelectItem value="3">Tech Solutions</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -116,8 +129,8 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
                 <Label>Data de Emissão *</Label>
                 <Input
                   type="date"
-                  value={dadosTitulo.dataEmissao}
-                  onChange={(e) => handleInputChange('dataEmissao', e.target.value)}
+                  value={dadosTitulo.emissao}
+                  onChange={(e) => handleInputChange('emissao', e.target.value)}
                 />
               </div>
 
@@ -125,8 +138,8 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
                 <Label>Data de Vencimento *</Label>
                 <Input
                   type="date"
-                  value={dadosTitulo.dataVencimento}
-                  onChange={(e) => handleInputChange('dataVencimento', e.target.value)}
+                  value={dadosTitulo.vencimento}
+                  onChange={(e) => handleInputChange('vencimento', e.target.value)}
                 />
               </div>
             </div>
@@ -161,14 +174,14 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
 
             <div>
               <Label>Plano de Contas</Label>
-              <Select value={dadosTitulo.planoContas} onValueChange={(value) => handleInputChange('planoContas', value)}>
+              <Select value={dadosTitulo.idPlanoContas} onValueChange={(value) => handleInputChange('idPlanoContas', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecionar conta" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="1">1 - Principal</SelectItem>
-                  <SelectItem value="1.1">1.1 - Ativo</SelectItem>
-                  <SelectItem value="2">2 - Resultado</SelectItem>
+                  <SelectItem value="2">1.1 - Ativo</SelectItem>
+                  <SelectItem value="3">2 - Resultado</SelectItem>
                 </SelectContent>
               </Select>
             </div>

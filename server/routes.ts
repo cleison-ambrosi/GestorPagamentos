@@ -360,11 +360,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/titulos", async (req, res) => {
     try {
+      console.log('Recebendo dados do título:', req.body);
       const data = insertTituloSchema.parse(req.body);
+      console.log('Dados validados:', data);
       const titulo = await storage.createTitulo(data);
+      console.log('Título criado:', titulo);
       res.status(201).json(titulo);
     } catch (error) {
-      res.status(400).json({ error: "Dados inválidos" });
+      console.error('Erro ao criar título:', error);
+      if (error instanceof Error) {
+        res.status(400).json({ error: "Dados inválidos", details: error.message });
+      } else {
+        res.status(400).json({ error: "Dados inválidos" });
+      }
     }
   });
 
