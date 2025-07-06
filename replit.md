@@ -16,15 +16,15 @@ This is a full-stack payment management system built with React, Express.js, and
 
 ### Backend Architecture
 - **Runtime**: Node.js with Express.js framework
-- **Database**: PostgreSQL with Drizzle ORM
-- **Connection**: Neon serverless database connection
+- **Database**: MySQL with Drizzle ORM
+- **Connection**: Aiven MySQL cloud database with SSL
 - **Development**: Hot-reload development server with middleware logging
 - **Build**: ESBuild for production bundling
 
 ## Key Components
 
-### Database Schema
-The system manages several core entities:
+### Database Schema (MySQL)
+The system manages several core entities using MySQL database:
 - **Empresas (Companies)**: Business entities with name and CNPJ
 - **Fornecedores (Suppliers)**: Vendor information with contact details
 - **Plano de Contas (Chart of Accounts)**: Hierarchical account structure
@@ -58,9 +58,9 @@ The system manages several core entities:
 ## External Dependencies
 
 ### Database
-- **Neon Database**: Serverless PostgreSQL hosting
+- **Aiven MySQL**: Cloud-hosted MySQL database with SSL encryption
 - **Connection Pooling**: Efficient database connection management
-- **WebSocket Support**: Real-time connection capabilities
+- **SSL Certificate**: Secure connections using ca.pem certificate
 
 ### UI Framework
 - **Radix UI**: Accessible component primitives
@@ -123,6 +123,12 @@ Changelog:
   * Configured environment variable support for flexible MySQL connections
   * Added retry logic and detailed error reporting for connection issues
   * Note: Current MySQL server (mysql8free-gestor-f.aivencloud.com:18411) has DNS resolution issues in Replit environment
+- July 06, 2025. Complete MySQL migration finalized:
+  * Successfully established connection to Aiven MySQL server with SSL
+  * Removed all PostgreSQL dependencies and references
+  * Configured MySQL credentials via Replit secrets for security
+  * System fully operational with MySQL database backend
+  * All API endpoints working with MySQL data layer
 
 ## User Preferences
 
