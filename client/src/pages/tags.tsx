@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchTags } from "@/lib/api";
+import { apiRequest } from "@/lib/queryClient";
 import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,12 +11,7 @@ import { Plus, User, Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
 import ConfirmDialog from "@/components/confirm-dialog";
 
-// Dados de exemplo das tags
-const tagsData = [
-  { id: 1, nome: "Pessoal", cor: "#8B5CF6" },
-  { id: 2, nome: "Carros", cor: "#22C55E" },
-  { id: 3, nome: "Impostos", cor: "#3B82F6" }
-];
+
 
 const colorPalette = [
   "#EF4444", "#F97316", "#F59E0B", "#84CC16", "#10B981", "#06B6D4", "#3B82F6",
@@ -35,13 +31,36 @@ export default function Tags() {
     onConfirm: () => {}
   });
 
+  const queryClient = useQueryClient();
+
   const { data: tags, isLoading } = useQuery({
     queryKey: ['/api/tags'],
     queryFn: fetchTags
   });
 
-  // Usando dados de exemplo enquanto não há dados reais
-  const displayTags = tags && tags.length > 0 ? tags : tagsData;
+  const createMutation = useMutation({
+    mutationFn: (data: any) => apiRequest('/api/tags', 'POST', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/tags'] });
+      setModalOpen(false);
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: any }) => 
+      apiRequest(`/api/tags/${id}`, 'PUT', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/tags'] });
+      setModalOpen(false);
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => apiRequest(`/api/tags/${id}`, 'DELETE'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/tags'] });
+    }
+  });
 
   const handleEdit = (tag: any) => {
     setEditingTag(tag);
@@ -60,9 +79,15 @@ export default function Tags() {
   };
 
   const handleSave = () => {
-    // Aqui seria a lógica para salvar no backend
-    console.log("Salvando tag:", { nome, cor: corPersonalizada || cor });
-    setModalOpen(false);
+    const tagData = { nome, cor: corPersonalizada || cor };
+    
+    console.log("Salvando tag:", tagData);
+    
+    if (editingTag) {
+      updateMutation.mutate({ id: editingTag.id, data: tagData });
+    } else {
+      createMutation.mutate(tagData);
+    }
   };
 
   const handleDelete = (tag: any) => {
@@ -72,7 +97,8 @@ export default function Tags() {
       description: `Tem certeza que deseja excluir a tag "${tag.nome}"? Esta ação não pode ser desfeita.`,
       onConfirm: () => {
         console.log("Excluindo tag:", tag.id);
-        // Implementar exclusão aqui
+        deleteMutation.mutate(tag.id);
+        setConfirmDialog({ ...confirmDialog, open: false });
       }
     });
   };
@@ -106,7 +132,7 @@ export default function Tags() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayTags.map((tag) => (
+              {tags?.map((tag) => (
                 <div key={tag.id} className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-3">
