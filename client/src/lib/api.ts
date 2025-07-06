@@ -1,36 +1,55 @@
-import { apiRequest } from "./queryClient";
-
-export async function fetchDashboardData() {
-  const response = await apiRequest('/api/dashboard', 'GET');
+export const fetchEmpresas = async () => {
+  const response = await fetch("/api/empresas");
+  if (!response.ok) {
+    throw new Error("Failed to fetch empresas");
+  }
   return response.json();
-}
+};
 
-export async function fetchEmpresas() {
-  const response = await apiRequest('/api/empresas', 'GET');
+export const fetchFornecedores = async () => {
+  const response = await fetch("/api/fornecedores");
+  if (!response.ok) {
+    throw new Error("Failed to fetch fornecedores");
+  }
   return response.json();
-}
+};
 
-export async function fetchFornecedores() {
-  const response = await apiRequest('/api/fornecedores', 'GET');
+export const fetchPlanoContas = async () => {
+  const response = await fetch("/api/plano-contas");
+  if (!response.ok) {
+    throw new Error("Failed to fetch plano contas");
+  }
   return response.json();
-}
+};
 
-export async function fetchTitulos() {
-  const response = await apiRequest('/api/titulos', 'GET');
+export const fetchDashboardData = async () => {
+  const response = await fetch("/api/dashboard");
+  if (!response.ok) {
+    throw new Error("Failed to fetch dashboard data");
+  }
   return response.json();
-}
+};
 
-export async function fetchContratos() {
-  const response = await apiRequest('/api/contratos', 'GET');
+export const fetchTags = async () => {
+  const response = await fetch("/api/tags");
+  if (!response.ok) {
+    throw new Error("Failed to fetch tags");
+  }
   return response.json();
-}
+};
 
-export async function fetchPlanoContas() {
-  const response = await apiRequest('/api/plano-contas', 'GET');
+export const fetchContratos = async () => {
+  const response = await fetch("/api/contratos");
+  if (!response.ok) {
+    throw new Error("Failed to fetch contratos");
+  }
   return response.json();
-}
+};
 
-export async function fetchTags() {
-  const response = await apiRequest('/api/tags', 'GET');
+export const fetchTitulos = async () => {
+  const response = await fetch("/api/titulos");
+  if (!response.ok) {
+    throw new Error("Failed to fetch titulos");
+  }
   return response.json();
-}
+};

@@ -293,11 +293,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/contratos", async (req, res) => {
     try {
+      console.log('Dados recebidos para contrato:', req.body);
       const data = insertContratoSchema.parse(req.body);
+      console.log('Dados validados:', data);
       const contrato = await storage.createContrato(data);
+      console.log('Contrato criado:', contrato);
       res.status(201).json(contrato);
     } catch (error) {
-      res.status(400).json({ error: "Dados inválidos" });
+      console.error('Erro ao criar contrato:', error);
+      res.status(400).json({ error: "Dados inválidos", details: (error as any).message });
     }
   });
 

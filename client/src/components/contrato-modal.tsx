@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { fetchEmpresas, fetchFornecedores, fetchPlanoContas } from "@/lib/api";
 
 interface ContratoModalProps {
   open: boolean;
@@ -15,29 +17,45 @@ interface ContratoModalProps {
 }
 
 export default function ContratoModal({ open, onOpenChange, contrato, onSave }: ContratoModalProps) {
+  const { data: empresas = [] } = useQuery({
+    queryKey: ["/api/empresas"],
+    queryFn: fetchEmpresas,
+  });
+
+  const { data: fornecedores = [] } = useQuery({
+    queryKey: ["/api/fornecedores"],
+    queryFn: fetchFornecedores,
+  });
+
+  const { data: planoContas = [] } = useQuery({
+    queryKey: ["/api/plano-contas"],
+    queryFn: fetchPlanoContas,
+  });
+
   const [dadosContrato, setDadosContrato] = useState({
-    empresa: contrato?.empresa || "",
-    fornecedor: contrato?.fornecedor || "",
+    idEmpresa: contrato?.idEmpresa || null,
+    idFornecedor: contrato?.idFornecedor || null,
     descricao: contrato?.descricao || "",
     valorContrato: contrato?.valorContrato || "",
     valorParcela: contrato?.valorParcela || "",
-    numeroParcelas: contrato?.numeroParcelas || "",
+    numParcela: contrato?.numParcela || "",
     dataInicio: contrato?.dataInicio || "",
     diaVencimento: contrato?.diaVencimento || "",
-    iniciarParcela: contrato?.iniciarParcela || "",
+    parcelaInicial: contrato?.parcelaInicial || "",
     numeroTitulo: contrato?.numeroTitulo || "",
     tipoMascara: contrato?.tipoMascara || "",
-    planoContas: contrato?.planoContas || "",
-    status: contrato?.status || "Ativo",
+    idPlanoContas: contrato?.idPlanoContas || null,
+    status: contrato?.status || true,
     observacoes: contrato?.observacoes || ""
   });
 
   const handleSave = () => {
+    console.log('Salvando contrato:', dadosContrato);
     onSave(dadosContrato);
     onOpenChange(false);
   };
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | number) => {
     setDadosContrato(prev => ({ ...prev, [field]: value }));
   };
 
@@ -65,29 +83,32 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Empresa *</Label>
-                <Select value={dadosContrato.empresa} onValueChange={(value) => handleInputChange('empresa', value)}>
+                <Select value={dadosContrato.idEmpresa?.toString()} onValueChange={(value) => handleInputChange('idEmpresa', parseInt(value))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar empresa" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="BPrint">BPrint</SelectItem>
-                    <SelectItem value="CL2G">CL2G</SelectItem>
-                    <SelectItem value="Wingraph">Wingraph</SelectItem>
-                    <SelectItem value="Bremen">Bremen</SelectItem>
+                    {empresas.map((empresa: any) => (
+                      <SelectItem key={empresa.id} value={empresa.id.toString()}>
+                        {empresa.nome}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
                 <Label>Fornecedor *</Label>
-                <Select value={dadosContrato.fornecedor} onValueChange={(value) => handleInputChange('fornecedor', value)}>
+                <Select value={dadosContrato.idFornecedor?.toString()} onValueChange={(value) => handleInputChange('idFornecedor', parseInt(value))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar fornecedor" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Energia SP">Energia SP</SelectItem>
-                    <SelectItem value="Águas SA">Águas SA</SelectItem>
-                    <SelectItem value="Tech Solutions">Tech Solutions</SelectItem>
+                    {fornecedores.map((fornecedor: any) => (
+                      <SelectItem key={fornecedor.id} value={fornecedor.id.toString()}>
+                        {fornecedor.nome}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -132,8 +153,8 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
               <div>
                 <Label>Nº de Parcelas *</Label>
                 <Input
-                  value={dadosContrato.numeroParcelas}
-                  onChange={(e) => handleInputChange('numeroParcelas', e.target.value)}
+                  value={dadosContrato.numParcela}
+                  onChange={(e) => handleInputChange('numParcela', e.target.value)}
                   placeholder="12"
                 />
               </div>
@@ -161,8 +182,8 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
               <div>
                 <Label>Iniciar na Parcela *</Label>
                 <Input
-                  value={dadosContrato.iniciarParcela}
-                  onChange={(e) => handleInputChange('iniciarParcela', e.target.value)}
+                  value={dadosContrato.parcelaInicial}
+                  onChange={(e) => handleInputChange('parcelaInicial', e.target.value)}
                   placeholder="1"
                 />
               </div>
@@ -203,14 +224,16 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Plano de Contas</Label>
-                <Select value={dadosContrato.planoContas} onValueChange={(value) => handleInputChange('planoContas', value)}>
+                <Select value={dadosContrato.idPlanoContas?.toString()} onValueChange={(value) => handleInputChange('idPlanoContas', parseInt(value))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar conta" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="1">1 - Principal</SelectItem>
-                    <SelectItem value="1.1">1.1 - Ativo</SelectItem>
-                    <SelectItem value="2">2 - Resultado</SelectItem>
+                    {planoContas.map((conta: any) => (
+                      <SelectItem key={conta.id} value={conta.id.toString()}>
+                        {conta.codigo} - {conta.nome}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
