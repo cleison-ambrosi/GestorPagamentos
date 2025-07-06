@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchEmpresas } from "@/lib/api";
+import { apiRequest } from "@/lib/queryClient";
 import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -11,13 +12,7 @@ import { formatDate } from "@/lib/format";
 import { useState } from "react";
 import ConfirmDialog from "@/components/confirm-dialog";
 
-// Dados de exemplo das empresas
-const empresasData = [
-  { id: 1, nome: "CL2G", cnpj: null, createdAt: "2025-07-02" },
-  { id: 2, nome: "Wingraph", cnpj: null, createdAt: "2025-07-02" },
-  { id: 3, nome: "Bremen", cnpj: null, createdAt: "2025-07-02" },
-  { id: 4, nome: "BPrint", cnpj: null, createdAt: "2025-07-02" }
-];
+
 
 export default function Empresas() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -34,13 +29,36 @@ export default function Empresas() {
     onConfirm: () => {}
   });
 
+  const queryClient = useQueryClient();
+
   const { data: empresas, isLoading } = useQuery({
     queryKey: ['/api/empresas'],
     queryFn: fetchEmpresas
   });
 
-  // Usando dados de exemplo enquanto não há dados reais
-  const displayEmpresas = empresas && empresas.length > 0 ? empresas : empresasData;
+  const createMutation = useMutation({
+    mutationFn: (data: any) => apiRequest('/api/empresas', 'POST', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/empresas'] });
+      setModalOpen(false);
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: any }) => 
+      apiRequest(`/api/empresas/${id}`, 'PUT', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/empresas'] });
+      setModalOpen(false);
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => apiRequest(`/api/empresas/${id}`, 'DELETE'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/empresas'] });
+    }
+  });
 
   const handleEdit = (empresa: any) => {
     setEditingEmpresa(empresa);
@@ -63,13 +81,15 @@ export default function Empresas() {
   };
 
   const handleSave = () => {
-    // Aqui seria a lógica para salvar no backend
-    const empresaData = editingEmpresa 
-      ? { id: parseInt(id), nome, cnpj, telefone, email }
-      : { nome, cnpj, telefone, email };
+    const empresaData = { nome, cnpj, telefone, email };
     
     console.log("Salvando empresa:", empresaData);
-    setModalOpen(false);
+    
+    if (editingEmpresa) {
+      updateMutation.mutate({ id: parseInt(id), data: empresaData });
+    } else {
+      createMutation.mutate(empresaData);
+    }
   };
 
   const handleDelete = (empresa: any) => {
@@ -79,7 +99,8 @@ export default function Empresas() {
       description: `Tem certeza que deseja excluir a empresa "${empresa.nome}"? Esta ação não pode ser desfeita.`,
       onConfirm: () => {
         console.log("Excluindo empresa:", empresa.id);
-        // Implementar exclusão aqui
+        deleteMutation.mutate(empresa.id);
+        setConfirmDialog({ ...confirmDialog, open: false });
       }
     });
   };
@@ -119,7 +140,7 @@ export default function Empresas() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {displayEmpresas.map((empresa) => (
+                  {empresas?.map((empresa) => (
                     <TableRow key={empresa.id}>
                       <TableCell className="font-medium">
                         {String(empresa.id).padStart(2, '0')}

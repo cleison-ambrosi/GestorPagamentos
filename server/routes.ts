@@ -94,7 +94,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json(empresa);
     } catch (error) {
       console.error('Erro ao criar empresa:', error);
-      res.status(400).json({ error: "Dados inválidos" });
+      res.status(400).json({ error: "Dados inválidos", details: (error as any).message });
     }
   });
 
@@ -112,10 +112,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.delete("/api/empresas/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
+      console.log('Excluindo empresa ID:', id);
       await storage.deleteEmpresa(id);
+      console.log('Empresa excluída com sucesso');
       res.status(204).send();
     } catch (error) {
-      res.status(500).json({ error: "Erro ao deletar empresa" });
+      console.error('Erro ao deletar empresa:', error);
+      res.status(500).json({ error: "Erro ao deletar empresa", details: (error as any).message });
     }
   });
 
