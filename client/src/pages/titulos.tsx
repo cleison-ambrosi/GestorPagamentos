@@ -86,7 +86,7 @@ export default function Titulos() {
 
 
   const handleSave = (data: any) => {
-    if (editingTitulo) {
+    if (editingTitulo && editingTitulo.id) {
       updateTituloMutation.mutate({ id: editingTitulo.id, data });
     } else {
       createTituloMutation.mutate(data);

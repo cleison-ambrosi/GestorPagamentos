@@ -156,7 +156,12 @@ export default function Contratos() {
               <p className="text-slate-600">Gerenciar contratos</p>
             </div>
             <Button 
-              onClick={() => { setEditingContrato(null); setModalOpen(true); }}
+              onClick={() => { 
+                // Auto-popular empresa se há filtro ativo
+                const novoContrato = empresaFilter !== "all" ? { idEmpresa: parseInt(empresaFilter) } : null;
+                setEditingContrato(novoContrato); 
+                setModalOpen(true); 
+              }}
               className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               <Plus className="h-4 w-4 mr-2" />
