@@ -36,10 +36,19 @@ export default function FornecedorSearchModal({
     }
   }, [open, initialSearch]);
 
-  const filteredFornecedores = fornecedores.filter(fornecedor =>
-    fornecedor.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    fornecedor.email?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredFornecedores = fornecedores.filter(fornecedor => {
+    const term = searchTerm.toLowerCase().trim();
+    if (!term) return true;
+    
+    const nome = fornecedor.nome?.toLowerCase() || '';
+    const email = fornecedor.email?.toLowerCase() || '';
+    const telefone = fornecedor.telefone?.toLowerCase() || '';
+    
+    // Busca por qualquer parte do texto em nome, email ou telefone
+    return nome.includes(term) || 
+           email.includes(term) || 
+           telefone.includes(term);
+  });
 
   const handleSelect = (fornecedor: any) => {
     onSelect(fornecedor);
@@ -75,26 +84,45 @@ export default function FornecedorSearchModal({
               </div>
             ) : (
               <div className="divide-y">
-                {filteredFornecedores.map((fornecedor) => (
-                  <button
-                    key={fornecedor.id}
-                    onClick={() => handleSelect(fornecedor)}
-                    className="w-full p-4 text-left hover:bg-slate-50 flex items-center justify-between transition-colors"
-                  >
-                    <div>
-                      <div className="font-medium">{fornecedor.nome}</div>
-                      {fornecedor.email && (
-                        <div className="text-sm text-slate-500">{fornecedor.email}</div>
+                {filteredFornecedores.map((fornecedor) => {
+                  const highlightText = (text: string, term: string) => {
+                    if (!term.trim()) return text;
+                    const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                    const parts = text.split(regex);
+                    return parts.map((part, index) => 
+                      regex.test(part) ? 
+                        <span key={index} className="bg-yellow-200 font-semibold">{part}</span> : 
+                        part
+                    );
+                  };
+
+                  return (
+                    <button
+                      key={fornecedor.id}
+                      onClick={() => handleSelect(fornecedor)}
+                      className="w-full p-4 text-left hover:bg-slate-50 flex items-center justify-between transition-colors"
+                    >
+                      <div>
+                        <div className="font-medium">
+                          {highlightText(fornecedor.nome, searchTerm)}
+                        </div>
+                        {fornecedor.email && (
+                          <div className="text-sm text-slate-500">
+                            {highlightText(fornecedor.email, searchTerm)}
+                          </div>
+                        )}
+                        {fornecedor.telefone && (
+                          <div className="text-sm text-slate-500">
+                            {highlightText(fornecedor.telefone, searchTerm)}
+                          </div>
+                        )}
+                      </div>
+                      {selectedId === fornecedor.id.toString() && (
+                        <Check className="h-5 w-5 text-blue-600" />
                       )}
-                      {fornecedor.telefone && (
-                        <div className="text-sm text-slate-500">{fornecedor.telefone}</div>
-                      )}
-                    </div>
-                    {selectedId === fornecedor.id.toString() && (
-                      <Check className="h-5 w-5 text-blue-600" />
-                    )}
-                  </button>
-                ))}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
