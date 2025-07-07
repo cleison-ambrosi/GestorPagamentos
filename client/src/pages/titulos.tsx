@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Search, Edit, Trash2, Copy } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Copy, Receipt } from "lucide-react";
 import { fetchTitulos, fetchEmpresas } from "@/lib/api";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -38,6 +38,7 @@ export default function Titulos() {
   }, [empresaFilter]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTitulo, setEditingTitulo] = useState<any>(null);
+  const [baixaModalOpen, setBaixaModalOpen] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean;
     title: string;
@@ -98,6 +99,11 @@ export default function Titulos() {
   const handleEdit = (titulo: any) => {
     setEditingTitulo(titulo);
     setModalOpen(true);
+  };
+
+  const handleBaixa = (titulo: any) => {
+    setEditingTitulo(titulo);
+    setBaixaModalOpen(true);
   };
 
   const handleDelete = (titulo: any) => {
@@ -288,6 +294,17 @@ export default function Titulos() {
                         size="sm"
                         onClick={(e) => {
                           e.stopPropagation();
+                          handleBaixa(titulo);
+                        }}
+                        className="h-8 w-8 p-0 hover:bg-slate-100"
+                      >
+                        <Receipt className="h-4 w-4 text-slate-600" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
                           handleCopy(titulo);
                         }}
                         className="h-8 w-8 p-0 hover:bg-slate-100"
@@ -319,6 +336,14 @@ export default function Titulos() {
           onOpenChange={setModalOpen}
           titulo={editingTitulo}
           onSave={handleSave}
+        />
+
+        <TituloModal
+          open={baixaModalOpen}
+          onOpenChange={setBaixaModalOpen}
+          titulo={editingTitulo}
+          onSave={handleSave}
+          showBaixaTab={true}
         />
 
         <ConfirmDialog

@@ -21,12 +21,17 @@ interface TituloModalProps {
   onOpenChange: (open: boolean) => void;
   titulo?: any;
   onSave: (titulo: any) => void;
+  showBaixaTab?: boolean;
 }
 
-export default function TituloModal({ open, onOpenChange, titulo, onSave }: TituloModalProps) {
+export default function TituloModal({ open, onOpenChange, titulo, onSave, showBaixaTab = false }: TituloModalProps) {
   const { data: empresas = [] } = useQuery({ queryKey: ["/api/empresas"] });
   const { data: fornecedores = [] } = useQuery({ queryKey: ["/api/fornecedores"] });
   const { data: planoContas = [] } = useQuery({ queryKey: ["/api/plano-contas"] });
+  const { data: titulosBaixa = [] } = useQuery({ 
+    queryKey: ["/api/titulos-baixa"],
+    enabled: !!titulo?.id
+  });
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -279,7 +284,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="dados" className="w-full">
+        <Tabs defaultValue={showBaixaTab ? "baixas" : "dados"} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="dados">Dados do Título</TabsTrigger>
             <TabsTrigger value="baixas">Baixas</TabsTrigger>
@@ -539,9 +544,42 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
 
                 <div>
                   <h3 className="text-lg font-semibold mb-4">Histórico de Baixas</h3>
-                  <div className="text-center py-8 text-gray-500">
-                    <p>Nenhuma baixa registrada.</p>
-                  </div>
+                  {titulosBaixa.filter((baixa: any) => baixa.idTitulo === titulo?.id).length > 0 ? (
+                    <div className="space-y-2">
+                      {titulosBaixa
+                        .filter((baixa: any) => baixa.idTitulo === titulo?.id)
+                        .map((baixa: any) => (
+                          <div key={baixa.id} className="p-3 bg-gray-50 rounded-lg">
+                            <div className="flex justify-between items-center">
+                              <div>
+                                <p className="font-medium">{formatDate(new Date(baixa.dataBaixa))}</p>
+                                <p className="text-sm text-gray-600">
+                                  Baixa: {formatCurrency(parseFloat(baixa.valorBaixa || '0'))}
+                                </p>
+                                {baixa.observacao && (
+                                  <p className="text-sm text-gray-500">{baixa.observacao}</p>
+                                )}
+                              </div>
+                              <div className="text-right">
+                                <p className="font-semibold text-green-600">
+                                  {formatCurrency(parseFloat(baixa.valorPago || '0'))}
+                                </p>
+                                {(parseFloat(baixa.juros || '0') > 0 || parseFloat(baixa.desconto || '0') > 0) && (
+                                  <p className="text-xs text-gray-500">
+                                    {parseFloat(baixa.juros || '0') > 0 && `+${formatCurrency(parseFloat(baixa.juros))}`}
+                                    {parseFloat(baixa.desconto || '0') > 0 && ` -${formatCurrency(parseFloat(baixa.desconto))}`}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <p>Nenhuma baixa registrada.</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
