@@ -63,9 +63,40 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
   const [planoContasModalOpen, setPlanoContasModalOpen] = useState(false);
   const [fornecedorModalOpen, setFornecedorModalOpen] = useState(false);
 
+  // Função para calcular valor pago automaticamente
+  const calcularValorPago = (valorBaixa: string, juros: string, desconto: string) => {
+    const parseValor = (valor: string) => {
+      return parseFloat(valor.replace(',', '.')) || 0;
+    };
+    
+    const valorBaixaNum = parseValor(valorBaixa);
+    const jurosNum = parseValor(juros);
+    const descontoNum = parseValor(desconto);
+    
+    const valorPago = valorBaixaNum + jurosNum - descontoNum;
+    return valorPago.toFixed(2).replace('.', ',');
+  };
+
+  // Handler para atualizar dados da baixa com cálculo automático
+  const handleBaixaChange = (field: string, value: string) => {
+    const newDadosBaixa = { ...dadosBaixa, [field]: value };
+    
+    // Se alterou valor baixa, juros ou desconto, recalcular valor pago
+    if (field === 'valorBaixa' || field === 'juros' || field === 'desconto') {
+      newDadosBaixa.valorPago = calcularValorPago(
+        field === 'valorBaixa' ? value : dadosBaixa.valorBaixa,
+        field === 'juros' ? value : dadosBaixa.juros,
+        field === 'desconto' ? value : dadosBaixa.desconto
+      );
+    }
+    
+    setDadosBaixa(newDadosBaixa);
+  };
+
   // Update form data when titulo prop changes
   useEffect(() => {
     if (titulo) {
+      const saldoAtual = titulo.saldoPagar?.toString() || "";
       setDadosTitulo({
         idEmpresa: titulo.idEmpresa?.toString() || "",
         idFornecedor: titulo.idFornecedor?.toString() || "",
@@ -73,11 +104,21 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
         emissao: titulo.emissao ? titulo.emissao.split('T')[0] : new Date().toISOString().split('T')[0],
         vencimento: titulo.vencimento ? titulo.vencimento.split('T')[0] : "",
         valorTotal: titulo.valorTotal?.toString() || "",
-        saldoPagar: titulo.saldoPagar?.toString() || "",
+        saldoPagar: saldoAtual,
         idPlanoContas: titulo.idPlanoContas?.toString() || "",
         descricao: titulo.descricao || "",
         observacoes: titulo.observacoes || "",
         status: titulo.status || "1"
+      });
+      
+      // Initialize baixa data with current saldo
+      setDadosBaixa({
+        dataBaixa: new Date().toISOString().split('T')[0],
+        valorBaixa: saldoAtual,
+        juros: "0,00",
+        desconto: "0,00",
+        valorPago: saldoAtual,
+        observacao: ""
       });
     } else {
       // Reset form for new titulo
@@ -93,6 +134,16 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
         descricao: "",
         observacoes: "",
         status: "1"
+      });
+      
+      // Reset baixa data
+      setDadosBaixa({
+        dataBaixa: new Date().toISOString().split('T')[0],
+        valorBaixa: "",
+        juros: "0,00",
+        desconto: "0,00",
+        valorPago: "",
+        observacao: ""
       });
     }
   }, [titulo]);
@@ -151,9 +202,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
     });
   };
 
-  const handleBaixaChange = (field: string, value: string) => {
-    setDadosBaixa(prev => ({ ...prev, [field]: value }));
-  };
+
 
   const lancarBaixa = () => {
     console.log("Lançando baixa:", dadosBaixa);
@@ -397,12 +446,15 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
 
                     <div>
                       <Label>Valor Pago</Label>
-                      <Input
-                        value={dadosBaixa.valorPago}
-                        onChange={(e) => handleBaixaChange('valorPago', e.target.value)}
-                        disabled
-                        className="bg-gray-50"
-                      />
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
+                        <Input
+                          className="pl-8 bg-gray-50"
+                          value={dadosBaixa.valorPago}
+                          readOnly
+                          placeholder="0,00"
+                        />
+                      </div>
                     </div>
 
                     <div>
