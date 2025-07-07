@@ -305,10 +305,47 @@ export class MySQLStorage implements IStorage {
   }
 
   async createTituloBaixa(data: InsertTituloBaixa): Promise<TituloBaixa> {
+    // First, insert the baixa record
     const result = await db.insert(tituloBaixa).values(data);
     const insertId = (result as any)[0].insertId;
     const [created] = await db.select().from(tituloBaixa).where(eq(tituloBaixa.id, insertId));
+    
+    // Then, update the título status and saldo
+    await this.updateTituloAfterBaixa(data.idTitulo);
+    
     return created;
+  }
+
+  private async updateTituloAfterBaixa(idTitulo: number): Promise<void> {
+    // Get the título
+    const [tituloAtual] = await db.select().from(titulo).where(eq(titulo.id, idTitulo));
+    if (!tituloAtual) return;
+
+    // Get all baixas for this título
+    const baixas = await db.select().from(tituloBaixa)
+      .where(and(eq(tituloBaixa.idTitulo, idTitulo), eq(tituloBaixa.cancelado, false)));
+
+    // Calculate total paid
+    const totalPago = baixas.reduce((sum, baixa) => 
+      sum + parseFloat(baixa.valorPago.toString()), 0
+    );
+
+    const valorTotal = parseFloat(tituloAtual.valorTotal.toString());
+    const novoSaldo = valorTotal - totalPago;
+
+    // Determine new status
+    let novoStatus = 1; // Em Aberto
+    if (novoSaldo <= 0) {
+      novoStatus = 3; // Pago
+    } else if (totalPago > 0) {
+      novoStatus = 2; // Parcial
+    }
+
+    // Update título
+    await db.update(titulo).set({
+      saldoPagar: novoSaldo.toFixed(2),
+      status: novoStatus
+    }).where(eq(titulo.id, idTitulo));
   }
 
   async updateTituloBaixa(id: number, data: Partial<InsertTituloBaixa>): Promise<TituloBaixa> {

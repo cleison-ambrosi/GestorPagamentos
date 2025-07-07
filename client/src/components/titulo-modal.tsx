@@ -9,7 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/format";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 import PlanoContasSearchModal from "@/components/plano-contas-search-modal";
 import FornecedorSearchModal from "@/components/fornecedor-search-modal";
@@ -25,6 +27,8 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
   const { data: empresas = [] } = useQuery({ queryKey: ["/api/empresas"] });
   const { data: fornecedores = [] } = useQuery({ queryKey: ["/api/fornecedores"] });
   const { data: planoContas = [] } = useQuery({ queryKey: ["/api/plano-contas"] });
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   // Função para converter status numérico para texto
   const getStatusLabel = (status: string | number) => {
@@ -204,9 +208,69 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
 
 
 
-  const lancarBaixa = () => {
-    console.log("Lançando baixa:", dadosBaixa);
-    // Aqui seria a lógica para lançar a baixa
+  const lancarBaixaMutation = useMutation({
+    mutationFn: async (baixaData: any) => {
+      const response = await apiRequest("/api/titulos-baixa", {
+        method: "POST",
+        body: baixaData
+      });
+      return response;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Baixa lançada com sucesso",
+        description: "O pagamento foi registrado corretamente.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/titulos"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/titulos-baixa"] });
+      onOpenChange(false);
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao lançar baixa",
+        description: "Ocorreu um erro ao registrar o pagamento.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const lancarBaixa = async () => {
+    if (!titulo?.id) {
+      toast({
+        title: "Erro",
+        description: "É necessário selecionar um título válido.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate required fields
+    if (!dadosBaixa.valorBaixa || parseFloat(dadosBaixa.valorBaixa.replace(',', '.')) <= 0) {
+      toast({
+        title: "Erro",
+        description: "Valor da baixa deve ser maior que zero.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const parseValor = (valor: string) => {
+      return parseFloat(valor.replace(',', '.')) || 0;
+    };
+
+    const baixaData = {
+      idTitulo: titulo.id,
+      dataBaixa: dadosBaixa.dataBaixa,
+      valorBaixa: parseValor(dadosBaixa.valorBaixa).toString(),
+      valorPago: parseValor(dadosBaixa.valorPago).toString(),
+      juros: parseValor(dadosBaixa.juros).toString(),
+      desconto: parseValor(dadosBaixa.desconto).toString(),
+      observacao: dadosBaixa.observacao || null,
+      cancelado: false
+    };
+
+    console.log("Lançando baixa:", baixaData);
+    lancarBaixaMutation.mutate(baixaData);
   };
 
   return (
@@ -466,8 +530,12 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
                       />
                     </div>
 
-                    <Button onClick={lancarBaixa} className="w-full bg-blue-600 hover:bg-blue-700">
-                      Lançar Baixa
+                    <Button 
+                      onClick={lancarBaixa} 
+                      disabled={lancarBaixaMutation.isPending}
+                      className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                    >
+                      {lancarBaixaMutation.isPending ? "Lançando..." : "Lançar Baixa"}
                     </Button>
                   </div>
                 </div>
