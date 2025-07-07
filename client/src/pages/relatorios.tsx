@@ -1,11 +1,9 @@
 import { useState } from 'react';
+import { Download, Filter, Search, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Download, Filter, Search, Package } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Sidebar from '@/components/sidebar';
 import { useQuery } from '@tanstack/react-query';
 
@@ -15,18 +13,17 @@ export default function Relatorios() {
 
   // Buscar dados reais da API
   const { data: titulos = [] } = useQuery({
-    queryKey: ["/api/titulos"],
+    queryKey: ['/api/titulos'],
   });
 
   const { data: empresas = [] } = useQuery({
-    queryKey: ["/api/empresas"],
+    queryKey: ['/api/empresas'],
   });
 
   const { data: fornecedores = [] } = useQuery({
-    queryKey: ["/api/fornecedores"],
+    queryKey: ['/api/fornecedores'],
   });
 
-  // Função para filtrar títulos baseado no período selecionado
   const filtrarTitulosPorPeriodo = (titulos: any[], periodo: string) => {
     const hoje = new Date();
     const amanha = new Date(hoje);
@@ -49,9 +46,7 @@ export default function Relatorios() {
           ontem.setDate(hoje.getDate() - 1);
           return vencimento.toDateString() === ontem.toDateString();
         case 'vencemHoje':
-          const isToday = vencimento.toDateString() === hoje.toDateString();
-          console.log('Verificando vencemHoje:', vencimento.toDateString(), 'vs', hoje.toDateString(), '=', isToday);
-          return isToday;
+          return vencimento.toDateString() === hoje.toDateString();
         case 'vencemAmanha':
           return vencimento.toDateString() === amanha.toDateString();
         case 'proximos7Dias':
@@ -70,15 +65,10 @@ export default function Relatorios() {
 
   // Filtrar títulos baseado no período e pesquisa
   const titulosPorPeriodo = filtrarTitulosPorPeriodo(titulos, periodo);
-  console.log('Títulos da API:', titulos.length);
-  console.log('Período selecionado:', periodo);
-  console.log('Títulos após filtro de período:', titulosPorPeriodo.length);
-  
   const titulosFiltrados = titulosPorPeriodo.filter((titulo: any) => {
     if (!pesquisa.trim()) return true;
     const termoPesquisa = pesquisa.toLowerCase();
     
-    // Buscar nomes da empresa e fornecedor
     const empresa = empresas.find((e: any) => e.id === titulo.idEmpresa);
     const fornecedor = fornecedores.find((f: any) => f.id === titulo.idFornecedor);
     
@@ -93,6 +83,31 @@ export default function Relatorios() {
     );
   });
 
+  // Agrupar títulos por data de vencimento
+  const titulosAgrupados = titulosFiltrados.reduce((grupos: any, titulo: any) => {
+    const dataVencimento = new Date(titulo.vencimento).toLocaleDateString('pt-BR');
+    if (!grupos[dataVencimento]) {
+      grupos[dataVencimento] = [];
+    }
+    grupos[dataVencimento].push(titulo);
+    return grupos;
+  }, {});
+
+  // Ordenar as datas
+  const datasOrdenadas = Object.keys(titulosAgrupados).sort((a, b) => {
+    const dataA = new Date(a.split('/').reverse().join('-'));
+    const dataB = new Date(b.split('/').reverse().join('-'));
+    return dataA.getTime() - dataB.getTime();
+  });
+
+  const formatarMoeda = (valor: number) => {
+    return new Intl.NumberFormat('pt-BR', { 
+      style: 'currency', 
+      currency: 'BRL' 
+    }).format(valor);
+  };
+
+  // Calcular total geral
   const totalGeral = titulosFiltrados.reduce((sum: number, item: any) => sum + parseFloat(item.valorTotal || 0), 0);
 
   return (
@@ -127,7 +142,7 @@ export default function Relatorios() {
               <div className="md:col-span-1">
                 <Label className="text-sm font-medium text-slate-700 mb-2 block">Período</Label>
                 <Select value={periodo} onValueChange={setPeriodo}>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger>
                     <SelectValue placeholder="Selecione o período" />
                   </SelectTrigger>
                   <SelectContent>
@@ -158,86 +173,98 @@ export default function Relatorios() {
             </div>
           </div>
 
-          {/* Tabela de Resultados */}
-          {titulosFiltrados.length > 0 ? (
-            <>
-              <Card className="bg-white border border-slate-200 overflow-hidden">
-                <CardContent className="p-0">
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow className="bg-slate-50">
-                          <TableHead className="font-medium text-slate-700">TÍTULO</TableHead>
-                          <TableHead className="font-medium text-slate-700">EMPRESA</TableHead>
-                          <TableHead className="font-medium text-slate-700">FORNECEDOR</TableHead>
-                          <TableHead className="font-medium text-slate-700">VENCIMENTO</TableHead>
-                          <TableHead className="font-medium text-slate-700">VALOR TOTAL</TableHead>
-                          <TableHead className="font-medium text-slate-700">SALDO</TableHead>
-                          <TableHead className="font-medium text-slate-700">STATUS</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {titulosFiltrados.map((titulo: any) => {
-                          const empresa = empresas.find((e: any) => e.id === titulo.idEmpresa);
-                          const fornecedor = fornecedores.find((f: any) => f.id === titulo.idFornecedor);
-                          
-                          return (
-                            <TableRow key={titulo.id} className="border-b">
-                              <TableCell className="font-medium">{titulo.numeroTitulo}</TableCell>
-                              <TableCell>{empresa?.nome || empresa?.apelido || '-'}</TableCell>
-                              <TableCell>{fornecedor?.nome || '-'}</TableCell>
-                              <TableCell>{new Date(titulo.vencimento).toLocaleDateString('pt-BR')}</TableCell>
-                              <TableCell>R$ {parseFloat(titulo.valorTotal || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
-                              <TableCell className="text-blue-600 font-medium">
-                                R$ {parseFloat(titulo.saldoPagar || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                              </TableCell>
-                              <TableCell>
-                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                  titulo.status === 1 ? 'bg-yellow-100 text-yellow-800' :
-                                  titulo.status === 2 ? 'bg-blue-100 text-blue-800' :
-                                  titulo.status === 3 ? 'bg-green-100 text-green-800' :
-                                  'bg-red-100 text-red-800'
-                                }`}>
-                                  {titulo.status === 1 ? 'Em Aberto' :
-                                   titulo.status === 2 ? 'Parcial' :
-                                   titulo.status === 3 ? 'Pago' : 'Cancelado'}
-                                </span>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Total Geral */}
-              <div className="mt-6 bg-slate-50 p-6 rounded-lg">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold text-blue-600">Total Geral</h3>
-                    <p className="text-sm text-slate-600">{titulosFiltrados.length} título(s) encontrado(s)</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-3xl font-bold text-blue-600">
-                      R$ {totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                    </p>
-                  </div>
-                </div>
+          {/* Seção de Resultados */}
+          <div className="bg-white rounded-lg border border-slate-200 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <FileText className="h-5 w-5 text-slate-600" />
+                <h3 className="text-lg font-medium text-slate-800">Resultados</h3>
+                <span className="text-sm text-slate-500">({titulosFiltrados.length} títulos)</span>
               </div>
-            </>
-          ) : (
-            <Card className="bg-white border border-slate-200">
-              <CardContent className="p-12 text-center">
-                <div className="flex flex-col items-center">
-                  <Package className="h-16 w-16 text-slate-300 mb-4" />
-                  <h3 className="text-lg font-medium text-slate-600 mb-2">Nenhum resultado encontrado</h3>
-                  <p className="text-slate-500">Tente ajustar os filtros para encontrar o que procura.</p>
+              <div className="text-right">
+                <p className="text-sm text-slate-600">Total Geral</p>
+                <p className="text-lg font-semibold text-slate-800">{formatarMoeda(totalGeral)}</p>
+              </div>
+            </div>
+            
+            <div className="overflow-x-auto">
+              {datasOrdenadas.length > 0 ? (
+                <div className="space-y-6">
+                  {datasOrdenadas.map((dataVencimento) => {
+                    const titulosDoDia = titulosAgrupados[dataVencimento];
+                    const totalDoDia = titulosDoDia.reduce((sum: number, titulo: any) => 
+                      sum + parseFloat(titulo.valorTotal || 0), 0);
+                    
+                    return (
+                      <div key={dataVencimento} className="border border-slate-200 rounded-lg">
+                        {/* Cabeçalho da Data */}
+                        <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-medium text-slate-800">
+                              Vencimento: {dataVencimento}
+                            </h4>
+                            <div className="text-right">
+                              <span className="text-sm text-slate-600">
+                                {titulosDoDia.length} título{titulosDoDia.length !== 1 ? 's' : ''} - 
+                              </span>
+                              <span className="ml-2 font-semibold text-slate-800">
+                                {formatarMoeda(totalDoDia)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Tabela dos Títulos */}
+                        <table className="min-w-full">
+                          <thead>
+                            <tr className="bg-white">
+                              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Título</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Empresa</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Fornecedor</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Valor</th>
+                              <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-slate-200">
+                            {titulosDoDia.map((titulo: any) => {
+                              const empresa = empresas.find((e: any) => e.id === titulo.idEmpresa);
+                              const fornecedor = fornecedores.find((f: any) => f.id === titulo.idFornecedor);
+                              
+                              return (
+                                <tr key={titulo.id} className="hover:bg-slate-50">
+                                  <td className="px-4 py-4 text-sm font-medium text-slate-900">{titulo.numeroTitulo}</td>
+                                  <td className="px-4 py-4 text-sm text-slate-600">{empresa?.nome || empresa?.apelido}</td>
+                                  <td className="px-4 py-4 text-sm text-slate-600">{fornecedor?.nome}</td>
+                                  <td className="px-4 py-4 text-sm font-medium text-slate-900">{formatarMoeda(parseFloat(titulo.valorTotal))}</td>
+                                  <td className="px-4 py-4 text-sm">
+                                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                      titulo.status === 1 ? 'bg-yellow-100 text-yellow-800' :
+                                      titulo.status === 2 ? 'bg-blue-100 text-blue-800' :
+                                      titulo.status === 3 ? 'bg-green-100 text-green-800' :
+                                      'bg-red-100 text-red-800'
+                                    }`}>
+                                      {titulo.status === 1 ? 'Em Aberto' :
+                                       titulo.status === 2 ? 'Parcial' :
+                                       titulo.status === 3 ? 'Pago' :
+                                       'Cancelado'}
+                                    </span>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    );
+                  })}
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              ) : (
+                <div className="text-center py-8 text-slate-500">
+                  Nenhum título encontrado para os filtros selecionados.
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </main>
     </div>

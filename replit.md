@@ -152,6 +152,14 @@ Changelog:
   * Updated título badge display system to work with numeric status values
   * Implemented company filter auto-population in título creation modal when filter is active
   * Fixed all database queries to use new status system instead of removed cancelado field
+- July 07, 2025. Enhanced sidebar design and relatórios restructuring:
+  * Redesigned sidebar with "Contas a Pagar" branding, compact layout (w-56), and blue accent colors
+  * Updated all icons to be smaller (w-4 h-4) and more professional appearance
+  * Completely restructured relatórios page to group titles by due date (vencimento)
+  * Implemented daily totalization with subtotals per date and grand total
+  * Removed individual vencimento column since data is now grouped by date
+  * Enhanced visual hierarchy with date headers and improved spacing
+  * Fixed default filter to show "Em Aberto" titles instead of restrictive date filters
 
 ## User Preferences
 
