@@ -46,7 +46,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
     diaVencimento: contrato?.diaVencimento || "",
     parcelaInicial: contrato?.parcelaInicial || "",
     numeroTitulo: contrato?.numeroTitulo || "",
-    tipoMascara: contrato?.tipoMascara || "",
+    mascara: contrato?.mascara || "",
     idPlanoContas: contrato?.idPlanoContas || null,
     status: contrato?.status !== undefined ? contrato.status : true,
     observacoes: contrato?.observacoes || ""
@@ -268,7 +268,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
 
               <div>
                 <Label>Máscara *</Label>
-                <Select value={dadosContrato.tipoMascara} onValueChange={(value) => handleInputChange('tipoMascara', value)}>
+                <Select value={dadosContrato.mascara} onValueChange={(value) => handleInputChange('mascara', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar máscara" />
                   </SelectTrigger>
@@ -281,7 +281,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
               </div>
             </div>
 
-            {dadosContrato.tipoMascara && (
+            {dadosContrato.mascara && (
               <div className="bg-blue-50 p-3 rounded-md">
                 <p className="text-sm text-blue-700">
                   <strong>Exemplo:</strong> {dadosContrato.numeroTitulo || 'xxxxx'} - 1/3

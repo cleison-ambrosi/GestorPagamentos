@@ -51,7 +51,7 @@ export const contrato = mysqlTable("contrato", {
   diaVencimento: bigint("dia_vencimento", { mode: "number" }),
   parcelaInicial: bigint("parcela_inicial", { mode: "number" }),
   numeroTitulo: text("numero_titulo"),
-  mascara: int("mascara"), // 1="Número do Título - Parcela/Total", 2="Número do Título - Parcela", 3="Somente Número do Título"
+  mascara: text("mascara"), // titulo-parcela, sequencial, alfanumerico
   status: boolean("status"),
   observacoes: text("observacoes"),
 });

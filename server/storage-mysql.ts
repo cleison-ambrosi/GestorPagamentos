@@ -215,7 +215,7 @@ export class MySQLStorage implements IStorage {
         diaVencimento: contrato.diaVencimento,
         parcelaInicial: contrato.parcelaInicial,
         numeroTitulo: contrato.numeroTitulo,
-        tipoMascara: contrato.tipoMascara,
+        mascara: contrato.mascara,
         status: contrato.status,
         observacoes: contrato.observacoes,
         empresa: empresa.nome,
