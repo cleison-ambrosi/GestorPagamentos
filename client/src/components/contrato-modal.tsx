@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { fetchEmpresas, fetchFornecedores, fetchPlanoContas } from "@/lib/api";
+import FornecedorSelect from "@/components/fornecedor-select";
 
 interface ContratoModalProps {
   open: boolean;
@@ -157,18 +158,12 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
 
               <div>
                 <Label>Fornecedor *</Label>
-                <Select value={dadosContrato.idFornecedor?.toString()} onValueChange={(value) => handleInputChange('idFornecedor', parseInt(value))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecionar fornecedor" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {fornecedores.map((fornecedor: any) => (
-                      <SelectItem key={fornecedor.id} value={fornecedor.id.toString()}>
-                        {fornecedor.nome}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FornecedorSelect
+                  fornecedores={fornecedores}
+                  value={dadosContrato.idFornecedor?.toString() || ""}
+                  onValueChange={(value) => handleInputChange('idFornecedor', parseInt(value))}
+                  placeholder="Selecionar fornecedor"
+                />
               </div>
             </div>
 

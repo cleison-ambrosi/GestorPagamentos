@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useQuery } from "@tanstack/react-query";
+import FornecedorSelect from "@/components/fornecedor-select";
 
 interface TituloModalProps {
   open: boolean;
@@ -142,18 +143,12 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
 
               <div>
                 <Label>Fornecedor *</Label>
-                <Select value={dadosTitulo.idFornecedor} onValueChange={(value) => handleInputChange('idFornecedor', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecionar fornecedor" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {fornecedores.map((fornecedor: any) => (
-                      <SelectItem key={fornecedor.id} value={fornecedor.id.toString()}>
-                        {fornecedor.nome}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <FornecedorSelect
+                  fornecedores={fornecedores}
+                  value={dadosTitulo.idFornecedor}
+                  onValueChange={(value) => handleInputChange('idFornecedor', value)}
+                  placeholder="Selecionar fornecedor"
+                />
               </div>
 
               <div>
