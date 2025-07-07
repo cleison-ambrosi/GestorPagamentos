@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Search, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import FornecedorSearchModal from "./fornecedor-search-modal";
 
 interface FornecedorSelectProps {
   fornecedores: any[];
@@ -15,50 +15,64 @@ export default function FornecedorSelect({
   fornecedores,
   value,
   onValueChange,
-  placeholder = "Selecione um fornecedor..."
+  placeholder = "Clique para pesquisar fornecedor",
 }: FornecedorSelectProps) {
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const filteredFornecedores = fornecedores.filter(fornecedor =>
-    fornecedor.nome.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const [modalOpen, setModalOpen] = useState(false);
+  const [inputValue, setInputValue] = useState("");
 
   const selectedFornecedor = fornecedores.find(f => f.id.toString() === value);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    if (e.target.value.length > 0) {
+      setModalOpen(true);
+    }
+  };
+
+  const handleInputFocus = () => {
+    setModalOpen(true);
+  };
+
+  const handleSearchClick = () => {
+    setModalOpen(true);
+  };
+
+  const handleFornecedorSelect = (fornecedor: any) => {
+    onValueChange(fornecedor.id.toString());
+    setInputValue("");
+  };
+
   return (
-    <div className="relative">
-      <div className="flex items-center gap-2 p-2 border rounded-md bg-white">
-        <Search className="h-4 w-4 text-slate-400 flex-shrink-0" />
-        <Input
-          placeholder="Buscar e selecionar fornecedor..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="border-0 p-0 h-auto bg-transparent focus-visible:ring-0 flex-1"
-        />
-        <Select value={value} onValueChange={onValueChange}>
-          <SelectTrigger className="w-auto border-0 h-auto p-0 bg-transparent focus:ring-0">
-            <ChevronDown className="h-4 w-4 text-slate-400" />
-          </SelectTrigger>
-          <SelectContent className="max-h-64">
-            {filteredFornecedores.length === 0 ? (
-              <div className="px-2 py-3 text-sm text-slate-500">
-                Nenhum fornecedor encontrado
-              </div>
-            ) : (
-              filteredFornecedores.map((fornecedor) => (
-                <SelectItem key={fornecedor.id} value={fornecedor.id.toString()}>
-                  {fornecedor.nome}
-                </SelectItem>
-              ))
-            )}
-          </SelectContent>
-        </Select>
-      </div>
-      {selectedFornecedor && (
-        <div className="mt-1 text-sm text-slate-600">
-          Selecionado: {selectedFornecedor.nome}
+    <div className="space-y-2">
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Input
+            placeholder={selectedFornecedor ? selectedFornecedor.nome : placeholder}
+            value={inputValue}
+            onChange={handleInputChange}
+            onFocus={handleInputFocus}
+            className="pr-10"
+            readOnly={false}
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleSearchClick}
+            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+          >
+            <Search className="h-4 w-4" />
+          </Button>
         </div>
-      )}
+      </div>
+
+      <FornecedorSearchModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        fornecedores={fornecedores}
+        onSelect={handleFornecedorSelect}
+        selectedId={value}
+      />
     </div>
   );
 }
