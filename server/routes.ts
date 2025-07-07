@@ -18,7 +18,7 @@ const customContratoSchema = z.object({
   parcelaInicial: z.number(),
   dataInicio: z.string().transform((val) => new Date(val)),
   numeroTitulo: z.string(),
-  tipoMascara: z.number(),
+  mascara: z.number().min(1).max(3).optional(),
   status: z.boolean(),
   observacoes: z.string().optional()
 });

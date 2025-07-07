@@ -18,6 +18,14 @@ export default function Relatorios() {
     queryKey: ["/api/titulos"],
   });
 
+  const { data: empresas = [] } = useQuery({
+    queryKey: ["/api/empresas"],
+  });
+
+  const { data: fornecedores = [] } = useQuery({
+    queryKey: ["/api/fornecedores"],
+  });
+
   // Função para filtrar títulos baseado no período selecionado
   const filtrarTitulosPorPeriodo = (titulos: any[], periodo: string) => {
     const hoje = new Date();
@@ -62,10 +70,19 @@ export default function Relatorios() {
   const titulosFiltrados = filtrarTitulosPorPeriodo(titulos, periodo).filter((titulo: any) => {
     if (!pesquisa.trim()) return true;
     const termoPesquisa = pesquisa.toLowerCase();
+    
+    // Buscar nomes da empresa e fornecedor
+    const empresa = empresas.find((e: any) => e.id === titulo.idEmpresa);
+    const fornecedor = fornecedores.find((f: any) => f.id === titulo.idFornecedor);
+    
     return (
       titulo.numeroTitulo?.toLowerCase().includes(termoPesquisa) ||
       titulo.descricao?.toLowerCase().includes(termoPesquisa) ||
-      titulo.observacoes?.toLowerCase().includes(termoPesquisa)
+      titulo.observacoes?.toLowerCase().includes(termoPesquisa) ||
+      empresa?.nome?.toLowerCase().includes(termoPesquisa) ||
+      empresa?.apelido?.toLowerCase().includes(termoPesquisa) ||
+      fornecedor?.nome?.toLowerCase().includes(termoPesquisa) ||
+      titulo.valorTotal?.toString().includes(termoPesquisa)
     );
   });
 
@@ -153,30 +170,35 @@ export default function Relatorios() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {titulosFiltrados.map((titulo: any) => (
-                          <TableRow key={titulo.id} className="border-b">
-                            <TableCell className="font-medium">{titulo.numeroTitulo}</TableCell>
-                            <TableCell>{titulo.empresa || '-'}</TableCell>
-                            <TableCell>{titulo.fornecedor || '-'}</TableCell>
-                            <TableCell>{new Date(titulo.vencimento).toLocaleDateString('pt-BR')}</TableCell>
-                            <TableCell>R$ {parseFloat(titulo.valorTotal || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
-                            <TableCell className="text-blue-600 font-medium">
-                              R$ {parseFloat(titulo.saldoPagar || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                            </TableCell>
-                            <TableCell>
-                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                titulo.status === 1 ? 'bg-yellow-100 text-yellow-800' :
-                                titulo.status === 2 ? 'bg-blue-100 text-blue-800' :
-                                titulo.status === 3 ? 'bg-green-100 text-green-800' :
-                                'bg-red-100 text-red-800'
-                              }`}>
-                                {titulo.status === 1 ? 'Em Aberto' :
-                                 titulo.status === 2 ? 'Parcial' :
-                                 titulo.status === 3 ? 'Pago' : 'Cancelado'}
-                              </span>
-                            </TableCell>
-                          </TableRow>
-                        ))}
+                        {titulosFiltrados.map((titulo: any) => {
+                          const empresa = empresas.find((e: any) => e.id === titulo.idEmpresa);
+                          const fornecedor = fornecedores.find((f: any) => f.id === titulo.idFornecedor);
+                          
+                          return (
+                            <TableRow key={titulo.id} className="border-b">
+                              <TableCell className="font-medium">{titulo.numeroTitulo}</TableCell>
+                              <TableCell>{empresa?.nome || empresa?.apelido || '-'}</TableCell>
+                              <TableCell>{fornecedor?.nome || '-'}</TableCell>
+                              <TableCell>{new Date(titulo.vencimento).toLocaleDateString('pt-BR')}</TableCell>
+                              <TableCell>R$ {parseFloat(titulo.valorTotal || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</TableCell>
+                              <TableCell className="text-blue-600 font-medium">
+                                R$ {parseFloat(titulo.saldoPagar || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                              </TableCell>
+                              <TableCell>
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  titulo.status === 1 ? 'bg-yellow-100 text-yellow-800' :
+                                  titulo.status === 2 ? 'bg-blue-100 text-blue-800' :
+                                  titulo.status === 3 ? 'bg-green-100 text-green-800' :
+                                  'bg-red-100 text-red-800'
+                                }`}>
+                                  {titulo.status === 1 ? 'Em Aberto' :
+                                   titulo.status === 2 ? 'Parcial' :
+                                   titulo.status === 3 ? 'Pago' : 'Cancelado'}
+                                </span>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
                       </TableBody>
                     </Table>
                   </div>
