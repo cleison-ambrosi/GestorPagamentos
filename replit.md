@@ -134,6 +134,13 @@ Changelog:
   * Implemented consistent header panel with white background and blue accent button
   * Applied standardized table styling with ID column and hover effects
   * Used uniform spacing and typography following established design patterns
+- July 07, 2025. Título management enhancements:
+  * Restructured título CRUD modal to use 3-column layout for better organization
+  * Removed "todas as empresas" option from company filter dropdowns in títulos and contratos pages
+  * Fixed date validation issues in título creation by updating insertTituloSchema with proper date transformation
+  * Updated título modal to use real data from API endpoints instead of hardcoded values
+  * Fixed foreign key constraint errors by ensuring proper data mapping between frontend and database
+  * System now successfully creates títulos with proper validation and data persistence
 
 ## User Preferences
 

@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/format";
+import { useQuery } from "@tanstack/react-query";
 
 interface TituloModalProps {
   open: boolean;
@@ -18,15 +19,18 @@ interface TituloModalProps {
 }
 
 export default function TituloModal({ open, onOpenChange, titulo, onSave }: TituloModalProps) {
+  const { data: empresas = [] } = useQuery({ queryKey: ["/api/empresas"] });
+  const { data: fornecedores = [] } = useQuery({ queryKey: ["/api/fornecedores"] });
+  const { data: planoContas = [] } = useQuery({ queryKey: ["/api/plano-contas"] });
   const [dadosTitulo, setDadosTitulo] = useState({
-    idEmpresa: titulo?.idEmpresa || "1",
-    idFornecedor: titulo?.idFornecedor || "1",
+    idEmpresa: titulo?.idEmpresa?.toString() || "",
+    idFornecedor: titulo?.idFornecedor?.toString() || "",
     numeroTitulo: titulo?.numeroTitulo || "",
     emissao: titulo?.emissao ? titulo.emissao.split('T')[0] : new Date().toISOString().split('T')[0],
     vencimento: titulo?.vencimento || "",
     valorTotal: titulo?.valorTotal?.toString() || "0.00",
     saldoPagar: titulo?.saldoPagar?.toString() || "0.00",
-    idPlanoContas: titulo?.idPlanoContas || "1",
+    idPlanoContas: titulo?.idPlanoContas?.toString() || "",
     descricao: titulo?.descricao || "",
     observacoes: titulo?.observacoes || ""
   });
@@ -95,10 +99,11 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
                     <SelectValue placeholder="Selecionar empresa" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="1">BPrint</SelectItem>
-                    <SelectItem value="2">CL2G</SelectItem>
-                    <SelectItem value="3">Wingraph</SelectItem>
-                    <SelectItem value="4">Bremen</SelectItem>
+                    {empresas.map((empresa: any) => (
+                      <SelectItem key={empresa.id} value={empresa.id.toString()}>
+                        {empresa.nome}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -110,9 +115,11 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
                     <SelectValue placeholder="Selecionar fornecedor" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="1">Energia SP</SelectItem>
-                    <SelectItem value="2">Águas SA</SelectItem>
-                    <SelectItem value="3">Tech Solutions</SelectItem>
+                    {fornecedores.map((fornecedor: any) => (
+                      <SelectItem key={fornecedor.id} value={fornecedor.id.toString()}>
+                        {fornecedor.nome}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -153,9 +160,11 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
                     <SelectValue placeholder="Selecionar conta" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="1">1 - Principal</SelectItem>
-                    <SelectItem value="2">1.1 - Ativo</SelectItem>
-                    <SelectItem value="3">2 - Resultado</SelectItem>
+                    {planoContas.map((conta: any) => (
+                      <SelectItem key={conta.id} value={conta.id.toString()}>
+                        {conta.codigo} - {conta.nome}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
