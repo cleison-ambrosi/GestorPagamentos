@@ -421,7 +421,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/configuracao", async (req, res) => {
     try {
       const configuracao = await storage.getConfiguracao();
-      res.json(configuracao);
+      // Return null if no configuration exists yet, don't throw error
+      res.json(configuracao || null);
     } catch (error) {
       res.status(500).json({ error: "Erro ao buscar configuração" });
     }
@@ -450,6 +451,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ error: "Erro ao atualizar empresa dos títulos" });
+    }
+  });
+
+  app.put("/api/configuracao", async (req, res) => {
+    try {
+      const { idEmpresaContratos, idEmpresaTitulos } = req.body;
+      
+      // First, try to get existing configuration
+      let configuracao = await storage.getConfiguracao();
+      
+      if (configuracao) {
+        // Update existing configuration
+        configuracao = await storage.updateConfiguracao(configuracao.id, {
+          idEmpresaContratos,
+          idEmpresaTitulos
+        });
+      } else {
+        // Create new configuration
+        configuracao = await storage.createConfiguracao({
+          idEmpresaContratos,
+          idEmpresaTitulos
+        });
+      }
+      
+      res.json(configuracao);
+    } catch (error) {
+      res.status(500).json({ error: "Erro ao atualizar configuração" });
     }
   });
 

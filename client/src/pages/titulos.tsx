@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,8 +26,19 @@ export default function Titulos() {
     queryFn: fetchEmpresas,
   });
 
+  const { data: configuracao } = useQuery({
+    queryKey: ["/api/configuracao"],
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
   const [empresaFilter, setEmpresaFilter] = useState("all");
+
+  // Restore saved company selection when configuration loads
+  useEffect(() => {
+    if (configuracao?.idEmpresaTitulos) {
+      setEmpresaFilter(configuracao.idEmpresaTitulos.toString());
+    }
+  }, [configuracao]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTitulo, setEditingTitulo] = useState<any>(null);
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -75,6 +86,13 @@ export default function Titulos() {
     }
   });
 
+  const updateConfiguracaoMutation = useMutation({
+    mutationFn: (data: any) => apiRequest("/api/configuracao", "PUT", data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/configuracao"] });
+    },
+  });
+
   const handleSave = (data: any) => {
     if (editingTitulo) {
       updateTituloMutation.mutate({ id: editingTitulo.id, data });
@@ -83,6 +101,19 @@ export default function Titulos() {
     }
     setEditingTitulo(null);
     setModalOpen(false);
+  };
+
+  const handleEmpresaFilterChange = (value: string) => {
+    setEmpresaFilter(value);
+    
+    // Save to configuração
+    if (value !== "all") {
+      const configData = {
+        idEmpresaTitulos: parseInt(value),
+        idEmpresaContratos: configuracao?.idEmpresaContratos || null,
+      };
+      updateConfiguracaoMutation.mutate(configData);
+    }
   };
 
   const handleEdit = (titulo: any) => {
@@ -166,7 +197,7 @@ export default function Titulos() {
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Empresa
                 </label>
-                <Select value={empresaFilter} onValueChange={setEmpresaFilter}>
+                <Select value={empresaFilter} onValueChange={handleEmpresaFilterChange}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecionar empresa" />
                   </SelectTrigger>
