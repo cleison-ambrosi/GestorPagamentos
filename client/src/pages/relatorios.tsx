@@ -72,14 +72,14 @@ export default function Relatorios() {
     const empresa = empresas.find((e: any) => e.id === titulo.idEmpresa);
     const fornecedor = fornecedores.find((f: any) => f.id === titulo.idFornecedor);
     
+    // Buscar qualquer substring nos campos principais
     return (
       titulo.numeroTitulo?.toLowerCase().includes(termoPesquisa) ||
-      titulo.descricao?.toLowerCase().includes(termoPesquisa) ||
-      titulo.observacoes?.toLowerCase().includes(termoPesquisa) ||
       empresa?.nome?.toLowerCase().includes(termoPesquisa) ||
       empresa?.apelido?.toLowerCase().includes(termoPesquisa) ||
       fornecedor?.nome?.toLowerCase().includes(termoPesquisa) ||
-      titulo.valorTotal?.toString().includes(termoPesquisa)
+      titulo.valorTotal?.toString().replace('.', ',').includes(termoPesquisa) ||
+      titulo.saldoPagar?.toString().replace('.', ',').includes(termoPesquisa)
     );
   });
 
@@ -163,7 +163,7 @@ export default function Relatorios() {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
                   <Input
-                    placeholder="Pesquisar por fornecedor, número do título ou valor..."
+                    placeholder="Pesquisar por título, empresa, fornecedor ou valor..."
                     value={pesquisa}
                     onChange={(e) => setPesquisa(e.target.value)}
                     className="pl-10"
