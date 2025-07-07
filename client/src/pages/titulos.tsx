@@ -191,8 +191,8 @@ export default function Titulos() {
         <div className="p-8">
           {/* Filtros */}
           <div className="bg-white rounded-lg border border-slate-200 p-6 mb-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="w-full sm:w-1/4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="md:col-span-1">
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Empresa
                 </label>
@@ -209,7 +209,7 @@ export default function Titulos() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="w-full sm:w-3/4">
+              <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Pesquisar
                 </label>
@@ -221,6 +221,25 @@ export default function Titulos() {
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
                   />
+                </div>
+              </div>
+              <div className="md:col-span-1">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Totalizações
+                </label>
+                <div className="bg-slate-50 rounded-lg p-3 border">
+                  <div className="text-xs text-slate-600 mb-1">Títulos:</div>
+                  <div className="font-semibold text-sm text-slate-800 mb-2">
+                    {filteredTitulos.length}
+                  </div>
+                  <div className="text-xs text-slate-600 mb-1">Total Saldo:</div>
+                  <div className="font-semibold text-sm text-slate-800">
+                    {formatCurrency(
+                      filteredTitulos.reduce((total, titulo) => 
+                        total + parseFloat(titulo.saldoPagar || titulo.valorTotal || '0'), 0
+                      )
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
