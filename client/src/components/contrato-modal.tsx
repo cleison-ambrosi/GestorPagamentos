@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { fetchEmpresas, fetchFornecedores, fetchPlanoContas } from "@/lib/api";
 import FornecedorSelect from "@/components/fornecedor-select";
+import PlanoContasSearchModal from "@/components/plano-contas-search-modal";
 
 interface ContratoModalProps {
   open: boolean;
@@ -49,6 +50,8 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
     status: contrato?.status || true,
     observacoes: contrato?.observacoes || ""
   });
+
+  const [planoContasModalOpen, setPlanoContasModalOpen] = useState(false);
 
   // Update form data when contrato prop changes
   useEffect(() => {
@@ -277,18 +280,21 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Plano de Contas</Label>
-                <Select value={dadosContrato.idPlanoContas?.toString()} onValueChange={(value) => handleInputChange('idPlanoContas', parseInt(value))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecionar conta" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {planoContas.map((conta: any) => (
-                      <SelectItem key={conta.id} value={conta.id.toString()}>
-                        {conta.codigo} - {conta.nome}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full justify-start text-left font-normal"
+                  onClick={() => setPlanoContasModalOpen(true)}
+                >
+                  {dadosContrato.idPlanoContas ? (
+                    (() => {
+                      const conta = planoContas.find(c => c.id === dadosContrato.idPlanoContas);
+                      return conta ? `${conta.codigo} - ${conta.nome}` : "Selecionar conta";
+                    })()
+                  ) : (
+                    "Selecionar conta"
+                  )}
+                </Button>
               </div>
 
               <div>
@@ -358,6 +364,14 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
           </Button>
         </div>
       </DialogContent>
+      
+      <PlanoContasSearchModal
+        open={planoContasModalOpen}
+        onOpenChange={setPlanoContasModalOpen}
+        planoContas={planoContas}
+        onSelect={(conta) => handleInputChange('idPlanoContas', conta.id)}
+        selectedId={dadosContrato.idPlanoContas?.toString()}
+      />
     </Dialog>
   );
 }

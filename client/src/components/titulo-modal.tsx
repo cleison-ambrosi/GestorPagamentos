@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useQuery } from "@tanstack/react-query";
 import FornecedorSelect from "@/components/fornecedor-select";
+import PlanoContasSearchModal from "@/components/plano-contas-search-modal";
 
 interface TituloModalProps {
   open: boolean;
@@ -57,6 +58,8 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
     valorPago: dadosTitulo.saldoPagar || "",
     observacao: ""
   });
+
+  const [planoContasModalOpen, setPlanoContasModalOpen] = useState(false);
 
   // Update form data when titulo prop changes
   useEffect(() => {
@@ -229,18 +232,21 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
 
               <div>
                 <Label>Plano de Contas</Label>
-                <Select value={dadosTitulo.idPlanoContas} onValueChange={(value) => handleInputChange('idPlanoContas', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecionar conta" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {planoContas.map((conta: any) => (
-                      <SelectItem key={conta.id} value={conta.id.toString()}>
-                        {conta.codigo} - {conta.nome}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full justify-start text-left font-normal"
+                  onClick={() => setPlanoContasModalOpen(true)}
+                >
+                  {dadosTitulo.idPlanoContas ? (
+                    (() => {
+                      const conta = planoContas.find(c => c.id.toString() === dadosTitulo.idPlanoContas);
+                      return conta ? `${conta.codigo} - ${conta.nome}` : "Selecionar conta";
+                    })()
+                  ) : (
+                    "Selecionar conta"
+                  )}
+                </Button>
               </div>
             </div>
 
@@ -426,6 +432,14 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
           </Button>
         </div>
       </DialogContent>
+      
+      <PlanoContasSearchModal
+        open={planoContasModalOpen}
+        onOpenChange={setPlanoContasModalOpen}
+        planoContas={planoContas}
+        onSelect={(conta) => handleInputChange('idPlanoContas', conta.id.toString())}
+        selectedId={dadosTitulo.idPlanoContas}
+      />
     </Dialog>
   );
 }
