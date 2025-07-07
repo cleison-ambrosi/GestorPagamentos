@@ -1,22 +1,20 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchFornecedores, fetchEmpresas } from "@/lib/api";
+import { fetchFornecedores } from "@/lib/api";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Bell, User, Edit, Trash2, Search } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ConfirmDialog from "@/components/confirm-dialog";
 
 export default function Fornecedores() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [empresaFilter, setEmpresaFilter] = useState("all");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingFornecedor, setEditingFornecedor] = useState<any>(null);
   const [nome, setNome] = useState("");
@@ -37,22 +35,6 @@ export default function Fornecedores() {
     queryKey: ['/api/fornecedores'],
     queryFn: fetchFornecedores
   });
-
-  const { data: empresas = [] } = useQuery({
-    queryKey: ["/api/empresas"],
-    queryFn: fetchEmpresas,
-  });
-
-  const { data: configuracao } = useQuery({
-    queryKey: ["/api/configuracao"],
-  });
-
-  // Restore saved company selection when configuration loads
-  useEffect(() => {
-    if (configuracao?.idEmpresaContratos) {
-      setEmpresaFilter(configuracao.idEmpresaContratos.toString());
-    }
-  }, [configuracao]);
 
   const createMutation = useMutation({
     mutationFn: (data: any) => apiRequest('/api/fornecedores', 'POST', data),
@@ -92,25 +74,7 @@ export default function Fornecedores() {
     }
   });
 
-  const updateConfiguracaoMutation = useMutation({
-    mutationFn: (data: any) => apiRequest("/api/configuracao", "PUT", data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/configuracao"] });
-    },
-  });
 
-  const handleEmpresaFilterChange = (value: string) => {
-    setEmpresaFilter(value);
-    
-    // Save to configuração
-    if (value !== "all") {
-      const configData = {
-        idEmpresaContratos: parseInt(value),
-        idEmpresaTitulos: configuracao?.idEmpresaTitulos || null,
-      };
-      updateConfiguracaoMutation.mutate(configData);
-    }
-  };
 
   const resetForm = () => {
     setNome("");
@@ -164,16 +128,10 @@ export default function Fornecedores() {
     setModalOpen(true);
   };
 
-  const filteredFornecedores = fornecedores?.filter((fornecedor: any) => {
-    const matchesSearch = fornecedor.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      fornecedor.email?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    // For now, we'll keep all fornecedores since they're not directly linked to empresas
-    // This filter is mainly for UI consistency with títulos page
-    const matchesEmpresa = empresaFilter === "all" || true;
-    
-    return matchesSearch && matchesEmpresa;
-  }) || [];
+  const filteredFornecedores = fornecedores?.filter((fornecedor: any) =>
+    fornecedor.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    fornecedor.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -199,45 +157,18 @@ export default function Fornecedores() {
         </div>
 
         <div className="p-8">
-          {/* Filtros */}
-          <div className="bg-white rounded-lg border border-slate-200 p-6 mb-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="w-full sm:w-1/4">
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Empresa
-                </label>
-                <Select value={empresaFilter} onValueChange={handleEmpresaFilterChange}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecionar empresa" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas as empresas</SelectItem>
-                    {empresas.map((empresa: any) => (
-                      <SelectItem key={empresa.id} value={empresa.id.toString()}>
-                        {empresa.nome}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="w-full sm:w-3/4">
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  Pesquisar
-                </label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-                  <Input
-                    placeholder="Pesquisar por nome ou email..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
+            <div className="p-4 border-b border-slate-200">
+              <div className="relative">
+                <Search className="h-4 w-4 absolute left-3 top-3 text-slate-400" />
+                <Input
+                  placeholder="Buscar fornecedores..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
               </div>
             </div>
-          </div>
-
-          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow className="bg-slate-50">

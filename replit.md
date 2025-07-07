@@ -141,6 +141,7 @@ Changelog:
   * Updated título modal to use real data from API endpoints instead of hardcoded values
   * Fixed foreign key constraint errors by ensuring proper data mapping between frontend and database
   * System now successfully creates títulos with proper validation and data persistence
+  * Reverted company selection persistence feature due to configuration API issues
 
 ## User Preferences
 
