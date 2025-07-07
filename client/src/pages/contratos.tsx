@@ -116,7 +116,7 @@ export default function Contratos() {
       contrato.fornecedor?.toLowerCase().includes(searchLower)
     );
     
-    const matchesEmpresa = empresaFilter === "all" || contrato.idEmpresa?.toString() === empresaFilter;
+    const matchesEmpresa = !empresaFilter || contrato.idEmpresa?.toString() === empresaFilter;
     
     return matchesSearch && matchesEmpresa;
   });
@@ -152,10 +152,9 @@ export default function Contratos() {
                 </label>
                 <Select value={empresaFilter} onValueChange={setEmpresaFilter}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Todas as empresas" />
+                    <SelectValue placeholder="Selecionar empresa" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todas as empresas</SelectItem>
                     {empresas.map((empresa) => (
                       <SelectItem key={empresa.id} value={empresa.id.toString()}>
                         {empresa.nome}

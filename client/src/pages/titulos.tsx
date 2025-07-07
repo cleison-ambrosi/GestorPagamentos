@@ -117,7 +117,7 @@ export default function Titulos() {
       titulo.fornecedor?.toLowerCase().includes(searchLower)
     );
     
-    const matchesEmpresa = empresaFilter === "all" || titulo.idEmpresa?.toString() === empresaFilter;
+    const matchesEmpresa = !empresaFilter || titulo.idEmpresa?.toString() === empresaFilter;
     
     return matchesSearch && matchesEmpresa;
   });
@@ -168,10 +168,9 @@ export default function Titulos() {
                 </label>
                 <Select value={empresaFilter} onValueChange={setEmpresaFilter}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Todas as empresas" />
+                    <SelectValue placeholder="Selecionar empresa" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todas as empresas</SelectItem>
                     {empresas.map((empresa: any) => (
                       <SelectItem key={empresa.id} value={empresa.id.toString()}>
                         {empresa.nome}
