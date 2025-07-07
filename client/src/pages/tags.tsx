@@ -133,7 +133,7 @@ export default function Tags() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {tags?.map((tag) => (
-                <div key={tag.id} className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm">
+                <div key={tag.id} className="bg-white rounded-lg border border-slate-200 p-6 shadow-sm cursor-pointer hover:bg-slate-50" onClick={() => handleEdit(tag)}>
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-3">
                       <div 
@@ -147,7 +147,10 @@ export default function Tags() {
                         variant="ghost" 
                         size="icon" 
                         className="h-8 w-8"
-                        onClick={() => handleEdit(tag)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(tag);
+                        }}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -155,7 +158,10 @@ export default function Tags() {
                         variant="ghost" 
                         size="icon" 
                         className="h-8 w-8"
-                        onClick={() => handleDelete(tag)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(tag);
+                        }}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

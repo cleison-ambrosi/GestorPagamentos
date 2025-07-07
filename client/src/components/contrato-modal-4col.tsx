@@ -271,18 +271,20 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
                         <p className="text-sm text-blue-700">
                           <strong>Exemplo:</strong> {(() => {
                             const numeroTitulo = dadosContrato.numeroTitulo || 'T001';
-                            const parcela = 1;
-                            const totalParcelas = dadosContrato.numParcela || 10;
+                            const totalParcelas = parseInt(dadosContrato.numParcela || "10");
+                            const parcelaDigits = totalParcelas.toString().length;
+                            const parcela = "1".padStart(parcelaDigits, '0');
+                            const totalFormatted = totalParcelas.toString().padStart(parcelaDigits, '0');
                             
                             switch(dadosContrato.mascara) {
                               case "1":
-                                return `${numeroTitulo} - ${parcela}/${totalParcelas}`;
+                                return `${numeroTitulo} - ${parcela}/${totalFormatted}`;
                               case "2":
                                 return `${numeroTitulo} - ${parcela}`;
                               case "3":
                                 return numeroTitulo;
                               default:
-                                return `${numeroTitulo} - ${parcela}/${totalParcelas}`;
+                                return `${numeroTitulo} - ${parcela}/${totalFormatted}`;
                             }
                           })()}
                         </p>

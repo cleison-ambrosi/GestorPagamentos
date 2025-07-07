@@ -144,7 +144,7 @@ export default function Empresas() {
                 </TableHeader>
                 <TableBody>
                   {empresas?.map((empresa) => (
-                    <TableRow key={empresa.id} className="cursor-pointer" onClick={() => handleEdit(empresa)}>
+                    <TableRow key={empresa.id} className="cursor-pointer hover:bg-slate-50" onClick={() => handleEdit(empresa)}>
                       <TableCell className="font-medium">
                         {String(empresa.id).padStart(2, '0')}
                       </TableCell>
