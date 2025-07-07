@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,7 +26,15 @@ export default function Contratos() {
   });
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [empresaFilter, setEmpresaFilter] = useState("all");
+  const [empresaFilter, setEmpresaFilter] = useState(() => {
+    // Recupera a última empresa selecionada do localStorage
+    return localStorage.getItem('contratos-empresa-filter') || "all";
+  });
+
+  // Salva a empresa selecionada no localStorage sempre que mudar
+  useEffect(() => {
+    localStorage.setItem('contratos-empresa-filter', empresaFilter);
+  }, [empresaFilter]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingContrato, setEditingContrato] = useState<any>(null);
   const [confirmDialog, setConfirmDialog] = useState<{

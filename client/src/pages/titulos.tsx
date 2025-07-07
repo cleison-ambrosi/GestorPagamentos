@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,7 +27,15 @@ export default function Titulos() {
   });
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [empresaFilter, setEmpresaFilter] = useState("all");
+  const [empresaFilter, setEmpresaFilter] = useState(() => {
+    // Recupera a última empresa selecionada do localStorage
+    return localStorage.getItem('titulos-empresa-filter') || "all";
+  });
+
+  // Salva a empresa selecionada no localStorage sempre que mudar
+  useEffect(() => {
+    localStorage.setItem('titulos-empresa-filter', empresaFilter);
+  }, [empresaFilter]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTitulo, setEditingTitulo] = useState<any>(null);
   const [confirmDialog, setConfirmDialog] = useState<{
