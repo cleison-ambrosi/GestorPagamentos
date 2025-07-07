@@ -125,11 +125,11 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
       ...dadosTitulo,
       idEmpresa: parseInt(dadosTitulo.idEmpresa),
       idFornecedor: parseInt(dadosTitulo.idFornecedor),
-      idPlanoContas: parseInt(dadosTitulo.idPlanoContas) || null,
+      idPlanoContas: dadosTitulo.idPlanoContas ? parseInt(dadosTitulo.idPlanoContas) : null,
       valorTotal: dadosTitulo.valorTotal.toString(),
       saldoPagar: dadosTitulo.saldoPagar.toString(),
-      emissao: new Date(dadosTitulo.emissao),
-      vencimento: new Date(dadosTitulo.vencimento),
+      emissao: dadosTitulo.emissao,
+      vencimento: dadosTitulo.vencimento,
       status: parseInt(dadosTitulo.status)
     };
     
