@@ -257,7 +257,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
 
     const baixaData = {
       idTitulo: Number(titulo.id),
-      dataBaixa: new Date(dadosBaixa.dataBaixa + 'T00:00:00.000Z').toISOString(),
+      dataBaixa: dadosBaixa.dataBaixa,
       valorBaixa: parseValor(dadosBaixa.valorBaixa).toFixed(2),
       valorPago: parseValor(dadosBaixa.valorPago).toFixed(2),
       juros: parseValor(dadosBaixa.juros).toFixed(2),

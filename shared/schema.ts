@@ -219,7 +219,9 @@ export const insertTituloSchema = z.object({
   observacoes: z.string().optional(),
   status: z.union([z.number().min(1).max(4), z.string().transform((val) => parseInt(val))]).optional().default(1), // 1=Em Aberto, 2=Parcial, 3=Pago, 4=Cancelado
 });
-export const insertTituloBaixaSchema = createInsertSchema(tituloBaixa);
+export const insertTituloBaixaSchema = createInsertSchema(tituloBaixa).extend({
+  dataBaixa: z.union([z.date(), z.string().transform((val) => new Date(val))])
+});
 export const insertConfiguracaoSchema = createInsertSchema(configuracao);
 
 // Types
