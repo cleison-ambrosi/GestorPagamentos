@@ -228,17 +228,23 @@ export default function Titulos() {
                   Totalizações
                 </label>
                 <div className="bg-slate-50 rounded-lg p-3 border">
-                  <div className="text-xs text-slate-600 mb-1">Títulos:</div>
-                  <div className="font-semibold text-sm text-slate-800 mb-2">
-                    {filteredTitulos.length}
-                  </div>
-                  <div className="text-xs text-slate-600 mb-1">Total Saldo:</div>
-                  <div className="font-semibold text-sm text-slate-800">
-                    {formatCurrency(
-                      filteredTitulos.reduce((total, titulo) => 
-                        total + parseFloat(titulo.saldoPagar || titulo.valorTotal || '0'), 0
-                      )
-                    )}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <div className="text-xs text-slate-600 mb-1">Títulos:</div>
+                      <div className="font-semibold text-sm text-slate-800">
+                        {filteredTitulos.length}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-600 mb-1">Total Saldo:</div>
+                      <div className="font-semibold text-sm text-slate-800">
+                        {formatCurrency(
+                          filteredTitulos.reduce((total, titulo) => 
+                            total + parseFloat(titulo.saldoPagar || titulo.valorTotal || '0'), 0
+                          )
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
