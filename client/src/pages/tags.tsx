@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Plus, User, Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
 import ConfirmDialog from "@/components/confirm-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 
 
@@ -22,6 +23,7 @@ export default function Tags() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTag, setEditingTag] = useState<any>(null);
   const [nome, setNome] = useState("");
+  const { toast } = useToast();
   const [cor, setCor] = useState("#3B82F6");
   const [corPersonalizada, setCorPersonalizada] = useState("");
   const [confirmDialog, setConfirmDialog] = useState({
@@ -43,6 +45,10 @@ export default function Tags() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/tags'] });
       setModalOpen(false);
+      toast({
+        title: "Sucesso!",
+        description: "Tag criada com sucesso.",
+      });
     }
   });
 
@@ -52,6 +58,10 @@ export default function Tags() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/tags'] });
       setModalOpen(false);
+      toast({
+        title: "Sucesso!",
+        description: "Tag atualizada com sucesso.",
+      });
     }
   });
 
@@ -59,6 +69,10 @@ export default function Tags() {
     mutationFn: (id: number) => apiRequest(`/api/tags/${id}`, 'DELETE'),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/tags'] });
+      toast({
+        title: "Sucesso!",
+        description: "Tag excluída com sucesso.",
+      });
     }
   });
 

@@ -95,13 +95,13 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
       idEmpresa: parseInt(dadosContrato.idEmpresa),
       idFornecedor: parseInt(dadosContrato.idFornecedor),
       idPlanoContas: parseInt(dadosContrato.idPlanoContas),
-      valorContrato: parseFloat(dadosContrato.valorContrato),
-      valorParcela: parseFloat(dadosContrato.valorParcela),
+      valorContrato: dadosContrato.valorContrato,
+      valorParcela: dadosContrato.valorParcela,
       numParcela: parseInt(dadosContrato.numParcela),
       diaVencimento: parseInt(dadosContrato.diaVencimento),
       parcelaInicial: parseInt(dadosContrato.parcelaInicial),
       mascara: parseInt(dadosContrato.mascara),
-      dataInicio: new Date(dadosContrato.dataInicio).toISOString(),
+      dataInicio: dadosContrato.dataInicio,
     };
 
     onSave(dataFormatada);

@@ -11,6 +11,7 @@ import { Plus, User, Edit, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import { useState } from "react";
 import ConfirmDialog from "@/components/confirm-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 
 
@@ -18,6 +19,7 @@ export default function Empresas() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingEmpresa, setEditingEmpresa] = useState<any>(null);
   const [id, setId] = useState("");
+  const { toast } = useToast();
   const [nome, setNome] = useState("");
   const [apelido, setApelido] = useState("");
   const [cnpj, setCnpj] = useState("");
@@ -42,6 +44,10 @@ export default function Empresas() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/empresas'] });
       setModalOpen(false);
+      toast({
+        title: "Sucesso!",
+        description: "Empresa criada com sucesso.",
+      });
     }
   });
 
@@ -51,6 +57,10 @@ export default function Empresas() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/empresas'] });
       setModalOpen(false);
+      toast({
+        title: "Sucesso!",
+        description: "Empresa atualizada com sucesso.",
+      });
     }
   });
 
@@ -58,6 +68,10 @@ export default function Empresas() {
     mutationFn: (id: number) => apiRequest(`/api/empresas/${id}`, 'DELETE'),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/empresas'] });
+      toast({
+        title: "Sucesso!",
+        description: "Empresa excluída com sucesso.",
+      });
     }
   });
 
