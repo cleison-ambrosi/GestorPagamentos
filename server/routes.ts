@@ -409,11 +409,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/titulos-baixa", async (req, res) => {
     try {
+      console.log('Dados recebidos para título baixa:', req.body);
       const data = insertTituloBaixaSchema.parse(req.body);
+      console.log('Dados validados:', data);
       const tituloBaixa = await storage.createTituloBaixa(data);
+      console.log('Título baixa criado:', tituloBaixa);
       res.status(201).json(tituloBaixa);
     } catch (error) {
-      res.status(400).json({ error: "Dados inválidos" });
+      console.error('Erro ao criar título baixa:', error);
+      if (error instanceof Error) {
+        res.status(400).json({ error: "Dados inválidos", details: error.message });
+      } else {
+        res.status(400).json({ error: "Dados inválidos" });
+      }
     }
   });
 

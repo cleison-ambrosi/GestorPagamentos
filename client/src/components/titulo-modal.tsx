@@ -256,12 +256,12 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
     };
 
     const baixaData = {
-      idTitulo: titulo.id,
-      dataBaixa: dadosBaixa.dataBaixa,
-      valorBaixa: parseValor(dadosBaixa.valorBaixa).toString(),
-      valorPago: parseValor(dadosBaixa.valorPago).toString(),
-      juros: parseValor(dadosBaixa.juros).toString(),
-      desconto: parseValor(dadosBaixa.desconto).toString(),
+      idTitulo: Number(titulo.id),
+      dataBaixa: new Date(dadosBaixa.dataBaixa + 'T00:00:00.000Z').toISOString(),
+      valorBaixa: parseValor(dadosBaixa.valorBaixa).toFixed(2),
+      valorPago: parseValor(dadosBaixa.valorPago).toFixed(2),
+      juros: parseValor(dadosBaixa.juros).toFixed(2),
+      desconto: parseValor(dadosBaixa.desconto).toFixed(2),
       observacao: dadosBaixa.observacao || null,
       cancelado: false
     };
