@@ -120,9 +120,11 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
         status: titulo.status || "1"
       });
       
-      // Initialize baixa data with current saldo
+      // Initialize baixa data with current saldo and current datetime
+      const now = new Date();
+      const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
       setDadosBaixa({
-        dataBaixa: new Date().toISOString().split('T')[0],
+        dataBaixa: localDateTime,
         valorBaixa: saldoAtual,
         juros: "0,00",
         desconto: "0,00",
@@ -145,9 +147,11 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
         status: "1"
       });
       
-      // Reset baixa data
+      // Reset baixa data with current datetime
+      const now = new Date();
+      const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
       setDadosBaixa({
-        dataBaixa: new Date().toISOString().split('T')[0],
+        dataBaixa: localDateTime,
         valorBaixa: "",
         juros: "0,00",
         desconto: "0,00",
@@ -262,7 +266,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
 
     const baixaData = {
       idTitulo: Number(titulo.id),
-      dataBaixa: dadosBaixa.dataBaixa,
+      dataBaixa: new Date(dadosBaixa.dataBaixa).toISOString(),
       valorBaixa: parseValor(dadosBaixa.valorBaixa).toFixed(2),
       valorPago: parseValor(dadosBaixa.valorPago).toFixed(2),
       juros: parseValor(dadosBaixa.juros).toFixed(2),
@@ -462,9 +466,9 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                   
                   <div className="space-y-4">
                     <div>
-                      <Label>Data da Baixa</Label>
+                      <Label>Data e Hora da Baixa</Label>
                       <Input
-                        type="date"
+                        type="datetime-local"
                         value={dadosBaixa.dataBaixa}
                         onChange={(e) => handleBaixaChange('dataBaixa', e.target.value)}
                       />
@@ -553,6 +557,13 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                             <div className="flex justify-between items-center">
                               <div>
                                 <p className="font-medium">{formatDate(new Date(baixa.dataBaixa))}</p>
+                                <p className="text-xs text-gray-500">
+                                  {new Date(baixa.dataBaixa).toLocaleTimeString('pt-BR', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit'
+                                  })}
+                                </p>
                                 <p className="text-sm text-gray-600">
                                   Baixa: {formatCurrency(parseFloat(baixa.valorBaixa || '0'))}
                                 </p>
