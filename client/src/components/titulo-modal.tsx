@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,6 +43,38 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
     valorPago: dadosTitulo.saldoPagar || "",
     observacao: ""
   });
+
+  // Update form data when titulo prop changes
+  useEffect(() => {
+    if (titulo) {
+      setDadosTitulo({
+        idEmpresa: titulo.idEmpresa?.toString() || "",
+        idFornecedor: titulo.idFornecedor?.toString() || "",
+        numeroTitulo: titulo.numeroTitulo || "",
+        emissao: titulo.emissao ? titulo.emissao.split('T')[0] : new Date().toISOString().split('T')[0],
+        vencimento: titulo.vencimento ? titulo.vencimento.split('T')[0] : "",
+        valorTotal: titulo.valorTotal?.toString() || "0.00",
+        saldoPagar: titulo.saldoPagar?.toString() || "0.00",
+        idPlanoContas: titulo.idPlanoContas?.toString() || "",
+        descricao: titulo.descricao || "",
+        observacoes: titulo.observacoes || ""
+      });
+    } else {
+      // Reset form for new titulo
+      setDadosTitulo({
+        idEmpresa: "",
+        idFornecedor: "",
+        numeroTitulo: "",
+        emissao: new Date().toISOString().split('T')[0],
+        vencimento: "",
+        valorTotal: "0.00",
+        saldoPagar: "0.00",
+        idPlanoContas: "",
+        descricao: "",
+        observacoes: ""
+      });
+    }
+  }, [titulo]);
 
   const handleSave = () => {
     // Converter string values para o formato correto do backend

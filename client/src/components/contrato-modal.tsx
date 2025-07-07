@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -48,6 +48,46 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
     status: contrato?.status || true,
     observacoes: contrato?.observacoes || ""
   });
+
+  // Update form data when contrato prop changes
+  useEffect(() => {
+    if (contrato) {
+      setDadosContrato({
+        idEmpresa: contrato.idEmpresa || null,
+        idFornecedor: contrato.idFornecedor || null,
+        descricao: contrato.descricao || "",
+        valorContrato: contrato.valorContrato || "",
+        valorParcela: contrato.valorParcela || "",
+        numParcela: contrato.numParcela || "",
+        dataInicio: contrato.dataInicio ? contrato.dataInicio.split('T')[0] : "",
+        diaVencimento: contrato.diaVencimento || "",
+        parcelaInicial: contrato.parcelaInicial || "",
+        numeroTitulo: contrato.numeroTitulo || "",
+        tipoMascara: contrato.tipoMascara || "",
+        idPlanoContas: contrato.idPlanoContas || null,
+        status: contrato.status !== undefined ? contrato.status : true,
+        observacoes: contrato.observacoes || ""
+      });
+    } else {
+      // Reset form for new contrato
+      setDadosContrato({
+        idEmpresa: null,
+        idFornecedor: null,
+        descricao: "",
+        valorContrato: "",
+        valorParcela: "",
+        numParcela: "",
+        dataInicio: "",
+        diaVencimento: "",
+        parcelaInicial: "",
+        numeroTitulo: "",
+        tipoMascara: "",
+        idPlanoContas: null,
+        status: true,
+        observacoes: ""
+      });
+    }
+  }, [contrato]);
 
   const handleSave = () => {
     // Converter tipos apropriadamente antes de salvar

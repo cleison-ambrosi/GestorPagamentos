@@ -157,8 +157,8 @@ export default function PlanoContas() {
                       : '-'
                     }
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
+                  <TableCell className="text-center">
+                    <div className="flex items-center justify-center space-x-2">
                       <Button
                         variant="ghost"
                         size="sm"
