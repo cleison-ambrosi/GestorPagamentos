@@ -456,7 +456,15 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Total Pago</p>
-                  <p className="text-2xl font-bold text-green-600">R$ 0,00</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {(() => {
+                      const baixasDoTitulo = titulosBaixa.filter((baixa: any) => baixa.idTitulo === titulo?.id);
+                      const totalPago = baixasDoTitulo.reduce((sum: number, baixa: any) => {
+                        return sum + parseFloat(baixa.valorPago || '0');
+                      }, 0);
+                      return formatCurrency(totalPago);
+                    })()}
+                  </p>
                 </div>
               </div>
 
@@ -556,12 +564,10 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                           <div key={baixa.id} className="p-3 bg-gray-50 rounded-lg">
                             <div className="flex justify-between items-center">
                               <div>
-                                <p className="font-medium">{formatDate(new Date(baixa.dataBaixa))}</p>
-                                <p className="text-xs text-gray-500">
-                                  {new Date(baixa.dataBaixa).toLocaleTimeString('pt-BR', {
+                                <p className="font-medium">
+                                  {formatDate(new Date(baixa.dataBaixa))} às {new Date(baixa.dataBaixa).toLocaleTimeString('pt-BR', {
                                     hour: '2-digit',
-                                    minute: '2-digit',
-                                    second: '2-digit'
+                                    minute: '2-digit'
                                   })}
                                 </p>
                                 <p className="text-sm text-gray-600">
