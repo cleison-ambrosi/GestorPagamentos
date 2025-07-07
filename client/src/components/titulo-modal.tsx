@@ -49,8 +49,8 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
       idPlanoContas: parseInt(dadosTitulo.idPlanoContas) || 1,
       valorTotal: dadosTitulo.valorTotal.toString(),
       saldoPagar: dadosTitulo.saldoPagar.toString(),
-      emissao: dadosTitulo.emissao,
-      vencimento: dadosTitulo.vencimento,
+      emissao: new Date(dadosTitulo.emissao),
+      vencimento: new Date(dadosTitulo.vencimento),
     };
     
     console.log('Dados formatados para envio:', tituloData);

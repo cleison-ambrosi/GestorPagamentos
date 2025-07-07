@@ -203,7 +203,19 @@ export const insertContratoSchema = z.object({
   status: z.boolean(),
   observacoes: z.string().optional()
 });
-export const insertTituloSchema = createInsertSchema(titulo);
+export const insertTituloSchema = z.object({
+  idEmpresa: z.number(),
+  idFornecedor: z.number(),
+  numeroTitulo: z.string(),
+  emissao: z.union([z.date(), z.string().transform((val) => new Date(val))]),
+  vencimento: z.union([z.date(), z.string().transform((val) => new Date(val))]),
+  valorTotal: z.string(),
+  saldoPagar: z.string(),
+  idPlanoContas: z.number(),
+  descricao: z.string(),
+  observacoes: z.string().optional(),
+  cancelado: z.boolean().optional(),
+});
 export const insertTituloBaixaSchema = createInsertSchema(tituloBaixa);
 export const insertConfiguracaoSchema = createInsertSchema(configuracao);
 
