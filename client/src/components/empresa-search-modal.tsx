@@ -33,9 +33,10 @@ export default function EmpresaSearchModal({
     if (!term) return true;
     
     const nome = empresa.nome?.toLowerCase() || '';
+    const apelido = empresa.apelido?.toLowerCase() || '';
     const cnpj = empresa.cnpj?.toLowerCase() || '';
     
-    return nome.includes(term) || cnpj.includes(term);
+    return nome.includes(term) || apelido.includes(term) || cnpj.includes(term);
   });
 
   const handleSelect = (empresa: any) => {
@@ -60,7 +61,7 @@ export default function EmpresaSearchModal({
         <DialogHeader>
           <DialogTitle>Pesquisar Empresa</DialogTitle>
           <DialogDescription>
-            Digite para pesquisar e selecionar uma empresa pelo nome ou CNPJ.
+            Digite para pesquisar e selecionar uma empresa pelo nome, apelido ou CNPJ.
           </DialogDescription>
         </DialogHeader>
         
@@ -68,7 +69,7 @@ export default function EmpresaSearchModal({
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
             <Input
-              placeholder="Digite o nome ou CNPJ da empresa..."
+              placeholder="Digite o nome, apelido ou CNPJ da empresa..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -93,6 +94,11 @@ export default function EmpresaSearchModal({
                       <div className="font-medium">
                         {highlightText(empresa.nome, searchTerm)}
                       </div>
+                      {empresa.apelido && (
+                        <div className="text-sm text-slate-600">
+                          Apelido: {highlightText(empresa.apelido, searchTerm)}
+                        </div>
+                      )}
                       {empresa.cnpj && (
                         <div className="text-sm text-slate-500">
                           CNPJ: {highlightText(empresa.cnpj, searchTerm)}

@@ -7,6 +7,7 @@ import { z } from "zod";
 export const empresa = mysqlTable("empresa", {
   id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   nome: text("nome").notNull(),
+  apelido: text("apelido"),
   cnpj: text("cnpj"),
 });
 

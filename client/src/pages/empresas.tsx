@@ -19,6 +19,7 @@ export default function Empresas() {
   const [editingEmpresa, setEditingEmpresa] = useState<any>(null);
   const [id, setId] = useState("");
   const [nome, setNome] = useState("");
+  const [apelido, setApelido] = useState("");
   const [cnpj, setCnpj] = useState("");
   const [telefone, setTelefone] = useState("");
   const [email, setEmail] = useState("");
@@ -64,6 +65,7 @@ export default function Empresas() {
     setEditingEmpresa(empresa);
     setId(empresa.id.toString());
     setNome(empresa.nome);
+    setApelido(empresa.apelido || "");
     setCnpj(empresa.cnpj || "");
     setTelefone(empresa.telefone || "");
     setEmail(empresa.email || "");
@@ -74,6 +76,7 @@ export default function Empresas() {
     setEditingEmpresa(null);
     setId("");
     setNome("");
+    setApelido("");
     setCnpj("");
     setTelefone("");
     setEmail("");
@@ -81,7 +84,7 @@ export default function Empresas() {
   };
 
   const handleSave = () => {
-    const empresaData = { nome, cnpj, telefone, email };
+    const empresaData = { nome, apelido, cnpj, telefone, email };
     
     console.log("Salvando empresa:", empresaData);
     
@@ -134,8 +137,8 @@ export default function Empresas() {
                   <TableRow className="bg-slate-50">
                     <TableHead className="font-medium text-slate-700">ID</TableHead>
                     <TableHead className="font-medium text-slate-700">Nome</TableHead>
+                    <TableHead className="font-medium text-slate-700">Apelido</TableHead>
                     <TableHead className="font-medium text-slate-700">CNPJ</TableHead>
-                    <TableHead className="font-medium text-slate-700">Cadastrado em</TableHead>
                     <TableHead className="text-center font-medium text-slate-700">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -146,13 +149,13 @@ export default function Empresas() {
                         {String(empresa.id).padStart(2, '0')}
                       </TableCell>
                       <TableCell>{empresa.nome}</TableCell>
+                      <TableCell className="text-slate-600">
+                        {empresa.apelido || "-"}
+                      </TableCell>
                       <TableCell>
                         <span className="text-orange-500">
                           {empresa.cnpj || "Não informado"}
                         </span>
-                      </TableCell>
-                      <TableCell>
-                        {formatDate(empresa.createdAt || new Date())}
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center space-x-2">
@@ -212,6 +215,16 @@ export default function Empresas() {
                     value={nome}
                     onChange={(e) => setNome(e.target.value)}
                     placeholder="Nome da empresa"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="apelido">Apelido</Label>
+                  <Input
+                    id="apelido"
+                    value={apelido}
+                    onChange={(e) => setApelido(e.target.value)}
+                    placeholder="Apelido ou nome fantasia"
                   />
                 </div>
 
