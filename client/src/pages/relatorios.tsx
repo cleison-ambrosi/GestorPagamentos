@@ -99,8 +99,8 @@ export default function Relatorios() {
               <h3 className="text-lg font-medium text-slate-800">Filtros</h3>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="md:col-span-1">
                 <Label className="text-sm font-medium text-slate-700 mb-2 block">Período</Label>
                 <Select value={periodo} onValueChange={setPeriodo}>
                   <SelectTrigger className="w-full">
@@ -119,7 +119,7 @@ export default function Relatorios() {
                 </Select>
               </div>
               
-              <div>
+              <div className="md:col-span-3">
                 <Label className="text-sm font-medium text-slate-700 mb-2 block">Pesquisar</Label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
