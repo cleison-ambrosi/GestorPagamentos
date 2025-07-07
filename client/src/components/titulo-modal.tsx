@@ -42,7 +42,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
     emissao: titulo?.emissao ? titulo.emissao.split('T')[0] : new Date().toISOString().split('T')[0],
     vencimento: titulo?.vencimento || "",
     valorTotal: titulo?.valorTotal?.toString() || "",
-    saldoPagar: titulo?.saldoPagar?.toString() || "",
+    saldoPagar: titulo?.saldoPagar?.toString() || titulo?.valorTotal?.toString() || "",
     idPlanoContas: titulo?.idPlanoContas?.toString() || "",
     descricao: titulo?.descricao || "",
     observacoes: titulo?.observacoes || "",
@@ -77,7 +77,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
     } else {
       // Reset form for new titulo
       setDadosTitulo({
-        idEmpresa: "",
+        idEmpresa: titulo?.idEmpresa?.toString() || "",
         idFornecedor: "",
         numeroTitulo: "",
         emissao: new Date().toISOString().split('T')[0],
@@ -136,7 +136,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
     setDadosTitulo(prev => {
       const updated = { ...prev, [field]: value };
       
-      // Auto-fill saldoPagar when valorTotal changes
+      // Auto-fill saldoPagar when valorTotal changes durante inclusão
       if (field === 'valorTotal' && value && !titulo) {
         updated.saldoPagar = value;
       }
@@ -255,6 +255,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
                     onChange={(e) => handleInputChange('valorTotal', e.target.value)}
                     placeholder="0,00"
                     required
+                    readOnly={titulo && dadosTitulo.status !== "1"}
                   />
                 </div>
               </div>
@@ -268,7 +269,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
                     value={dadosTitulo.saldoPagar}
                     onChange={(e) => handleInputChange('saldoPagar', e.target.value)}
                     placeholder="0,00"
-                    readOnly
+                    readOnly={!!titulo}
                   />
                 </div>
               </div>
