@@ -219,7 +219,7 @@ export default function Contratos() {
             </TableHeader>
             <TableBody>
               {filteredContratos.map((contrato: any) => (
-                <TableRow key={contrato.id} className="hover:bg-slate-50">
+                <TableRow key={contrato.id} className="hover:bg-slate-50 cursor-pointer" onClick={() => handleEdit(contrato)}>
                   <TableCell className="font-medium">{contrato.id.toString().padStart(5, '0')}</TableCell>
                   <TableCell className="font-medium">{highlightText(contrato.numeroTitulo || '-', searchTerm)}</TableCell>
                   <TableCell>
@@ -244,7 +244,10 @@ export default function Contratos() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleEdit(contrato)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(contrato);
+                        }}
                         className="h-8 w-8 p-0 hover:bg-slate-100"
                       >
                         <Edit className="h-4 w-4 text-slate-600" />
@@ -252,7 +255,10 @@ export default function Contratos() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleCopy(contrato)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCopy(contrato);
+                        }}
                         className="h-8 w-8 p-0 hover:bg-slate-100"
                       >
                         <Copy className="h-4 w-4 text-slate-600" />
@@ -260,7 +266,10 @@ export default function Contratos() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDelete(contrato)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(contrato);
+                        }}
                         className="h-8 w-8 p-0 hover:bg-slate-100"
                       >
                         <Trash2 className="h-4 w-4 text-slate-500" />

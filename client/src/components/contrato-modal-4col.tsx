@@ -173,7 +173,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
               </div>
             </div>
 
-            {/* Linha 2: Valor do Contrato, Valor da Parcela, Número de Parcelas, Número do Título */}
+            {/* Linha 2: Valor do Contrato, Número de Parcelas, Valor da Parcela, Número do Título */}
             <div className="grid grid-cols-4 gap-4">
               <div>
                 <Label>Valor do Contrato *</Label>
@@ -189,6 +189,15 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
               </div>
 
               <div>
+                <Label>Nº de Parcelas *</Label>
+                <Input
+                  value={dadosContrato.numParcela}
+                  onChange={(e) => handleInputChange('numParcela', e.target.value)}
+                  placeholder="12"
+                />
+              </div>
+
+              <div>
                 <Label>Valor da Parcela *</Label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
@@ -199,15 +208,6 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
                     placeholder="0,00"
                   />
                 </div>
-              </div>
-
-              <div>
-                <Label>Nº de Parcelas *</Label>
-                <Input
-                  value={dadosContrato.numParcela}
-                  onChange={(e) => handleInputChange('numParcela', e.target.value)}
-                  placeholder="12"
-                />
               </div>
 
               <div>

@@ -144,7 +144,7 @@ export default function Empresas() {
                 </TableHeader>
                 <TableBody>
                   {empresas?.map((empresa) => (
-                    <TableRow key={empresa.id}>
+                    <TableRow key={empresa.id} className="cursor-pointer" onClick={() => handleEdit(empresa)}>
                       <TableCell className="font-medium">
                         {String(empresa.id).padStart(2, '0')}
                       </TableCell>
@@ -163,7 +163,10 @@ export default function Empresas() {
                             variant="ghost" 
                             size="icon" 
                             className="h-8 w-8"
-                            onClick={() => handleEdit(empresa)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(empresa);
+                            }}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -171,7 +174,10 @@ export default function Empresas() {
                             variant="ghost" 
                             size="icon" 
                             className="h-8 w-8"
-                            onClick={() => handleDelete(empresa)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(empresa);
+                            }}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>

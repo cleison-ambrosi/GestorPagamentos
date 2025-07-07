@@ -164,7 +164,7 @@ export default function PlanoContas() {
             </TableHeader>
             <TableBody>
               {filteredContas.map((conta: any) => (
-                <TableRow key={conta.id} className="hover:bg-slate-50">
+                <TableRow key={conta.id} className="hover:bg-slate-50 cursor-pointer" onClick={() => handleEdit(conta)}>
                   <TableCell className="font-medium">{conta.id.toString().padStart(5, '0')}</TableCell>
                   <TableCell className="font-medium">{highlightText(conta.codigo, searchTerm)}</TableCell>
                   <TableCell>{highlightText(conta.nome, searchTerm)}</TableCell>
@@ -179,7 +179,10 @@ export default function PlanoContas() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleEdit(conta)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(conta);
+                        }}
                         className="h-8 w-8 p-0 hover:bg-slate-100"
                       >
                         <Edit className="h-4 w-4 text-slate-600" />
@@ -187,7 +190,10 @@ export default function PlanoContas() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDelete(conta)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(conta);
+                        }}
                         className="h-8 w-8 p-0 hover:bg-slate-100"
                       >
                         <Trash2 className="h-4 w-4 text-slate-500" />

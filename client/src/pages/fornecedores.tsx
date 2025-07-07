@@ -221,7 +221,7 @@ export default function Fornecedores() {
                   </TableRow>
                 ) : (
                   filteredFornecedores.map((fornecedor: any) => (
-                    <TableRow key={fornecedor.id} className="hover:bg-slate-50">
+                    <TableRow key={fornecedor.id} className="hover:bg-slate-50 cursor-pointer" onClick={() => handleEdit(fornecedor)}>
                       <TableCell className="font-medium">{fornecedor.id.toString().padStart(5, '0')}</TableCell>
                       <TableCell className="font-medium">{highlightText(fornecedor.nome, searchTerm)}</TableCell>
                       <TableCell className="text-slate-600">{fornecedor.email ? highlightText(fornecedor.email, searchTerm) : '-'}</TableCell>
@@ -231,7 +231,10 @@ export default function Fornecedores() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleEdit(fornecedor)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(fornecedor);
+                            }}
                             className="h-8 w-8 p-0 hover:bg-slate-100"
                           >
                             <Edit className="h-4 w-4 text-slate-600" />
@@ -239,7 +242,10 @@ export default function Fornecedores() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleDuplicate(fornecedor)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDuplicate(fornecedor);
+                            }}
                             className="h-8 w-8 p-0 hover:bg-slate-100"
                           >
                             <Copy className="h-4 w-4 text-slate-600" />
@@ -247,7 +253,10 @@ export default function Fornecedores() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleDelete(fornecedor)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(fornecedor);
+                            }}
                             className="h-8 w-8 p-0 hover:bg-slate-100"
                           >
                             <Trash2 className="h-4 w-4 text-slate-500" />
