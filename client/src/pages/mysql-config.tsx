@@ -40,7 +40,7 @@ export default function MySQLConfig() {
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
-      <main className="flex-1 ml-48">
+      <main className="flex-1 ml-56">
         {/* Header */}
         <div className="bg-white border-b border-slate-200 p-6">
           <div className="flex items-center justify-between">

@@ -28,7 +28,7 @@ export default function Sidebar() {
   const [location] = useLocation();
   
   return (
-    <aside className="w-48 bg-white shadow-sm border-r border-slate-200 fixed h-full z-10 flex flex-col">
+    <aside className="w-56 bg-white shadow-sm border-r border-slate-200 fixed h-full z-10 flex flex-col">
       <div className="p-4 border-b border-slate-200">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
