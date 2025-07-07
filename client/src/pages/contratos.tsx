@@ -110,18 +110,30 @@ export default function Contratos() {
   };
 
   const filteredContratos = contratos.filter((contrato: any) => {
-    const searchLower = searchTerm.toLowerCase();
-    const matchesSearch = (
-      contrato.numero?.toLowerCase().includes(searchLower) ||
-      contrato.descricao?.toLowerCase().includes(searchLower) ||
-      contrato.valor?.toString().includes(searchLower) ||
-      contrato.fornecedor?.toLowerCase().includes(searchLower)
+    const term = searchTerm.toLowerCase().trim();
+    const matchesSearch = !term || (
+      contrato.numero?.toLowerCase().includes(term) ||
+      contrato.descricao?.toLowerCase().includes(term) ||
+      contrato.valor?.toString().includes(term) ||
+      contrato.fornecedor?.toLowerCase().includes(term) ||
+      contrato.observacoes?.toLowerCase().includes(term)
     );
     
-    const matchesEmpresa = !empresaFilter || contrato.idEmpresa?.toString() === empresaFilter;
+    const matchesEmpresa = empresaFilter === "all" || contrato.idEmpresa?.toString() === empresaFilter;
     
     return matchesSearch && matchesEmpresa;
   });
+
+  const highlightText = (text: string, term: string) => {
+    if (!term.trim()) return text;
+    const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+    return parts.map((part, index) => 
+      regex.test(part) ? 
+        <span key={index} className="bg-yellow-200 font-semibold">{part}</span> : 
+        part
+    );
+  };
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -199,9 +211,9 @@ export default function Contratos() {
               {filteredContratos.map((contrato: any) => (
                 <TableRow key={contrato.id} className="hover:bg-slate-50">
                   <TableCell className="font-medium">{contrato.id.toString().padStart(5, '0')}</TableCell>
-                  <TableCell className="font-medium">{contrato.numero}</TableCell>
-                  <TableCell>{contrato.descricao}</TableCell>
-                  <TableCell>{contrato.fornecedor || '-'}</TableCell>
+                  <TableCell className="font-medium">{highlightText(contrato.numero, searchTerm)}</TableCell>
+                  <TableCell>{contrato.descricao ? highlightText(contrato.descricao, searchTerm) : '-'}</TableCell>
+                  <TableCell>{contrato.fornecedor ? highlightText(contrato.fornecedor, searchTerm) : '-'}</TableCell>
                   <TableCell>{formatCurrency(contrato.valor || 0)}</TableCell>
                   <TableCell>{formatDate(contrato.dataInicio) || '-'}</TableCell>
                   <TableCell className="text-center">

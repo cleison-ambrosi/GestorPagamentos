@@ -94,10 +94,27 @@ export default function PlanoContas() {
     });
   };
 
-  const filteredContas = planoContas?.filter((conta: any) =>
-    conta.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    conta.codigo?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  const filteredContas = planoContas?.filter((conta: any) => {
+    const term = searchTerm.toLowerCase().trim();
+    if (!term) return true;
+    
+    const codigo = conta.codigo?.toLowerCase() || '';
+    const nome = conta.nome?.toLowerCase() || '';
+    const descricao = conta.descricao?.toLowerCase() || '';
+    
+    return codigo.includes(term) || nome.includes(term) || descricao.includes(term);
+  }) || [];
+
+  const highlightText = (text: string, term: string) => {
+    if (!term.trim()) return text;
+    const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+    return parts.map((part, index) => 
+      regex.test(part) ? 
+        <span key={index} className="bg-yellow-200 font-semibold">{part}</span> : 
+        part
+    );
+  };
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -149,8 +166,8 @@ export default function PlanoContas() {
               {filteredContas.map((conta: any) => (
                 <TableRow key={conta.id} className="hover:bg-slate-50">
                   <TableCell className="font-medium">{conta.id.toString().padStart(5, '0')}</TableCell>
-                  <TableCell className="font-medium">{conta.codigo}</TableCell>
-                  <TableCell>{conta.nome}</TableCell>
+                  <TableCell className="font-medium">{highlightText(conta.codigo, searchTerm)}</TableCell>
+                  <TableCell>{highlightText(conta.nome, searchTerm)}</TableCell>
                   <TableCell>
                     {conta.idContaPai ? 
                       planoContas.find(p => p.id === conta.idContaPai)?.nome || `ID: ${conta.idContaPai}` 

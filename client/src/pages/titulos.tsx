@@ -111,18 +111,30 @@ export default function Titulos() {
   };
 
   const filteredTitulos = titulos.filter((titulo: any) => {
-    const searchLower = searchTerm.toLowerCase();
-    const matchesSearch = (
-      titulo.numeroTitulo?.toLowerCase().includes(searchLower) ||
-      titulo.descricao?.toLowerCase().includes(searchLower) ||
-      titulo.valor?.toString().includes(searchLower) ||
-      titulo.fornecedor?.toLowerCase().includes(searchLower)
+    const term = searchTerm.toLowerCase().trim();
+    const matchesSearch = !term || (
+      titulo.numeroTitulo?.toLowerCase().includes(term) ||
+      titulo.descricao?.toLowerCase().includes(term) ||
+      titulo.valor?.toString().includes(term) ||
+      titulo.fornecedor?.toLowerCase().includes(term) ||
+      titulo.observacoes?.toLowerCase().includes(term)
     );
     
-    const matchesEmpresa = !empresaFilter || titulo.idEmpresa?.toString() === empresaFilter;
+    const matchesEmpresa = empresaFilter === "all" || titulo.idEmpresa?.toString() === empresaFilter;
     
     return matchesSearch && matchesEmpresa;
   });
+
+  const highlightText = (text: string, term: string) => {
+    if (!term.trim()) return text;
+    const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+    return parts.map((part, index) => 
+      regex.test(part) ? 
+        <span key={index} className="bg-yellow-200 font-semibold">{part}</span> : 
+        part
+    );
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -215,8 +227,8 @@ export default function Titulos() {
               {filteredTitulos.map((titulo: any) => (
                 <TableRow key={titulo.id} className="hover:bg-slate-50">
                   <TableCell className="font-medium">{titulo.id.toString().padStart(5, '0')}</TableCell>
-                  <TableCell className="font-medium">{titulo.numeroTitulo}</TableCell>
-                  <TableCell>{titulo.fornecedor || '-'}</TableCell>
+                  <TableCell className="font-medium">{highlightText(titulo.numeroTitulo, searchTerm)}</TableCell>
+                  <TableCell>{titulo.fornecedor ? highlightText(titulo.fornecedor, searchTerm) : '-'}</TableCell>
                   <TableCell>{titulo.dataVencimento || '-'}</TableCell>
                   <TableCell>{formatCurrency(titulo.valor || 0)}</TableCell>
                   <TableCell>{getStatusBadge(titulo.status || 'ativo')}</TableCell>

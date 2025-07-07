@@ -137,10 +137,28 @@ export default function Fornecedores() {
     setModalOpen(true);
   };
 
-  const filteredFornecedores = fornecedores?.filter((fornecedor: any) =>
-    fornecedor.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    fornecedor.email?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  const filteredFornecedores = fornecedores?.filter((fornecedor: any) => {
+    const term = searchTerm.toLowerCase().trim();
+    if (!term) return true;
+    
+    const nome = fornecedor.nome?.toLowerCase() || '';
+    const email = fornecedor.email?.toLowerCase() || '';
+    const telefone = fornecedor.telefone?.toLowerCase() || '';
+    const observacoes = fornecedor.observacoes?.toLowerCase() || '';
+    
+    return nome.includes(term) || email.includes(term) || telefone.includes(term) || observacoes.includes(term);
+  }) || [];
+
+  const highlightText = (text: string, term: string) => {
+    if (!term.trim()) return text;
+    const regex = new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    const parts = text.split(regex);
+    return parts.map((part, index) => 
+      regex.test(part) ? 
+        <span key={index} className="bg-yellow-200 font-semibold">{part}</span> : 
+        part
+    );
+  };
 
   return (
     <div className="flex min-h-screen bg-slate-50">
@@ -206,10 +224,10 @@ export default function Fornecedores() {
                   filteredFornecedores.map((fornecedor: any) => (
                     <TableRow key={fornecedor.id} className="hover:bg-slate-50">
                       <TableCell className="font-medium">{fornecedor.id.toString().padStart(5, '0')}</TableCell>
-                      <TableCell className="font-medium">{fornecedor.nome}</TableCell>
-                      <TableCell className="text-slate-600">{fornecedor.email || '-'}</TableCell>
-                      <TableCell className="text-slate-600">{fornecedor.telefone || '-'}</TableCell>
-                      <TableCell className="text-slate-600">{fornecedor.observacoes || '-'}</TableCell>
+                      <TableCell className="font-medium">{highlightText(fornecedor.nome, searchTerm)}</TableCell>
+                      <TableCell className="text-slate-600">{fornecedor.email ? highlightText(fornecedor.email, searchTerm) : '-'}</TableCell>
+                      <TableCell className="text-slate-600">{fornecedor.telefone ? highlightText(fornecedor.telefone, searchTerm) : '-'}</TableCell>
+                      <TableCell className="text-slate-600">{fornecedor.observacoes ? highlightText(fornecedor.observacoes, searchTerm) : '-'}</TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center space-x-2">
                           <Button
