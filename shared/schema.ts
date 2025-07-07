@@ -200,7 +200,7 @@ export const insertContratoSchema = z.object({
   parcelaInicial: z.number(),
   dataInicio: z.string().transform((val) => new Date(val)),
   numeroTitulo: z.string(),
-  mascara: z.number().min(1).max(3).optional(), // 1="Número do Título - Parcela/Total", 2="Número do Título - Parcela", 3="Somente Número do Título"
+  mascara: z.number().min(1).max(3).optional(), // 1="Número - Parcela/Total", 2="Número - Parcela", 3="Somente Número"
   status: z.boolean(),
   observacoes: z.string().optional()
 });

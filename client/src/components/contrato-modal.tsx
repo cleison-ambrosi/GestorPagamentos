@@ -273,9 +273,9 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
                     <SelectValue placeholder="Selecionar máscara" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="titulo-parcela">Título - 99/99 - Título + parcela/total</SelectItem>
-                    <SelectItem value="sequencial">Sequencial - 001, 002, 003...</SelectItem>
-                    <SelectItem value="alfanumerico">Alfanumérico - ABC001, ABC002...</SelectItem>
+                    <SelectItem value="1">1 - "Número - Parcela/Total"</SelectItem>
+                    <SelectItem value="2">2 - "Número - Parcela"</SelectItem>
+                    <SelectItem value="3">3 - "Somente Número"</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -284,7 +284,22 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
             {dadosContrato.mascara && (
               <div className="bg-blue-50 p-3 rounded-md">
                 <p className="text-sm text-blue-700">
-                  <strong>Exemplo:</strong> {dadosContrato.numeroTitulo || 'xxxxx'} - 1/3
+                  <strong>Exemplo:</strong> {(() => {
+                    const numeroTitulo = dadosContrato.numeroTitulo || 'T001';
+                    const parcela = 1;
+                    const totalParcelas = dadosContrato.numParcela || 10;
+                    
+                    switch(dadosContrato.mascara) {
+                      case "1":
+                        return `${numeroTitulo} - ${parcela}/${totalParcelas}`;
+                      case "2":
+                        return `${numeroTitulo} - ${parcela}`;
+                      case "3":
+                        return numeroTitulo;
+                      default:
+                        return `${numeroTitulo} - ${parcela}/${totalParcelas}`;
+                    }
+                  })()}
                 </p>
               </div>
             )}
