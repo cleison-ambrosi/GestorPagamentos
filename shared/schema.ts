@@ -68,6 +68,7 @@ export const titulo = mysqlTable("titulo", {
   idPlanoContas: bigint("id_plano_contas", { mode: "number" }).notNull(),
   descricao: text("descricao").notNull(),
   observacoes: text("observacoes"),
+  status: text("status").notNull().default("Em Aberto"), // Status: Em Aberto, Parcial, Pago, Cancelado
   cancelado: boolean("cancelado").default(false),
 });
 
@@ -215,6 +216,7 @@ export const insertTituloSchema = z.object({
   idPlanoContas: z.number(),
   descricao: z.string().min(1, "Descrição é obrigatória"),
   observacoes: z.string().optional(),
+  status: z.enum(["Em Aberto", "Parcial", "Pago", "Cancelado"]).default("Em Aberto"),
   cancelado: z.boolean().optional(),
 });
 export const insertTituloBaixaSchema = createInsertSchema(tituloBaixa);

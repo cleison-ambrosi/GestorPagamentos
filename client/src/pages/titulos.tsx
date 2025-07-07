@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Search, Edit, Trash2, Copy } from "lucide-react";
 import { fetchTitulos, fetchEmpresas } from "@/lib/api";
-import { formatCurrency } from "@/lib/format";
+import { formatCurrency, formatDate } from "@/lib/format";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import TituloModal from "@/components/titulo-modal";
@@ -146,14 +146,16 @@ export default function Titulos() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'pendente':
-        return <Badge variant="outline" className="text-orange-600 border-orange-600">Pendente</Badge>;
-      case 'pago':
+      case 'Em Aberto':
+        return <Badge variant="outline" className="text-blue-600 border-blue-600">Em Aberto</Badge>;
+      case 'Parcial':
+        return <Badge variant="outline" className="text-orange-600 border-orange-600">Parcial</Badge>;
+      case 'Pago':
         return <Badge variant="outline" className="text-green-600 border-green-600">Pago</Badge>;
-      case 'vencido':
-        return <Badge variant="outline" className="text-red-600 border-red-600">Vencido</Badge>;
+      case 'Cancelado':
+        return <Badge variant="outline" className="text-red-600 border-red-600">Cancelado</Badge>;
       default:
-        return <Badge variant="outline" className="text-slate-600 border-slate-600">Ativo</Badge>;
+        return <Badge variant="outline" className="text-slate-600 border-slate-600">Em Aberto</Badge>;
     }
   };
 
@@ -237,9 +239,9 @@ export default function Titulos() {
                   <TableCell className="font-medium">{titulo.id.toString().padStart(5, '0')}</TableCell>
                   <TableCell className="font-medium">{highlightText(titulo.numeroTitulo, searchTerm)}</TableCell>
                   <TableCell>{titulo.fornecedor ? highlightText(titulo.fornecedor, searchTerm) : '-'}</TableCell>
-                  <TableCell>{titulo.dataVencimento || '-'}</TableCell>
-                  <TableCell>{formatCurrency(titulo.valor || 0)}</TableCell>
-                  <TableCell>{getStatusBadge(titulo.status || 'ativo')}</TableCell>
+                  <TableCell>{titulo.vencimento ? formatDate(new Date(titulo.vencimento)) : '-'}</TableCell>
+                  <TableCell>{formatCurrency(parseFloat(titulo.valorTotal || '0'))}</TableCell>
+                  <TableCell>{getStatusBadge(titulo.status || 'Em Aberto')}</TableCell>
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center space-x-2">
                       <Button

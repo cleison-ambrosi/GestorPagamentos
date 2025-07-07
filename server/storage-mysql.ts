@@ -226,7 +226,24 @@ export class MySQLStorage {
 
   // Títulos
   async getAllTitulos(): Promise<Titulo[]> {
-    return await db.select().from(titulo).orderBy(desc(titulo.id));
+    return await db.select({
+      id: titulo.id,
+      idEmpresa: titulo.idEmpresa,
+      idFornecedor: titulo.idFornecedor,
+      numeroTitulo: titulo.numeroTitulo,
+      emissao: titulo.emissao,
+      vencimento: titulo.vencimento,
+      valorTotal: titulo.valorTotal,
+      saldoPagar: titulo.saldoPagar,
+      idPlanoContas: titulo.idPlanoContas,
+      descricao: titulo.descricao,
+      observacoes: titulo.observacoes,
+      status: titulo.status,
+      cancelado: titulo.cancelado,
+      fornecedor: fornecedor.nome,
+    }).from(titulo)
+      .leftJoin(fornecedor, eq(titulo.idFornecedor, fornecedor.id))
+      .orderBy(desc(titulo.id));
   }
 
   async getTitulo(id: number): Promise<Titulo | undefined> {

@@ -29,11 +29,12 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
     numeroTitulo: titulo?.numeroTitulo || "",
     emissao: titulo?.emissao ? titulo.emissao.split('T')[0] : new Date().toISOString().split('T')[0],
     vencimento: titulo?.vencimento || "",
-    valorTotal: titulo?.valorTotal?.toString() || "0.00",
-    saldoPagar: titulo?.saldoPagar?.toString() || "0.00",
+    valorTotal: titulo?.valorTotal?.toString() || "",
+    saldoPagar: titulo?.saldoPagar?.toString() || "",
     idPlanoContas: titulo?.idPlanoContas?.toString() || "",
     descricao: titulo?.descricao || "",
-    observacoes: titulo?.observacoes || ""
+    observacoes: titulo?.observacoes || "",
+    status: titulo?.status || "Em Aberto"
   });
 
   const [dadosBaixa, setDadosBaixa] = useState({
@@ -54,11 +55,12 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
         numeroTitulo: titulo.numeroTitulo || "",
         emissao: titulo.emissao ? titulo.emissao.split('T')[0] : new Date().toISOString().split('T')[0],
         vencimento: titulo.vencimento ? titulo.vencimento.split('T')[0] : "",
-        valorTotal: titulo.valorTotal?.toString() || "0.00",
-        saldoPagar: titulo.saldoPagar?.toString() || "0.00",
+        valorTotal: titulo.valorTotal?.toString() || "",
+        saldoPagar: titulo.saldoPagar?.toString() || "",
         idPlanoContas: titulo.idPlanoContas?.toString() || "",
         descricao: titulo.descricao || "",
-        observacoes: titulo.observacoes || ""
+        observacoes: titulo.observacoes || "",
+        status: titulo.status || "Em Aberto"
       });
     } else {
       // Reset form for new titulo
@@ -68,22 +70,45 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
         numeroTitulo: "",
         emissao: new Date().toISOString().split('T')[0],
         vencimento: "",
-        valorTotal: "0.00",
-        saldoPagar: "0.00",
+        valorTotal: "",
+        saldoPagar: "",
         idPlanoContas: "",
         descricao: "",
-        observacoes: ""
+        observacoes: "",
+        status: "Em Aberto"
       });
     }
   }, [titulo]);
 
   const handleSave = () => {
+    // Validação dos campos obrigatórios
+    if (!dadosTitulo.descricao.trim()) {
+      alert('Descrição é obrigatória');
+      return;
+    }
+    if (!dadosTitulo.idEmpresa) {
+      alert('Empresa é obrigatória');
+      return;
+    }
+    if (!dadosTitulo.idFornecedor) {
+      alert('Fornecedor é obrigatório');
+      return;
+    }
+    if (!dadosTitulo.valorTotal) {
+      alert('Valor Total é obrigatório');
+      return;
+    }
+    if (!dadosTitulo.vencimento) {
+      alert('Data de Vencimento é obrigatória');
+      return;
+    }
+
     // Converter string values para o formato correto do backend
     const tituloData = {
       ...dadosTitulo,
-      idEmpresa: parseInt(dadosTitulo.idEmpresa) || 1,
-      idFornecedor: parseInt(dadosTitulo.idFornecedor) || 1,
-      idPlanoContas: parseInt(dadosTitulo.idPlanoContas) || 1,
+      idEmpresa: parseInt(dadosTitulo.idEmpresa),
+      idFornecedor: parseInt(dadosTitulo.idFornecedor),
+      idPlanoContas: parseInt(dadosTitulo.idPlanoContas) || null,
       valorTotal: dadosTitulo.valorTotal.toString(),
       saldoPagar: dadosTitulo.saldoPagar.toString(),
       emissao: new Date(dadosTitulo.emissao),
@@ -96,7 +121,16 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setDadosTitulo(prev => ({ ...prev, [field]: value }));
+    setDadosTitulo(prev => {
+      const updated = { ...prev, [field]: value };
+      
+      // Auto-fill saldoPagar when valorTotal changes
+      if (field === 'valorTotal' && value && !titulo) {
+        updated.saldoPagar = value;
+      }
+      
+      return updated;
+    });
   };
 
   const handleBaixaChange = (field: string, value: string) => {
@@ -168,6 +202,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
                   type="date"
                   value={dadosTitulo.emissao}
                   onChange={(e) => handleInputChange('emissao', e.target.value)}
+                  readOnly
                 />
               </div>
 
@@ -199,7 +234,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
 
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label>Valor Total</Label>
+                <Label>Valor Total *</Label>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
                   <Input
@@ -207,6 +242,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
                     value={dadosTitulo.valorTotal}
                     onChange={(e) => handleInputChange('valorTotal', e.target.value)}
                     placeholder="0,00"
+                    required
                   />
                 </div>
               </div>
@@ -220,20 +256,22 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
                     value={dadosTitulo.saldoPagar}
                     onChange={(e) => handleInputChange('saldoPagar', e.target.value)}
                     placeholder="0,00"
+                    readOnly
                   />
                 </div>
               </div>
 
               <div>
                 <Label>Status</Label>
-                <Select defaultValue="pendente">
+                <Select value={dadosTitulo.status} onValueChange={(value) => handleInputChange('status', value)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="pendente">Pendente</SelectItem>
-                    <SelectItem value="pago">Pago</SelectItem>
-                    <SelectItem value="vencido">Vencido</SelectItem>
+                    <SelectItem value="Em Aberto">Em Aberto</SelectItem>
+                    <SelectItem value="Parcial">Parcial</SelectItem>
+                    <SelectItem value="Pago">Pago</SelectItem>
+                    <SelectItem value="Cancelado">Cancelado</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -242,11 +280,12 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
 
 
             <div>
-              <Label>Descrição</Label>
+              <Label>Descrição *</Label>
               <Input
                 value={dadosTitulo.descricao}
                 onChange={(e) => handleInputChange('descricao', e.target.value)}
                 placeholder="Descrição do título"
+                required
               />
             </div>
 
