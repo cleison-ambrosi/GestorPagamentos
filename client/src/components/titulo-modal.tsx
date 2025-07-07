@@ -210,10 +210,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
 
   const lancarBaixaMutation = useMutation({
     mutationFn: async (baixaData: any) => {
-      const response = await apiRequest("/api/titulos-baixa", {
-        method: "POST",
-        body: baixaData
-      });
+      const response = await apiRequest("/api/titulos-baixa", "POST", baixaData);
       return response;
     },
     onSuccess: () => {
