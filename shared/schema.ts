@@ -183,7 +183,9 @@ export const tagRelations = relations(tag, ({ many }) => ({
 }));
 
 // Insert schemas
-export const insertEmpresaSchema = createInsertSchema(empresa);
+export const insertEmpresaSchema = createInsertSchema(empresa).extend({
+  apelido: z.string().min(1, "Apelido é obrigatório")
+});
 export const insertFornecedorSchema = createInsertSchema(fornecedor);
 export const insertPlanoContasSchema = createInsertSchema(planoContas);
 export const insertTagSchema = createInsertSchema(tag);

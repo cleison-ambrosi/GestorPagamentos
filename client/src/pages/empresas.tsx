@@ -98,6 +98,25 @@ export default function Empresas() {
   };
 
   const handleSave = () => {
+    // Validação
+    if (!nome.trim()) {
+      toast({
+        title: "Erro",
+        description: "Nome é obrigatório",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!apelido.trim()) {
+      toast({
+        title: "Erro", 
+        description: "Apelido é obrigatório",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     const empresaData = { nome, apelido, cnpj, telefone, email };
     
     console.log("Salvando empresa:", empresaData);
@@ -239,7 +258,7 @@ export default function Empresas() {
                 </div>
 
                 <div>
-                  <Label htmlFor="apelido">Apelido</Label>
+                  <Label htmlFor="apelido">Apelido *</Label>
                   <Input
                     id="apelido"
                     value={apelido}
@@ -282,7 +301,7 @@ export default function Empresas() {
               <div className="flex justify-end pt-4">
                 <Button 
                   onClick={handleSave} 
-                  disabled={!nome.trim() || (editingEmpresa && !id.trim())}
+                  disabled={!nome.trim() || !apelido.trim() || (editingEmpresa && !id.trim())}
                   className="w-full"
                 >
                   Salvar Empresa
