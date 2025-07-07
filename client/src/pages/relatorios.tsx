@@ -10,7 +10,7 @@ import Sidebar from '@/components/sidebar';
 import { useQuery } from '@tanstack/react-query';
 
 export default function Relatorios() {
-  const [periodo, setPeriodo] = useState('vencemHoje');
+  const [periodo, setPeriodo] = useState('emAberto');
   const [pesquisa, setPesquisa] = useState('');
 
   // Buscar dados reais da API
@@ -49,7 +49,9 @@ export default function Relatorios() {
           ontem.setDate(hoje.getDate() - 1);
           return vencimento.toDateString() === ontem.toDateString();
         case 'vencemHoje':
-          return vencimento.toDateString() === hoje.toDateString();
+          const isToday = vencimento.toDateString() === hoje.toDateString();
+          console.log('Verificando vencemHoje:', vencimento.toDateString(), 'vs', hoje.toDateString(), '=', isToday);
+          return isToday;
         case 'vencemAmanha':
           return vencimento.toDateString() === amanha.toDateString();
         case 'proximos7Dias':
@@ -67,7 +69,12 @@ export default function Relatorios() {
   };
 
   // Filtrar títulos baseado no período e pesquisa
-  const titulosFiltrados = filtrarTitulosPorPeriodo(titulos, periodo).filter((titulo: any) => {
+  const titulosPorPeriodo = filtrarTitulosPorPeriodo(titulos, periodo);
+  console.log('Títulos da API:', titulos.length);
+  console.log('Período selecionado:', periodo);
+  console.log('Títulos após filtro de período:', titulosPorPeriodo.length);
+  
+  const titulosFiltrados = titulosPorPeriodo.filter((titulo: any) => {
     if (!pesquisa.trim()) return true;
     const termoPesquisa = pesquisa.toLowerCase();
     
