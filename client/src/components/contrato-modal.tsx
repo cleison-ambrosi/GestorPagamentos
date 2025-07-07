@@ -144,7 +144,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
           </TabsList>
 
           <TabsContent value="dados" className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               <div>
                 <Label>Empresa *</Label>
                 <Select value={dadosContrato.idEmpresa?.toString()} onValueChange={(value) => handleInputChange('idEmpresa', parseInt(value))}>
@@ -179,18 +179,27 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
                   )}
                 </Button>
               </div>
+
+              <div>
+                <Label>Descrição *</Label>
+                <Input
+                  value={dadosContrato.descricao}
+                  onChange={(e) => handleInputChange('descricao', e.target.value)}
+                  placeholder="Descrição do contrato"
+                />
+              </div>
+
+              <div>
+                <Label>Número do Título *</Label>
+                <Input
+                  value={dadosContrato.numeroTitulo}
+                  onChange={(e) => handleInputChange('numeroTitulo', e.target.value)}
+                  placeholder="Número do título"
+                />
+              </div>
             </div>
 
-            <div>
-              <Label>Descrição *</Label>
-              <Input
-                value={dadosContrato.descricao}
-                onChange={(e) => handleInputChange('descricao', e.target.value)}
-                placeholder="Descrição do contrato"
-              />
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               <div>
                 <Label>Valor do Contrato *</Label>
                 <div className="relative">

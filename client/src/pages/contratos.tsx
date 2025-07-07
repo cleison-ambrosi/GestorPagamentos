@@ -9,7 +9,7 @@ import { fetchContratos, fetchEmpresas } from "@/lib/api";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import ContratoModal from "@/components/contrato-modal";
+import ContratoModal from "@/components/contrato-modal-4col";
 import ConfirmDialog from "@/components/confirm-dialog";
 import Sidebar from "@/components/sidebar";
 
