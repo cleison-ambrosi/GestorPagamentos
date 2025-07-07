@@ -203,20 +203,19 @@ export default function Fornecedores() {
                   <TableHead className="font-medium text-slate-700">Nome</TableHead>
                   <TableHead className="font-medium text-slate-700">Email</TableHead>
                   <TableHead className="font-medium text-slate-700">Telefone</TableHead>
-                  <TableHead className="font-medium text-slate-700">Observações</TableHead>
                   <TableHead className="font-medium text-slate-700 text-center">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
+                    <TableCell colSpan={5} className="text-center py-8">
                       <p className="text-slate-500">Carregando...</p>
                     </TableCell>
                   </TableRow>
                 ) : filteredFornecedores.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8">
+                    <TableCell colSpan={5} className="text-center py-8">
                       <p className="text-slate-500">Nenhum fornecedor encontrado</p>
                     </TableCell>
                   </TableRow>
@@ -227,7 +226,6 @@ export default function Fornecedores() {
                       <TableCell className="font-medium">{highlightText(fornecedor.nome, searchTerm)}</TableCell>
                       <TableCell className="text-slate-600">{fornecedor.email ? highlightText(fornecedor.email, searchTerm) : '-'}</TableCell>
                       <TableCell className="text-slate-600">{fornecedor.telefone ? highlightText(fornecedor.telefone, searchTerm) : '-'}</TableCell>
-                      <TableCell className="text-slate-600">{fornecedor.observacoes ? highlightText(fornecedor.observacoes, searchTerm) : '-'}</TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center space-x-2">
                           <Button

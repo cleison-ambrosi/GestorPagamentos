@@ -10,8 +10,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { useQuery } from "@tanstack/react-query";
-import FornecedorSelect from "@/components/fornecedor-select";
+
 import PlanoContasSearchModal from "@/components/plano-contas-search-modal";
+import FornecedorSearchModal from "@/components/fornecedor-search-modal";
 
 interface TituloModalProps {
   open: boolean;
@@ -60,6 +61,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
   });
 
   const [planoContasModalOpen, setPlanoContasModalOpen] = useState(false);
+  const [fornecedorModalOpen, setFornecedorModalOpen] = useState(false);
 
   // Update form data when titulo prop changes
   useEffect(() => {
@@ -139,8 +141,8 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
     setDadosTitulo(prev => {
       const updated = { ...prev, [field]: value };
       
-      // Auto-fill saldoPagar when valorTotal changes durante inclusão
-      if (field === 'valorTotal' && value && !titulo) {
+      // Auto-fill saldoPagar when valorTotal changes se status = em aberto (1)
+      if (field === 'valorTotal' && value && (updated.status === "1" || updated.status === 1)) {
         updated.saldoPagar = value;
       }
       
@@ -192,12 +194,20 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
 
               <div>
                 <Label>Fornecedor *</Label>
-                <FornecedorSelect
-                  fornecedores={fornecedores}
-                  value={dadosTitulo.idFornecedor}
-                  onValueChange={(value) => handleInputChange('idFornecedor', value)}
-                  placeholder="Selecionar fornecedor"
-                />
+                <Button
+                  variant="outline"
+                  className="w-full justify-start h-10 px-3 text-left font-normal"
+                  onClick={() => setFornecedorModalOpen(true)}
+                >
+                  {dadosTitulo.idFornecedor ? (
+                    (() => {
+                      const forn = fornecedores.find(f => f.id.toString() === dadosTitulo.idFornecedor);
+                      return forn ? forn.nome : "Selecionar fornecedor";
+                    })()
+                  ) : (
+                    "Selecionar fornecedor"
+                  )}
+                </Button>
               </div>
 
               <div>
@@ -275,7 +285,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
                     value={dadosTitulo.saldoPagar}
                     onChange={(e) => handleInputChange('saldoPagar', e.target.value)}
                     placeholder="0,00"
-                    readOnly={!!titulo}
+                    readOnly={titulo && dadosTitulo.status !== "1"}
                   />
                 </div>
               </div>
@@ -439,6 +449,17 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
         planoContas={planoContas}
         onSelect={(conta) => handleInputChange('idPlanoContas', conta.id.toString())}
         selectedId={dadosTitulo.idPlanoContas}
+      />
+      
+      <FornecedorSearchModal
+        open={fornecedorModalOpen}
+        onOpenChange={setFornecedorModalOpen}
+        fornecedores={fornecedores}
+        onSelect={(fornecedor) => {
+          handleInputChange('idFornecedor', fornecedor.id.toString());
+          setFornecedorModalOpen(false);
+        }}
+        selectedId={dadosTitulo.idFornecedor}
       />
     </Dialog>
   );
