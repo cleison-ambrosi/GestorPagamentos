@@ -224,7 +224,7 @@ export default function Titulos() {
                 </div>
               </div>
               <div className="md:col-span-1">
-                <div className="bg-slate-50 rounded-lg p-3 border"></div>
+                <div className="bg-slate-50 rounded-lg p-3 border">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <div className="text-xs text-slate-600 mb-1">Títulos:</div>
