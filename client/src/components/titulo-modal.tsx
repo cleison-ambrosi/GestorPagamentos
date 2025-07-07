@@ -130,6 +130,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
       saldoPagar: dadosTitulo.saldoPagar.toString(),
       emissao: new Date(dadosTitulo.emissao),
       vencimento: new Date(dadosTitulo.vencimento),
+      status: parseInt(dadosTitulo.status)
     };
     
     console.log('Dados formatados para envio:', tituloData);

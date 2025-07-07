@@ -215,7 +215,7 @@ export const insertTituloSchema = z.object({
   idPlanoContas: z.number(),
   descricao: z.string().min(1, "Descrição é obrigatória"),
   observacoes: z.string().optional(),
-  status: z.number().min(1).max(4).optional().default(1), // 1=Em Aberto, 2=Parcial, 3=Pago, 4=Cancelado
+  status: z.union([z.number().min(1).max(4), z.string().transform((val) => parseInt(val))]).optional().default(1), // 1=Em Aberto, 2=Parcial, 3=Pago, 4=Cancelado
 });
 export const insertTituloBaixaSchema = createInsertSchema(tituloBaixa);
 export const insertConfiguracaoSchema = createInsertSchema(configuracao);

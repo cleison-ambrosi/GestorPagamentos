@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { Plus, Search, Edit, Trash2, Copy } from "lucide-react";
 import { fetchContratos, fetchEmpresas } from "@/lib/api";
 import { formatCurrency, formatDate } from "@/lib/format";
@@ -209,10 +210,10 @@ export default function Contratos() {
                 <TableHead className="font-medium text-slate-700">ID</TableHead>
                 <TableHead className="font-medium text-slate-700">Número</TableHead>
                 <TableHead className="font-medium text-slate-700">Descrição</TableHead>
-                <TableHead className="font-medium text-slate-700">Fornecedor</TableHead>
                 <TableHead className="font-medium text-slate-700">Nº Parcelas</TableHead>
                 <TableHead className="font-medium text-slate-700">Valor Parcela</TableHead>
                 <TableHead className="font-medium text-slate-700">Valor Contrato</TableHead>
+                <TableHead className="font-medium text-slate-700">Status</TableHead>
                 <TableHead className="font-medium text-slate-700 text-center">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -221,11 +222,23 @@ export default function Contratos() {
                 <TableRow key={contrato.id} className="hover:bg-slate-50">
                   <TableCell className="font-medium">{contrato.id.toString().padStart(5, '0')}</TableCell>
                   <TableCell className="font-medium">{highlightText(contrato.numeroTitulo || '-', searchTerm)}</TableCell>
-                  <TableCell>{contrato.descricao ? highlightText(contrato.descricao, searchTerm) : '-'}</TableCell>
-                  <TableCell>{contrato.fornecedor ? highlightText(contrato.fornecedor, searchTerm) : '-'}</TableCell>
+                  <TableCell>
+                    <div>
+                      <div>{contrato.descricao ? highlightText(contrato.descricao, searchTerm) : '-'}</div>
+                      <div className="text-sm text-slate-500">
+                        {contrato.fornecedor ? highlightText(contrato.fornecedor, searchTerm) : '-'}
+                      </div>
+                    </div>
+                  </TableCell>
                   <TableCell>{contrato.numParcela || '-'}</TableCell>
                   <TableCell>{formatCurrency(contrato.valorParcela || 0)}</TableCell>
                   <TableCell>{formatCurrency(contrato.valorContrato || 0)}</TableCell>
+                  <TableCell>
+                    <Badge variant={contrato.status ? "default" : "secondary"} 
+                           className={contrato.status ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>
+                      {contrato.status ? "Ativo" : "Inativo"}
+                    </Badge>
+                  </TableCell>
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center space-x-2">
                       <Button

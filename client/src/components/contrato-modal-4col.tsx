@@ -173,17 +173,8 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
               </div>
             </div>
 
-            {/* Linha 2: Número do Título, Valor do Contrato, Valor da Parcela, Número de Parcelas */}
+            {/* Linha 2: Valor do Contrato, Valor da Parcela, Número de Parcelas, Número do Título */}
             <div className="grid grid-cols-4 gap-4">
-              <div>
-                <Label>Número do Título *</Label>
-                <Input
-                  value={dadosContrato.numeroTitulo}
-                  onChange={(e) => handleInputChange('numeroTitulo', e.target.value)}
-                  placeholder="Número do título"
-                />
-              </div>
-
               <div>
                 <Label>Valor do Contrato *</Label>
                 <div className="relative">
@@ -218,6 +209,15 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
                   placeholder="12"
                 />
               </div>
+
+              <div>
+                <Label>Número do Título *</Label>
+                <Input
+                  value={dadosContrato.numeroTitulo}
+                  onChange={(e) => handleInputChange('numeroTitulo', e.target.value)}
+                  placeholder="Número do título"
+                />
+              </div>
             </div>
 
             {/* Linha 3: Data de Início, Dia do Vencimento, Iniciar na Parcela, Máscara */}
@@ -249,46 +249,47 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
                 />
               </div>
 
-              <div>
-                <Label>Máscara *</Label>
-                <Select value={dadosContrato.mascara} onValueChange={(value) => handleInputChange('mascara', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecionar máscara" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1">1 - "Número - Parcela/Total"</SelectItem>
-                    <SelectItem value="2">2 - "Número - Parcela"</SelectItem>
-                    <SelectItem value="3">3 - "Somente Número"</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Linha 4: Exemplo da máscara ao lado da máscara e Status */}
-            <div className="grid grid-cols-4 gap-4">
               <div className="col-span-2">
-                {dadosContrato.mascara && (
-                  <div className="bg-blue-50 p-3 rounded-md">
-                    <p className="text-sm text-blue-700">
-                      <strong>Exemplo:</strong> {(() => {
-                        const numeroTitulo = dadosContrato.numeroTitulo || 'T001';
-                        const parcela = 1;
-                        const totalParcelas = dadosContrato.numParcela || 10;
-                        
-                        switch(dadosContrato.mascara) {
-                          case "1":
-                            return `${numeroTitulo} - ${parcela}/${totalParcelas}`;
-                          case "2":
-                            return `${numeroTitulo} - ${parcela}`;
-                          case "3":
-                            return numeroTitulo;
-                          default:
-                            return `${numeroTitulo} - ${parcela}/${totalParcelas}`;
-                        }
-                      })()}
-                    </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Máscara *</Label>
+                    <Select value={dadosContrato.mascara} onValueChange={(value) => handleInputChange('mascara', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecionar máscara" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1">1 - "Número - Parcela/Total"</SelectItem>
+                        <SelectItem value="2">2 - "Número - Parcela"</SelectItem>
+                        <SelectItem value="3">3 - "Somente Número"</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                )}
+                  
+                  <div>
+                    {dadosContrato.mascara && (
+                      <div className="bg-blue-50 p-3 rounded-md mt-6">
+                        <p className="text-sm text-blue-700">
+                          <strong>Exemplo:</strong> {(() => {
+                            const numeroTitulo = dadosContrato.numeroTitulo || 'T001';
+                            const parcela = 1;
+                            const totalParcelas = dadosContrato.numParcela || 10;
+                            
+                            switch(dadosContrato.mascara) {
+                              case "1":
+                                return `${numeroTitulo} - ${parcela}/${totalParcelas}`;
+                              case "2":
+                                return `${numeroTitulo} - ${parcela}`;
+                              case "3":
+                                return numeroTitulo;
+                              default:
+                                return `${numeroTitulo} - ${parcela}/${totalParcelas}`;
+                            }
+                          })()}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               <div>
@@ -305,7 +306,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
               </div>
             </div>
 
-            {/* Linha 5: Plano de Contas, Observações */}
+            {/* Linha 4: Plano de Contas, Observações */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Plano de Contas</Label>
