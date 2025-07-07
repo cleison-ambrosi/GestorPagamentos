@@ -86,7 +86,7 @@ export default function Contratos() {
 
 
   const handleSave = (data: any) => {
-    if (editingContrato) {
+    if (editingContrato && editingContrato.id) {
       updateContratoMutation.mutate({ id: editingContrato.id, data });
     } else {
       createContratoMutation.mutate(data);
