@@ -210,8 +210,9 @@ export default function Contratos() {
                 <TableHead className="font-medium text-slate-700">Número</TableHead>
                 <TableHead className="font-medium text-slate-700">Descrição</TableHead>
                 <TableHead className="font-medium text-slate-700">Fornecedor</TableHead>
-                <TableHead className="font-medium text-slate-700">Valor</TableHead>
-                <TableHead className="font-medium text-slate-700">Data Início</TableHead>
+                <TableHead className="font-medium text-slate-700">Nº Parcelas</TableHead>
+                <TableHead className="font-medium text-slate-700">Valor Parcela</TableHead>
+                <TableHead className="font-medium text-slate-700">Valor Contrato</TableHead>
                 <TableHead className="font-medium text-slate-700 text-center">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -219,11 +220,12 @@ export default function Contratos() {
               {filteredContratos.map((contrato: any) => (
                 <TableRow key={contrato.id} className="hover:bg-slate-50">
                   <TableCell className="font-medium">{contrato.id.toString().padStart(5, '0')}</TableCell>
-                  <TableCell className="font-medium">{highlightText(contrato.numero, searchTerm)}</TableCell>
+                  <TableCell className="font-medium">{highlightText(contrato.numeroTitulo || '-', searchTerm)}</TableCell>
                   <TableCell>{contrato.descricao ? highlightText(contrato.descricao, searchTerm) : '-'}</TableCell>
                   <TableCell>{contrato.fornecedor ? highlightText(contrato.fornecedor, searchTerm) : '-'}</TableCell>
-                  <TableCell>{formatCurrency(contrato.valor || 0)}</TableCell>
-                  <TableCell>{formatDate(contrato.dataInicio) || '-'}</TableCell>
+                  <TableCell>{contrato.numParcela || '-'}</TableCell>
+                  <TableCell>{formatCurrency(contrato.valorParcela || 0)}</TableCell>
+                  <TableCell>{formatCurrency(contrato.valorContrato || 0)}</TableCell>
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center space-x-2">
                       <Button

@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { fetchEmpresas, fetchFornecedores, fetchPlanoContas } from "@/lib/api";
 import FornecedorSelect from "@/components/fornecedor-select";
 import PlanoContasSearchModal from "@/components/plano-contas-search-modal";
+import FornecedorSearchModal from "@/components/fornecedor-search-modal";
 
 interface ContratoModalProps {
   open: boolean;
@@ -47,11 +48,12 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
     numeroTitulo: contrato?.numeroTitulo || "",
     tipoMascara: contrato?.tipoMascara || "",
     idPlanoContas: contrato?.idPlanoContas || null,
-    status: contrato?.status || true,
+    status: contrato?.status !== undefined ? contrato.status : true,
     observacoes: contrato?.observacoes || ""
   });
 
   const [planoContasModalOpen, setPlanoContasModalOpen] = useState(false);
+  const [fornecedorModalOpen, setFornecedorModalOpen] = useState(false);
 
   // Update form data when contrato prop changes
   useEffect(() => {
@@ -69,7 +71,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
         numeroTitulo: contrato.numeroTitulo || "",
         tipoMascara: contrato.tipoMascara || "",
         idPlanoContas: contrato.idPlanoContas || null,
-        status: contrato.status !== undefined ? contrato.status : true,
+        status: true, // Status sempre inicia como ativo
         observacoes: contrato.observacoes || ""
       });
     } else {
@@ -161,12 +163,21 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
 
               <div>
                 <Label>Fornecedor *</Label>
-                <FornecedorSelect
-                  fornecedores={fornecedores}
-                  value={dadosContrato.idFornecedor?.toString() || ""}
-                  onValueChange={(value) => handleInputChange('idFornecedor', parseInt(value))}
-                  placeholder="Selecionar fornecedor"
-                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full justify-start text-left font-normal"
+                  onClick={() => setFornecedorModalOpen(true)}
+                >
+                  {dadosContrato.idFornecedor ? (
+                    (() => {
+                      const fornecedor = fornecedores.find(f => f.id === dadosContrato.idFornecedor);
+                      return fornecedor ? fornecedor.nome : "Selecionar fornecedor";
+                    })()
+                  ) : (
+                    "Selecionar fornecedor"
+                  )}
+                </Button>
               </div>
             </div>
 
@@ -256,7 +267,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
               </div>
 
               <div>
-                <Label>Tipo de Máscara *</Label>
+                <Label>Máscara *</Label>
                 <Select value={dadosContrato.tipoMascara} onValueChange={(value) => handleInputChange('tipoMascara', value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar máscara" />
@@ -264,6 +275,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
                   <SelectContent>
                     <SelectItem value="titulo-parcela">Título - 99/99 - Título + parcela/total</SelectItem>
                     <SelectItem value="sequencial">Sequencial - 001, 002, 003...</SelectItem>
+                    <SelectItem value="alfanumerico">Alfanumérico - ABC001, ABC002...</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -371,6 +383,14 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
         planoContas={planoContas}
         onSelect={(conta) => handleInputChange('idPlanoContas', conta.id)}
         selectedId={dadosContrato.idPlanoContas?.toString()}
+      />
+      
+      <FornecedorSearchModal
+        open={fornecedorModalOpen}
+        onOpenChange={setFornecedorModalOpen}
+        fornecedores={fornecedores}
+        onSelect={(fornecedor) => handleInputChange('idFornecedor', fornecedor.id)}
+        selectedId={dadosContrato.idFornecedor?.toString()}
       />
     </Dialog>
   );

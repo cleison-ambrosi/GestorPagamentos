@@ -201,7 +201,32 @@ export class MySQLStorage implements IStorage {
 
   // Contratos
   async getAllContratos(): Promise<Contrato[]> {
-    return await db.select().from(contrato).orderBy(desc(contrato.id));
+    const result = await db
+      .select({
+        id: contrato.id,
+        idEmpresa: contrato.idEmpresa,
+        idFornecedor: contrato.idFornecedor,
+        idPlanoContas: contrato.idPlanoContas,
+        descricao: contrato.descricao,
+        valorContrato: contrato.valorContrato,
+        valorParcela: contrato.valorParcela,
+        numParcela: contrato.numParcela,
+        dataInicio: contrato.dataInicio,
+        diaVencimento: contrato.diaVencimento,
+        parcelaInicial: contrato.parcelaInicial,
+        numeroTitulo: contrato.numeroTitulo,
+        tipoMascara: contrato.tipoMascara,
+        status: contrato.status,
+        observacoes: contrato.observacoes,
+        empresa: empresa.nome,
+        fornecedor: fornecedor.nome,
+      })
+      .from(contrato)
+      .leftJoin(empresa, eq(contrato.idEmpresa, empresa.id))
+      .leftJoin(fornecedor, eq(contrato.idFornecedor, fornecedor.id))
+      .orderBy(desc(contrato.id));
+    
+    return result as any[];
   }
 
   async getContrato(id: number): Promise<Contrato | undefined> {
