@@ -126,7 +126,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
           </TabsList>
 
           <TabsContent value="dados" className="space-y-4">
-            {/* Linha 1: Empresa, Fornecedor, Descrição, Número do Título */}
+            {/* Linha 1: Empresa, Fornecedor, Descrição (2 colunas) */}
             <div className="grid grid-cols-4 gap-4">
               <div>
                 <Label>Empresa *</Label>
@@ -163,7 +163,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
                 </Button>
               </div>
 
-              <div>
+              <div className="col-span-2">
                 <Label>Descrição *</Label>
                 <Input
                   value={dadosContrato.descricao}
@@ -171,7 +171,10 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
                   placeholder="Descrição do contrato"
                 />
               </div>
+            </div>
 
+            {/* Linha 2: Número do Título, Valor do Contrato, Valor da Parcela, Número de Parcelas */}
+            <div className="grid grid-cols-4 gap-4">
               <div>
                 <Label>Número do Título *</Label>
                 <Input
@@ -180,10 +183,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
                   placeholder="Número do título"
                 />
               </div>
-            </div>
 
-            {/* Linha 2: Valor do Contrato, Valor da Parcela, Número de Parcelas, Data de Início */}
-            <div className="grid grid-cols-4 gap-4">
               <div>
                 <Label>Valor do Contrato *</Label>
                 <div className="relative">
@@ -218,7 +218,10 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
                   placeholder="12"
                 />
               </div>
+            </div>
 
+            {/* Linha 3: Data de Início, Dia do Vencimento, Iniciar na Parcela, Máscara */}
+            <div className="grid grid-cols-4 gap-4">
               <div>
                 <Label>Data de Início *</Label>
                 <Input
@@ -227,10 +230,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
                   onChange={(e) => handleInputChange('dataInicio', e.target.value)}
                 />
               </div>
-            </div>
 
-            {/* Linha 3: Dia do Vencimento, Iniciar na Parcela, Máscara, Status */}
-            <div className="grid grid-cols-4 gap-4">
               <div>
                 <Label>Dia do Vencimento *</Label>
                 <Input
@@ -262,6 +262,34 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            {/* Linha 4: Exemplo da máscara ao lado da máscara e Status */}
+            <div className="grid grid-cols-4 gap-4">
+              <div className="col-span-2">
+                {dadosContrato.mascara && (
+                  <div className="bg-blue-50 p-3 rounded-md">
+                    <p className="text-sm text-blue-700">
+                      <strong>Exemplo:</strong> {(() => {
+                        const numeroTitulo = dadosContrato.numeroTitulo || 'T001';
+                        const parcela = 1;
+                        const totalParcelas = dadosContrato.numParcela || 10;
+                        
+                        switch(dadosContrato.mascara) {
+                          case "1":
+                            return `${numeroTitulo} - ${parcela}/${totalParcelas}`;
+                          case "2":
+                            return `${numeroTitulo} - ${parcela}`;
+                          case "3":
+                            return numeroTitulo;
+                          default:
+                            return `${numeroTitulo} - ${parcela}/${totalParcelas}`;
+                        }
+                      })()}
+                    </p>
+                  </div>
+                )}
+              </div>
 
               <div>
                 <Label>Status</Label>
@@ -277,7 +305,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
               </div>
             </div>
 
-            {/* Linha 4: Plano de Contas, Observações */}
+            {/* Linha 5: Plano de Contas, Observações */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Plano de Contas</Label>
@@ -307,30 +335,6 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
                 />
               </div>
             </div>
-
-            {/* Exemplo da máscara */}
-            {dadosContrato.mascara && (
-              <div className="bg-blue-50 p-3 rounded-md">
-                <p className="text-sm text-blue-700">
-                  <strong>Exemplo:</strong> {(() => {
-                    const numeroTitulo = dadosContrato.numeroTitulo || 'T001';
-                    const parcela = 1;
-                    const totalParcelas = dadosContrato.numParcela || 10;
-                    
-                    switch(dadosContrato.mascara) {
-                      case "1":
-                        return `${numeroTitulo} - ${parcela}/${totalParcelas}`;
-                      case "2":
-                        return `${numeroTitulo} - ${parcela}`;
-                      case "3":
-                        return numeroTitulo;
-                      default:
-                        return `${numeroTitulo} - ${parcela}/${totalParcelas}`;
-                    }
-                  })()}
-                </p>
-              </div>
-            )}
           </TabsContent>
 
           <TabsContent value="titulos" className="space-y-4">
