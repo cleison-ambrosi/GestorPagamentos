@@ -19,7 +19,7 @@ export default function Dashboard() {
     return (
       <div className="flex min-h-screen">
         <Sidebar />
-        <main className="flex-1 ml-64">
+        <main className="flex-1 ml-48">
           <header className="bg-white shadow-sm border-b border-slate-200 px-8 py-4">
             <div>
               <h2 className="text-2xl font-bold text-slate-800">Dashboard</h2>
@@ -47,7 +47,7 @@ export default function Dashboard() {
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
-      <main className="flex-1 ml-64">
+      <main className="flex-1 ml-48">
         <header className="bg-white shadow-sm border-b border-slate-200 px-8 py-4">
           <div>
             <h2 className="text-2xl font-bold text-slate-800">Dashboard</h2>

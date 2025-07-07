@@ -147,7 +147,7 @@ export default function Contratos() {
   return (
     <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
-      <main className="flex-1 ml-64">
+      <main className="flex-1 ml-48">
         {/* Header Panel */}
         <div className="bg-white border-b border-slate-200 p-6 pl-[32px] pr-[32px] pt-[16px] pb-[16px]">
           <div className="flex items-center justify-between">
