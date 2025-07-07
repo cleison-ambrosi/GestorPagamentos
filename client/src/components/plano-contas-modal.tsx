@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { PlanoContas } from "@shared/schema";
+import PlanoContasSearchModal from "@/components/plano-contas-search-modal";
 
 interface PlanoContasModalProps {
   open: boolean;
@@ -18,6 +18,7 @@ export default function PlanoContasModal({ open, onOpenChange, conta, onSave }: 
   const [codigo, setCodigo] = useState("");
   const [nome, setNome] = useState("");
   const [contaPai, setContaPai] = useState("");
+  const [contaPaiModalOpen, setContaPaiModalOpen] = useState(false);
 
   const { data: planoContas } = useQuery<PlanoContas[]>({
     queryKey: ["/api/plano-contas"],
@@ -49,8 +50,17 @@ export default function PlanoContasModal({ open, onOpenChange, conta, onSave }: 
     onOpenChange(false);
   };
 
+  const handleContaPaiSelect = (contaSelecionada: any) => {
+    if (contaSelecionada.id === "") {
+      setContaPai("");
+    } else {
+      setContaPai(contaSelecionada.id.toString());
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
@@ -82,20 +92,22 @@ export default function PlanoContasModal({ open, onOpenChange, conta, onSave }: 
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="contaPai">Conta Pai</Label>
-            <Select value={contaPai} onValueChange={setContaPai}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione uma conta pai (opcional)" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="0">Nenhuma (Conta raiz)</SelectItem>
-                {planoContas?.map((c) => (
-                  <SelectItem key={c.id} value={c.id.toString()}>
-                    {c.codigo} - {c.nome}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label>Conta Pai</Label>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full justify-start text-left font-normal"
+              onClick={() => setContaPaiModalOpen(true)}
+            >
+              {contaPai ? (
+                (() => {
+                  const conta = planoContas?.find(c => c.id === parseInt(contaPai));
+                  return conta ? `${conta.codigo} - ${conta.nome}` : "Selecionar conta pai";
+                })()
+              ) : (
+                "Selecionar conta pai (opcional)"
+              )}
+            </Button>
           </div>
           <div className="flex justify-end space-x-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
@@ -108,5 +120,14 @@ export default function PlanoContasModal({ open, onOpenChange, conta, onSave }: 
         </form>
       </DialogContent>
     </Dialog>
+
+    <PlanoContasSearchModal
+      open={contaPaiModalOpen}
+      onOpenChange={setContaPaiModalOpen}
+      planoContas={planoContas || []}
+      onSelect={handleContaPaiSelect}
+      selectedId={contaPai}
+    />
+    </>
   );
 }

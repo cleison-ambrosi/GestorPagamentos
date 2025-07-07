@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Check } from "lucide-react";
 
 interface PlanoContasSearchModalProps {
@@ -22,106 +22,101 @@ export default function PlanoContasSearchModal({
   selectedId,
   initialSearch = ""
 }: PlanoContasSearchModalProps) {
-  const [searchTerm, setSearchTerm] = useState(initialSearch);
+  const [search, setSearch] = useState(initialSearch);
   const [filteredPlanoContas, setFilteredPlanoContas] = useState(planoContas);
 
   useEffect(() => {
-    if (open) {
-      setSearchTerm(initialSearch);
-    }
-  }, [open, initialSearch]);
-
-  useEffect(() => {
-    if (!searchTerm.trim()) {
+    if (search.trim() === "") {
       setFilteredPlanoContas(planoContas);
     } else {
       const filtered = planoContas.filter(conta =>
-        conta.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        conta.codigo.toLowerCase().includes(searchTerm.toLowerCase())
+        conta.nome.toLowerCase().includes(search.toLowerCase()) ||
+        conta.codigo.toLowerCase().includes(search.toLowerCase())
       );
       setFilteredPlanoContas(filtered);
     }
-  }, [searchTerm, planoContas]);
+  }, [search, planoContas]);
+
+  useEffect(() => {
+    if (open) {
+      setSearch(initialSearch);
+    }
+  }, [open, initialSearch]);
 
   const handleSelect = (conta: any) => {
     onSelect(conta);
     onOpenChange(false);
   };
 
-  const highlightText = (text: string, searchTerm: string) => {
-    if (!searchTerm.trim()) return text;
-    
-    const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
-    return parts.map((part, index) =>
-      part.toLowerCase() === searchTerm.toLowerCase() ? (
-        <span key={index} className="bg-yellow-200 font-medium">
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
+  const handleClear = () => {
+    onSelect({ id: "", nome: "", codigo: "" });
+    onOpenChange(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden">
+      <DialogContent className="max-w-4xl max-h-[80vh]">
         <DialogHeader>
-          <DialogTitle>Selecionar Plano de Contas</DialogTitle>
+          <DialogTitle>Selecionar Conta Pai</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Pesquisar por nome ou código..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-              autoFocus
-            />
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Pesquisar por nome ou código..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-10"
+                autoFocus
+              />
+            </div>
+            <Button variant="outline" onClick={handleClear}>
+              Limpar Seleção
+            </Button>
           </div>
 
           <div className="border rounded-md max-h-96 overflow-y-auto">
-            <div className="space-y-1 p-2">
-              {filteredPlanoContas.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  Nenhum plano de contas encontrado
-                </div>
-              ) : (
-                filteredPlanoContas.map((conta) => (
-                  <button
-                    key={conta.id}
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-16">Sel.</TableHead>
+                  <TableHead className="w-24">ID</TableHead>
+                  <TableHead className="w-32">Código</TableHead>
+                  <TableHead>Nome</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredPlanoContas.map((conta) => (
+                  <TableRow 
+                    key={conta.id} 
+                    className="cursor-pointer hover:bg-slate-50"
                     onClick={() => handleSelect(conta)}
-                    className={`w-full text-left p-3 rounded-md border transition-colors hover:bg-gray-50 ${
-                      selectedId === conta.id.toString() ? 'bg-blue-50 border-blue-200' : 'border-gray-200'
-                    }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-900">
-                          {highlightText(conta.codigo, searchTerm)} - {highlightText(conta.nome, searchTerm)}
-                        </div>
-                        {conta.descricao && (
-                          <div className="text-sm text-gray-500 mt-1">
-                            {highlightText(conta.descricao, searchTerm)}
-                          </div>
-                        )}
-                      </div>
+                    <TableCell className="text-center">
                       {selectedId === conta.id.toString() && (
-                        <Check className="h-5 w-5 text-blue-600" />
+                        <Check className="h-4 w-4 text-green-600 mx-auto" />
                       )}
-                    </div>
-                  </button>
-                ))
-              )}
-            </div>
-          </div>
-
-          <div className="flex justify-end space-x-2">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Cancelar
-            </Button>
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {String(conta.id).padStart(2, '0')}
+                    </TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {conta.codigo}
+                    </TableCell>
+                    <TableCell>{conta.nome}</TableCell>
+                  </TableRow>
+                ))}
+                {filteredPlanoContas.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center text-gray-500 py-8">
+                      Nenhuma conta encontrada
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
           </div>
         </div>
       </DialogContent>
