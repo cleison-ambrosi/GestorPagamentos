@@ -26,20 +26,18 @@ export default function FornecedorSelect({
   const selectedFornecedor = fornecedores.find(f => f.id.toString() === value);
 
   return (
-    <div className="flex gap-2">
-      <div className="relative flex-1">
-        <Search className="absolute left-2 top-2.5 h-4 w-4 text-slate-400" />
+    <div className="relative">
+      <div className="flex items-center gap-2 p-2 border rounded-md bg-white">
+        <Search className="h-4 w-4 text-slate-400 flex-shrink-0" />
         <Input
-          placeholder="Buscar fornecedor..."
+          placeholder="Buscar e selecionar fornecedor..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-8"
+          className="border-0 p-0 h-auto bg-transparent focus-visible:ring-0 flex-1"
         />
-      </div>
-      <div className="flex-1">
         <Select value={value} onValueChange={onValueChange}>
-          <SelectTrigger>
-            <SelectValue placeholder={placeholder} />
+          <SelectTrigger className="w-auto border-0 h-auto p-0 bg-transparent focus:ring-0">
+            <ChevronDown className="h-4 w-4 text-slate-400" />
           </SelectTrigger>
           <SelectContent className="max-h-64">
             {filteredFornecedores.length === 0 ? (
@@ -56,6 +54,11 @@ export default function FornecedorSelect({
           </SelectContent>
         </Select>
       </div>
+      {selectedFornecedor && (
+        <div className="mt-1 text-sm text-slate-600">
+          Selecionado: {selectedFornecedor.nome}
+        </div>
+      )}
     </div>
   );
 }
