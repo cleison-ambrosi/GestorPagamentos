@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Check } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ interface FornecedorSearchModalProps {
   fornecedores: any[];
   onSelect: (fornecedor: any) => void;
   selectedId?: string;
+  initialSearch?: string;
 }
 
 export default function FornecedorSearchModal({
@@ -22,9 +24,17 @@ export default function FornecedorSearchModal({
   onOpenChange,
   fornecedores,
   onSelect,
-  selectedId
+  selectedId,
+  initialSearch = ""
 }: FornecedorSearchModalProps) {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(initialSearch);
+
+  // Update search when modal opens with initial search value
+  useEffect(() => {
+    if (open) {
+      setSearchTerm(initialSearch);
+    }
+  }, [open, initialSearch]);
 
   const filteredFornecedores = fornecedores.filter(fornecedor =>
     fornecedor.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -41,6 +51,9 @@ export default function FornecedorSearchModal({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Pesquisar Fornecedor</DialogTitle>
+          <DialogDescription>
+            Digite para pesquisar e selecionar um fornecedor pelo nome ou email.
+          </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">

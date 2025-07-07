@@ -42,6 +42,13 @@ export default function FornecedorSelect({
     setInputValue("");
   };
 
+  const handleModalClose = (open: boolean) => {
+    setModalOpen(open);
+    if (!open) {
+      setInputValue("");
+    }
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex gap-2">
@@ -51,7 +58,10 @@ export default function FornecedorSelect({
             value={inputValue}
             onChange={handleInputChange}
             onFocus={handleInputFocus}
-            className="pr-10"
+            className={`pr-10 ${selectedFornecedor 
+              ? 'text-black placeholder:text-black' 
+              : 'text-slate-500 placeholder:text-slate-500'
+            }`}
             readOnly={false}
           />
           <Button
@@ -68,10 +78,11 @@ export default function FornecedorSelect({
 
       <FornecedorSearchModal
         open={modalOpen}
-        onOpenChange={setModalOpen}
+        onOpenChange={handleModalClose}
         fornecedores={fornecedores}
         onSelect={handleFornecedorSelect}
         selectedId={value}
+        initialSearch={inputValue}
       />
     </div>
   );
