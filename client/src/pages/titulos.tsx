@@ -230,10 +230,9 @@ export default function Titulos() {
             <Table>
               <TableHeader>
               <TableRow className="bg-slate-50">
-                <TableHead className="font-medium text-slate-700">ID</TableHead>
+                <TableHead className="font-medium text-slate-700">Vencimento</TableHead>
                 <TableHead className="font-medium text-slate-700">Número do Título</TableHead>
                 <TableHead className="font-medium text-slate-700">Fornecedor</TableHead>
-                <TableHead className="font-medium text-slate-700">Vencimento</TableHead>
                 <TableHead className="font-medium text-slate-700">Valor</TableHead>
                 <TableHead className="font-medium text-slate-700">Status</TableHead>
                 <TableHead className="font-medium text-slate-700 text-center">Ações</TableHead>
@@ -242,10 +241,9 @@ export default function Titulos() {
             <TableBody>
               {filteredTitulos.map((titulo: any) => (
                 <TableRow key={titulo.id} className="hover:bg-slate-50 cursor-pointer" onClick={() => handleEdit(titulo)}>
-                  <TableCell className="font-medium">{titulo.id.toString().padStart(5, '0')}</TableCell>
+                  <TableCell>{titulo.vencimento ? formatDate(new Date(titulo.vencimento)) : '-'}</TableCell>
                   <TableCell className="font-medium">{highlightText(titulo.numeroTitulo, searchTerm)}</TableCell>
                   <TableCell>{titulo.fornecedor ? highlightText(titulo.fornecedor, searchTerm) : '-'}</TableCell>
-                  <TableCell>{titulo.vencimento ? formatDate(new Date(titulo.vencimento)) : '-'}</TableCell>
                   <TableCell>{formatCurrency(parseFloat(titulo.valorTotal || '0'))}</TableCell>
                   <TableCell>{getStatusBadge(titulo.status || 'Em Aberto')}</TableCell>
                   <TableCell className="text-center">
