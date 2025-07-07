@@ -177,7 +177,7 @@ export default function Fornecedores() {
                   <TableHead className="font-medium text-slate-700">Email</TableHead>
                   <TableHead className="font-medium text-slate-700">Telefone</TableHead>
                   <TableHead className="font-medium text-slate-700">Observações</TableHead>
-                  <TableHead className="font-medium text-slate-700">Ações</TableHead>
+                  <TableHead className="font-medium text-slate-700 text-center">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

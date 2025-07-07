@@ -142,7 +142,7 @@ export default function PlanoContas() {
                 <TableHead className="font-medium text-slate-700">Código</TableHead>
                 <TableHead className="font-medium text-slate-700">Nome</TableHead>
                 <TableHead className="font-medium text-slate-700">Conta Pai</TableHead>
-                <TableHead className="font-medium text-slate-700">Ações</TableHead>
+                <TableHead className="font-medium text-slate-700 text-center">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -151,7 +151,12 @@ export default function PlanoContas() {
                   <TableCell className="font-medium">{conta.id.toString().padStart(5, '0')}</TableCell>
                   <TableCell className="font-medium">{conta.codigo}</TableCell>
                   <TableCell>{conta.nome}</TableCell>
-                  <TableCell>{conta.contaPai || '-'}</TableCell>
+                  <TableCell>
+                    {conta.idContaPai ? 
+                      planoContas.find(p => p.id === conta.idContaPai)?.nome || `ID: ${conta.idContaPai}` 
+                      : '-'
+                    }
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
                       <Button

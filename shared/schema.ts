@@ -212,7 +212,7 @@ export const insertTituloSchema = z.object({
   valorTotal: z.string(),
   saldoPagar: z.string(),
   idPlanoContas: z.number(),
-  descricao: z.string(),
+  descricao: z.string().min(1, "Descrição é obrigatória"),
   observacoes: z.string().optional(),
   cancelado: z.boolean().optional(),
 });
