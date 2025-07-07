@@ -319,11 +319,25 @@ export class MySQLStorage {
   }
 
   async updateEmpresaContratos(idEmpresa: number): Promise<void> {
-    // Implementação específica se necessário
+    // Verificar se já existe configuração
+    const existing = await this.getConfiguracao();
+    
+    if (existing) {
+      await this.updateConfiguracao(existing.id, { idEmpresaContratos: idEmpresa });
+    } else {
+      await this.createConfiguracao({ idEmpresaContratos: idEmpresa });
+    }
   }
 
   async updateEmpresaTitulos(idEmpresa: number): Promise<void> {
-    // Implementação específica se necessário
+    // Verificar se já existe configuração
+    const existing = await this.getConfiguracao();
+    
+    if (existing) {
+      await this.updateConfiguracao(existing.id, { idEmpresaTitulos: idEmpresa });
+    } else {
+      await this.createConfiguracao({ idEmpresaTitulos: idEmpresa });
+    }
   }
 }
 
