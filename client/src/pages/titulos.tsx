@@ -144,15 +144,16 @@ export default function Titulos() {
     );
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'Em Aberto':
+  const getStatusBadge = (status: string | number) => {
+    const numStatus = typeof status === 'string' ? parseInt(status) : status;
+    switch (numStatus) {
+      case 1:
         return <Badge variant="outline" className="text-blue-600 border-blue-600">Em Aberto</Badge>;
-      case 'Parcial':
+      case 2:
         return <Badge variant="outline" className="text-orange-600 border-orange-600">Parcial</Badge>;
-      case 'Pago':
+      case 3:
         return <Badge variant="outline" className="text-green-600 border-green-600">Pago</Badge>;
-      case 'Cancelado':
+      case 4:
         return <Badge variant="outline" className="text-red-600 border-red-600">Cancelado</Badge>;
       default:
         return <Badge variant="outline" className="text-slate-600 border-slate-600">Em Aberto</Badge>;
@@ -172,7 +173,12 @@ export default function Titulos() {
             </div>
             <div className="flex items-center space-x-4">
               <Button 
-                onClick={() => { setEditingTitulo(null); setModalOpen(true); }}
+                onClick={() => { 
+                  // Auto-popular empresa se há filtro ativo
+                  const novoTitulo = empresaFilter !== "all" ? { idEmpresa: parseInt(empresaFilter) } : null;
+                  setEditingTitulo(novoTitulo); 
+                  setModalOpen(true); 
+                }}
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 <Plus className="h-4 w-4 mr-2" />

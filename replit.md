@@ -142,6 +142,16 @@ Changelog:
   * Fixed foreign key constraint errors by ensuring proper data mapping between frontend and database
   * System now successfully creates títulos with proper validation and data persistence
   * Reverted company selection persistence feature due to configuration API issues
+- July 07, 2025. Status system overhaul and database fixes:
+  * Converted títulos status field from string enum to numeric values (1-4: Em Aberto, Parcial, Pago, Cancelado)
+  * Removed "cancelado" boolean field from títulos schema as status now handles this state
+  * Updated storage layer to use new numeric status filtering (status != 4 for non-cancelled titles)
+  * Made status field readonly in título modal with automatic text conversion display
+  * Fixed MySQL storage implementation to properly implement IStorage interface
+  * Simplified dashboard getDashboardData method temporarily to resolve connection issues
+  * Updated título badge display system to work with numeric status values
+  * Implemented company filter auto-population in título creation modal when filter is active
+  * Fixed all database queries to use new status system instead of removed cancelado field
 
 ## User Preferences
 

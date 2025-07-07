@@ -23,6 +23,18 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
   const { data: empresas = [] } = useQuery({ queryKey: ["/api/empresas"] });
   const { data: fornecedores = [] } = useQuery({ queryKey: ["/api/fornecedores"] });
   const { data: planoContas = [] } = useQuery({ queryKey: ["/api/plano-contas"] });
+
+  // Função para converter status numérico para texto
+  const getStatusLabel = (status: string | number) => {
+    const numStatus = typeof status === 'string' ? parseInt(status) : status;
+    switch (numStatus) {
+      case 1: return 'Em Aberto';
+      case 2: return 'Parcial';
+      case 3: return 'Pago';
+      case 4: return 'Cancelado';
+      default: return 'Em Aberto';
+    }
+  };
   const [dadosTitulo, setDadosTitulo] = useState({
     idEmpresa: titulo?.idEmpresa?.toString() || "",
     idFornecedor: titulo?.idFornecedor?.toString() || "",
@@ -34,7 +46,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
     idPlanoContas: titulo?.idPlanoContas?.toString() || "",
     descricao: titulo?.descricao || "",
     observacoes: titulo?.observacoes || "",
-    status: titulo?.status || "Em Aberto"
+    status: titulo?.status || "1"
   });
 
   const [dadosBaixa, setDadosBaixa] = useState({
@@ -60,7 +72,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
         idPlanoContas: titulo.idPlanoContas?.toString() || "",
         descricao: titulo.descricao || "",
         observacoes: titulo.observacoes || "",
-        status: titulo.status || "Em Aberto"
+        status: titulo.status || "1"
       });
     } else {
       // Reset form for new titulo
@@ -75,7 +87,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
         idPlanoContas: "",
         descricao: "",
         observacoes: "",
-        status: "Em Aberto"
+        status: "1"
       });
     }
   }, [titulo]);
@@ -263,17 +275,11 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave }: Titu
 
               <div>
                 <Label>Status</Label>
-                <Select value={dadosTitulo.status} onValueChange={(value) => handleInputChange('status', value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Em Aberto">Em Aberto</SelectItem>
-                    <SelectItem value="Parcial">Parcial</SelectItem>
-                    <SelectItem value="Pago">Pago</SelectItem>
-                    <SelectItem value="Cancelado">Cancelado</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Input
+                  value={getStatusLabel(dadosTitulo.status)}
+                  readOnly
+                  className="bg-gray-50"
+                />
               </div>
             </div>
 

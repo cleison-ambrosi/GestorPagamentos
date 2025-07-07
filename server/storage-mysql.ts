@@ -1,4 +1,4 @@
-import { eq, asc, desc, sql } from "drizzle-orm";
+import { eq, asc, desc, sql, and, ne, gte, lte } from "drizzle-orm";
 import { db } from "./db";
 import {
   Empresa,
@@ -27,8 +27,10 @@ import {
   configuracao,
 } from "@shared/schema";
 
+import { IStorage } from "./storage";
+
 // Simple MySQL storage implementation
-export class MySQLStorage {
+export class MySQLStorage implements IStorage {
   // Empresas
   async getAllEmpresas(): Promise<Empresa[]> {
     return await db.select().from(empresa).orderBy(asc(empresa.nome));
@@ -239,7 +241,6 @@ export class MySQLStorage {
       descricao: titulo.descricao,
       observacoes: titulo.observacoes,
       status: titulo.status,
-      cancelado: titulo.cancelado,
       fornecedor: fornecedor.nome,
     }).from(titulo)
       .leftJoin(fornecedor, eq(titulo.idFornecedor, fornecedor.id))
@@ -295,24 +296,15 @@ export class MySQLStorage {
     await db.delete(tituloBaixa).where(eq(tituloBaixa.id, id));
   }
 
-  // Dashboard específico
+  // Dashboard específico - implementação temporária
   async getDashboardData() {
-    const today = new Date().toISOString().split('T')[0];
-    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-
     return {
       titulosHoje: 0,
       valorAtraso: 0,
       vencimentosHoje: 0,
       vencimentosAmanha: 0,
       proximosVencimentos: [],
-      resumoEmpresas: await db.select({
-        id: empresa.id,
-        nome: empresa.nome,
-        emAtraso: sql<number>`0`,
-        venceHoje: sql<number>`0`,
-        proximoVencimento: sql<number>`0`,
-      }).from(empresa),
+      resumoEmpresas: []
     };
   }
 

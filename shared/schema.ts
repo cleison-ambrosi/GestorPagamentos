@@ -51,7 +51,7 @@ export const contrato = mysqlTable("contrato", {
   diaVencimento: bigint("dia_vencimento", { mode: "number" }),
   parcelaInicial: bigint("parcela_inicial", { mode: "number" }),
   numeroTitulo: text("numero_titulo"),
-  tipoMascara: bigint("tipo_mascara", { mode: "number" }),
+  mascara: int("mascara"), // 1="Número do Título - Parcela/Total", 2="Número do Título - Parcela", 3="Somente Número do Título"
   status: boolean("status"),
   observacoes: text("observacoes"),
 });
@@ -68,8 +68,7 @@ export const titulo = mysqlTable("titulo", {
   idPlanoContas: bigint("id_plano_contas", { mode: "number" }).notNull(),
   descricao: text("descricao").notNull(),
   observacoes: text("observacoes"),
-  status: text("status").notNull().default("Em Aberto"), // Status: Em Aberto, Parcial, Pago, Cancelado
-  cancelado: boolean("cancelado").default(false),
+  status: int("status").notNull().default(1), // 1=Em Aberto, 2=Parcial, 3=Pago, 4=Cancelado
 });
 
 export const tituloBaixa = mysqlTable("titulo_baixa", {
@@ -201,7 +200,7 @@ export const insertContratoSchema = z.object({
   parcelaInicial: z.number(),
   dataInicio: z.string().transform((val) => new Date(val)),
   numeroTitulo: z.string(),
-  tipoMascara: z.number(),
+  mascara: z.number().min(1).max(3).optional(), // 1="Número do Título - Parcela/Total", 2="Número do Título - Parcela", 3="Somente Número do Título"
   status: z.boolean(),
   observacoes: z.string().optional()
 });
@@ -216,8 +215,7 @@ export const insertTituloSchema = z.object({
   idPlanoContas: z.number(),
   descricao: z.string().min(1, "Descrição é obrigatória"),
   observacoes: z.string().optional(),
-  status: z.enum(["Em Aberto", "Parcial", "Pago", "Cancelado"]).default("Em Aberto"),
-  cancelado: z.boolean().optional(),
+  status: z.number().min(1).max(4).optional().default(1), // 1=Em Aberto, 2=Parcial, 3=Pago, 4=Cancelado
 });
 export const insertTituloBaixaSchema = createInsertSchema(tituloBaixa);
 export const insertConfiguracaoSchema = createInsertSchema(configuracao);
