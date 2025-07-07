@@ -175,16 +175,9 @@ export default function Relatorios() {
 
           {/* Seção de Resultados */}
           <div className="bg-white rounded-lg border border-slate-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-slate-600" />
-                <h3 className="text-lg font-medium text-slate-800">Resultados</h3>
-                <span className="text-sm text-slate-500">({titulosFiltrados.length} títulos)</span>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-slate-600">Total Geral</p>
-                <p className="text-lg font-semibold text-slate-800">{formatarMoeda(totalGeral)}</p>
-              </div>
+            <div className="flex items-center gap-2 mb-4">
+              <FileText className="h-5 w-5 text-slate-600" />
+              <h3 className="text-lg font-medium text-slate-800">Resultados</h3>
             </div>
             
             <div className="overflow-x-auto">
@@ -266,6 +259,21 @@ export default function Relatorios() {
                 </div>
               )}
             </div>
+            
+            {/* Total Geral no Final */}
+            {titulosFiltrados.length > 0 && (
+              <div className="border-t border-slate-200 pt-4 mt-6">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-slate-600">
+                    Total de {titulosFiltrados.length} título{titulosFiltrados.length !== 1 ? 's' : ''}
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-slate-600">Total Geral</p>
+                    <p className="text-xl font-bold text-slate-800">{formatarMoeda(totalGeral)}</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </main>
