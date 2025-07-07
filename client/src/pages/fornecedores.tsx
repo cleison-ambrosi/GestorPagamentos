@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Bell, User, Edit, Trash2, Search } from "lucide-react";
+import { Plus, Bell, User, Edit, Trash2, Search, Copy } from "lucide-react";
 import { useState } from "react";
 import ConfirmDialog from "@/components/confirm-dialog";
 
@@ -128,6 +128,15 @@ export default function Fornecedores() {
     setModalOpen(true);
   };
 
+  const handleDuplicate = (fornecedor: any) => {
+    setEditingFornecedor(null);
+    setNome(fornecedor.nome + " (Cópia)");
+    setEmail(fornecedor.email || "");
+    setTelefone(fornecedor.telefone || "");
+    setObservacoes(fornecedor.observacoes || "");
+    setModalOpen(true);
+  };
+
   const filteredFornecedores = fornecedores?.filter((fornecedor: any) =>
     fornecedor.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
     fornecedor.email?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -210,6 +219,14 @@ export default function Fornecedores() {
                             className="h-8 w-8 p-0 hover:bg-slate-100"
                           >
                             <Edit className="h-4 w-4 text-slate-600" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDuplicate(fornecedor)}
+                            className="h-8 w-8 p-0 hover:bg-slate-100"
+                          >
+                            <Copy className="h-4 w-4 text-slate-600" />
                           </Button>
                           <Button
                             variant="ghost"

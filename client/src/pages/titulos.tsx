@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,20 +26,8 @@ export default function Titulos() {
     queryFn: fetchEmpresas,
   });
 
-  const { data: configuracao } = useQuery({
-    queryKey: ["/api/configuracao"],
-    queryFn: () => apiRequest("/api/configuracao"),
-  });
-
   const [searchTerm, setSearchTerm] = useState("");
   const [empresaFilter, setEmpresaFilter] = useState("all");
-
-  // Load saved empresa filter on component mount
-  useEffect(() => {
-    if (configuracao?.idEmpresaTitulos) {
-      setEmpresaFilter(configuracao.idEmpresaTitulos.toString());
-    }
-  }, [configuracao]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingTitulo, setEditingTitulo] = useState<any>(null);
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -87,13 +75,7 @@ export default function Titulos() {
     }
   });
 
-  const saveEmpresaFilterMutation = useMutation({
-    mutationFn: (idEmpresa: number) => 
-      apiRequest("/api/configuracao/empresa-titulos", "POST", { idEmpresa }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/configuracao"] });
-    },
-  });
+
 
   const handleSave = (data: any) => {
     if (editingTitulo) {
@@ -186,12 +168,7 @@ export default function Titulos() {
                 <label className="block text-sm font-medium text-slate-700 mb-2">
                   Empresa
                 </label>
-                <Select value={empresaFilter} onValueChange={(value) => {
-                  setEmpresaFilter(value);
-                  if (value !== "all") {
-                    saveEmpresaFilterMutation.mutate(parseInt(value));
-                  }
-                }}>
+                <Select value={empresaFilter} onValueChange={setEmpresaFilter}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecionar empresa" />
                   </SelectTrigger>
