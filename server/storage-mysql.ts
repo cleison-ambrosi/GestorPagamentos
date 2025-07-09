@@ -349,7 +349,16 @@ export class MySQLStorage implements IStorage {
   }
 
   async updateTituloBaixa(id: number, data: Partial<InsertTituloBaixa>): Promise<TituloBaixa> {
+    // Get the current baixa to know which título to update
+    const [currentBaixa] = await db.select().from(tituloBaixa).where(eq(tituloBaixa.id, id));
+    
+    // Update the baixa
     await db.update(tituloBaixa).set(data).where(eq(tituloBaixa.id, id));
+    
+    // Update the título's balance after the baixa change
+    await this.updateTituloAfterBaixa(currentBaixa.idTitulo);
+    
+    // Return the updated baixa
     const [result] = await db.select().from(tituloBaixa).where(eq(tituloBaixa.id, id));
     return result;
   }

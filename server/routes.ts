@@ -425,6 +425,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/titulos-baixa/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      console.log('Atualizando título baixa ID:', id, 'com dados:', req.body);
+      const data = insertTituloBaixaSchema.partial().parse(req.body);
+      const tituloBaixa = await storage.updateTituloBaixa(id, data);
+      console.log('Título baixa atualizado:', tituloBaixa);
+      res.json(tituloBaixa);
+    } catch (error) {
+      console.error('Erro ao atualizar título baixa:', error);
+      res.status(400).json({ error: "Dados inválidos" });
+    }
+  });
+
   // Configurações
   app.get("/api/configuracao", async (req, res) => {
     try {
