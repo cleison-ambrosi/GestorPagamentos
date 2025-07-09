@@ -580,20 +580,27 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
 
                 <div>
                   <h3 className="text-lg font-semibold mb-4">Histórico de Baixas</h3>
-                  {titulosBaixa.filter((baixa: any) => baixa.idTitulo === titulo?.id && !baixa.cancelado).length > 0 ? (
+                  {titulosBaixa.filter((baixa: any) => baixa.idTitulo === titulo?.id).length > 0 ? (
                     <div className="space-y-2">
                       {titulosBaixa
-                        .filter((baixa: any) => baixa.idTitulo === titulo?.id && !baixa.cancelado)
+                        .filter((baixa: any) => baixa.idTitulo === titulo?.id)
                         .map((baixa: any) => (
-                          <div key={baixa.id} className="p-3 bg-gray-50 rounded-lg">
+                          <div key={baixa.id} className={`p-3 rounded-lg ${baixa.cancelado ? 'bg-red-50' : 'bg-gray-50'}`}>
                             <div className="flex justify-between items-center">
                               <div>
-                                <p className="font-medium">
-                                  {formatDate(new Date(baixa.dataBaixa))} às {new Date(baixa.dataBaixa).toLocaleTimeString('pt-BR', {
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                  })}
-                                </p>
+                                <div className="flex items-center space-x-2">
+                                  <p className="font-medium">
+                                    {formatDate(new Date(baixa.dataBaixa))} às {new Date(baixa.dataBaixa).toLocaleTimeString('pt-BR', {
+                                      hour: '2-digit',
+                                      minute: '2-digit'
+                                    })}
+                                  </p>
+                                  {baixa.cancelado && (
+                                    <Badge variant="destructive" className="text-xs">
+                                      CANCELADA
+                                    </Badge>
+                                  )}
+                                </div>
                                 <p className="text-sm text-gray-600">
                                   Baixa: {formatCurrency(parseFloat(baixa.valorBaixa || '0'))}
                                 </p>
@@ -603,7 +610,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                               </div>
                               <div className="text-right flex items-center space-x-2">
                                 <div>
-                                  <p className="font-semibold text-green-600">
+                                  <p className={`font-semibold ${baixa.cancelado ? 'text-red-600 line-through' : 'text-green-600'}`}>
                                     {formatCurrency(parseFloat(baixa.valorPago || '0'))}
                                   </p>
                                   {(parseFloat(baixa.juros || '0') > 0 || parseFloat(baixa.desconto || '0') > 0) && (
@@ -613,16 +620,18 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                                     </p>
                                   )}
                                 </div>
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => cancelarBaixaMutation.mutate(baixa.id)}
-                                  disabled={cancelarBaixaMutation.isPending}
-                                  className="h-8 w-8 p-0 hover:bg-red-100"
-                                  title="Cancelar baixa"
-                                >
-                                  <X className="h-4 w-4 text-red-600" />
-                                </Button>
+                                {!baixa.cancelado && (
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => cancelarBaixaMutation.mutate(baixa.id)}
+                                    disabled={cancelarBaixaMutation.isPending}
+                                    className="h-8 w-8 p-0 hover:bg-red-100"
+                                    title="Cancelar baixa"
+                                  >
+                                    <X className="h-4 w-4 text-red-600" />
+                                  </Button>
+                                )}
                               </div>
                             </div>
                           </div>
