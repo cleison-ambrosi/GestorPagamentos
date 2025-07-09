@@ -126,10 +126,10 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
       const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
       setDadosBaixa({
         dataBaixa: localDateTime,
-        valorBaixa: saldoAtual,
+        valorBaixa: titulo.saldoPagar || "",
         juros: "0,00",
         desconto: "0,00",
-        valorPago: saldoAtual,
+        valorPago: titulo.saldoPagar || "",
         observacao: ""
       });
     } else {
@@ -471,11 +471,15 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <div>
                   <p className="text-sm text-gray-600">Saldo Atual</p>
-                  <p className="text-2xl font-bold text-blue-600">R$ {dadosTitulo.saldoPagar || '34.444,00'}</p>
+                  <p className="text-2xl font-bold text-blue-600">
+                    {titulo ? formatCurrency(parseFloat(titulo.saldoPagar || '0')) : 'R$ 0,00'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Valor Original</p>
-                  <p className="text-2xl font-bold text-gray-700">R$ {dadosTitulo.valorTotal || '34.444,00'}</p>
+                  <p className="text-2xl font-bold text-gray-700">
+                    {titulo ? formatCurrency(parseFloat(titulo.valorTotal || '0')) : 'R$ 0,00'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Total Pago</p>
@@ -569,11 +573,11 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
 
                     <Button 
                       onClick={lancarBaixa} 
-                      disabled={lancarBaixaMutation.isPending || parseFloat(dadosTitulo.saldoPagar?.replace(',', '.') || '0') === 0}
+                      disabled={lancarBaixaMutation.isPending || parseFloat(titulo?.saldoPagar?.replace(',', '.') || '0') === 0}
                       className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
                     >
                       {lancarBaixaMutation.isPending ? "Lançando..." : 
-                       parseFloat(dadosTitulo.saldoPagar?.replace(',', '.') || '0') === 0 ? "Título Liquidado" : "Lançar Baixa"}
+                       parseFloat(titulo?.saldoPagar?.replace(',', '.') || '0') === 0 ? "Título Liquidado" : "Lançar Baixa"}
                     </Button>
                   </div>
                 </div>
