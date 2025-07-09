@@ -12,6 +12,7 @@ import { formatCurrency, formatDate } from "@/lib/format";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { X } from "lucide-react";
 
 import PlanoContasSearchModal from "@/components/plano-contas-search-modal";
 import FornecedorSearchModal from "@/components/fornecedor-search-modal";
@@ -240,6 +241,28 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
     }
   });
 
+  const cancelarBaixaMutation = useMutation({
+    mutationFn: async (baixaId: number) => {
+      const response = await apiRequest(`/api/titulos-baixa/${baixaId}`, "PUT", { cancelado: true });
+      return response;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Baixa cancelada com sucesso",
+        description: "O valor foi devolvido ao saldo do título.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/titulos"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/titulos-baixa"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao cancelar baixa",
+        description: "Ocorreu um erro ao cancelar o pagamento.",
+        variant: "destructive",
+      });
+    }
+  });
+
   const lancarBaixa = async () => {
     if (!titulo?.id) {
       toast({
@@ -458,7 +481,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                   <p className="text-sm text-gray-600">Total Pago</p>
                   <p className="text-2xl font-bold text-green-600">
                     {(() => {
-                      const baixasDoTitulo = titulosBaixa.filter((baixa: any) => baixa.idTitulo === titulo?.id);
+                      const baixasDoTitulo = titulosBaixa.filter((baixa: any) => baixa.idTitulo === titulo?.id && !baixa.cancelado);
                       const totalPago = baixasDoTitulo.reduce((sum: number, baixa: any) => {
                         return sum + parseFloat(baixa.valorPago || '0');
                       }, 0);
@@ -546,20 +569,21 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
 
                     <Button 
                       onClick={lancarBaixa} 
-                      disabled={lancarBaixaMutation.isPending}
+                      disabled={lancarBaixaMutation.isPending || parseFloat(dadosTitulo.saldoPagar?.replace(',', '.') || '0') === 0}
                       className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
                     >
-                      {lancarBaixaMutation.isPending ? "Lançando..." : "Lançar Baixa"}
+                      {lancarBaixaMutation.isPending ? "Lançando..." : 
+                       parseFloat(dadosTitulo.saldoPagar?.replace(',', '.') || '0') === 0 ? "Título Liquidado" : "Lançar Baixa"}
                     </Button>
                   </div>
                 </div>
 
                 <div>
                   <h3 className="text-lg font-semibold mb-4">Histórico de Baixas</h3>
-                  {titulosBaixa.filter((baixa: any) => baixa.idTitulo === titulo?.id).length > 0 ? (
+                  {titulosBaixa.filter((baixa: any) => baixa.idTitulo === titulo?.id && !baixa.cancelado).length > 0 ? (
                     <div className="space-y-2">
                       {titulosBaixa
-                        .filter((baixa: any) => baixa.idTitulo === titulo?.id)
+                        .filter((baixa: any) => baixa.idTitulo === titulo?.id && !baixa.cancelado)
                         .map((baixa: any) => (
                           <div key={baixa.id} className="p-3 bg-gray-50 rounded-lg">
                             <div className="flex justify-between items-center">
@@ -577,16 +601,28 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                                   <p className="text-sm text-gray-500">{baixa.observacao}</p>
                                 )}
                               </div>
-                              <div className="text-right">
-                                <p className="font-semibold text-green-600">
-                                  {formatCurrency(parseFloat(baixa.valorPago || '0'))}
-                                </p>
-                                {(parseFloat(baixa.juros || '0') > 0 || parseFloat(baixa.desconto || '0') > 0) && (
-                                  <p className="text-xs text-gray-500">
-                                    {parseFloat(baixa.juros || '0') > 0 && `+${formatCurrency(parseFloat(baixa.juros))}`}
-                                    {parseFloat(baixa.desconto || '0') > 0 && ` -${formatCurrency(parseFloat(baixa.desconto))}`}
+                              <div className="text-right flex items-center space-x-2">
+                                <div>
+                                  <p className="font-semibold text-green-600">
+                                    {formatCurrency(parseFloat(baixa.valorPago || '0'))}
                                   </p>
-                                )}
+                                  {(parseFloat(baixa.juros || '0') > 0 || parseFloat(baixa.desconto || '0') > 0) && (
+                                    <p className="text-xs text-gray-500">
+                                      {parseFloat(baixa.juros || '0') > 0 && `+${formatCurrency(parseFloat(baixa.juros))}`}
+                                      {parseFloat(baixa.desconto || '0') > 0 && ` -${formatCurrency(parseFloat(baixa.desconto))}`}
+                                    </p>
+                                  )}
+                                </div>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => cancelarBaixaMutation.mutate(baixa.id)}
+                                  disabled={cancelarBaixaMutation.isPending}
+                                  className="h-8 w-8 p-0 hover:bg-red-100"
+                                  title="Cancelar baixa"
+                                >
+                                  <X className="h-4 w-4 text-red-600" />
+                                </Button>
                               </div>
                             </div>
                           </div>
