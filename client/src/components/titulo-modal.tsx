@@ -223,13 +223,16 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
       const response = await apiRequest("/api/titulos-baixa", "POST", baixaData);
       return response;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast({
         title: "Baixa lançada com sucesso",
         description: "O pagamento foi registrado corretamente.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/titulos"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/titulos-baixa"] });
+      // Invalidate and refetch queries to get updated data immediately
+      await queryClient.invalidateQueries({ queryKey: ["/api/titulos"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/titulos-baixa"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/titulos"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/titulos-baixa"] });
       onOpenChange(false);
     },
     onError: (error) => {
@@ -246,13 +249,16 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
       const response = await apiRequest(`/api/titulos-baixa/${baixaId}`, "PUT", { cancelado: true });
       return response;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast({
         title: "Baixa cancelada com sucesso",
         description: "O valor foi devolvido ao saldo do título.",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/titulos"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/titulos-baixa"] });
+      // Invalidate and refetch queries to get updated data immediately
+      await queryClient.invalidateQueries({ queryKey: ["/api/titulos"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/titulos-baixa"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/titulos"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/titulos-baixa"] });
     },
     onError: (error) => {
       toast({

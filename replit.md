@@ -160,6 +160,17 @@ Changelog:
   * Removed individual vencimento column since data is now grouped by date
   * Enhanced visual hierarchy with date headers and improved spacing
   * Fixed default filter to show "Em Aberto" titles instead of restrictive date filters
+- July 09, 2025. Payment system with timestamp and cancellation features:
+  * Updated payment date field to capture full datetime instead of just date
+  * Enhanced payment history to display date and time together (e.g., "07/01/2025 às 14:30")
+  * Implemented automatic payment calculation: valor pago = valor baixa + juros - desconto
+  * Added payment cancellation system with "cancelado" field in titulo_baixa table
+  * Payment cancellation marks records as cancelled while keeping them in history
+  * Cancelled payments display with red background, "CANCELADA" badge, and struck-through values
+  * Balance calculations properly exclude cancelled payments and restore values to título saldo
+  * "Lançar Baixa" button disables when saldo=0 and shows "Título Liquidado" caption
+  * Fixed real-time balance updates when payments are created or cancelled
+  * Enhanced query invalidation to ensure immediate UI updates after payment operations
 
 ## User Preferences
 
