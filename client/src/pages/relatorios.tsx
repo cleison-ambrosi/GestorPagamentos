@@ -1,15 +1,12 @@
 import { useState } from 'react';
-import { Download, Filter, Search, FileText } from 'lucide-react';
+import { Download, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Sidebar from '@/components/sidebar';
 import { useQuery } from '@tanstack/react-query';
 
 export default function Relatorios() {
-  const [periodo, setPeriodo] = useState('emAberto');
-  const [pesquisa, setPesquisa] = useState('');
+  const periodo = 'emAberto';
+  const pesquisa = '';
 
   // Buscar dados reais da API
   const { data: titulos = [] } = useQuery({
@@ -131,48 +128,6 @@ export default function Relatorios() {
         </div>
 
         <div className="p-8">
-          {/* Seção de Filtros */}
-          <div className="bg-white rounded-lg border border-slate-200 p-6 mb-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Filter className="h-5 w-5 text-slate-600" />
-              <h3 className="text-lg font-medium text-slate-800">Filtros</h3>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="md:col-span-1">
-                <Label className="text-sm font-medium text-slate-700 mb-2 block">Período</Label>
-                <Select value={periodo} onValueChange={setPeriodo}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione o período" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="todosVencidos">Todos os Vencidos</SelectItem>
-                    <SelectItem value="vencidosOntem">Vencidos Ontem</SelectItem>
-                    <SelectItem value="vencemHoje">Vencem Hoje</SelectItem>
-                    <SelectItem value="vencemAmanha">Vencem Amanhã</SelectItem>
-                    <SelectItem value="proximos7Dias">Próximos 7 dias</SelectItem>
-                    <SelectItem value="ateFinalMes">Até final do mês</SelectItem>
-                    <SelectItem value="emAberto">Em Aberto</SelectItem>
-                    <SelectItem value="pagos">Pagos</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="md:col-span-3">
-                <Label className="text-sm font-medium text-slate-700 mb-2 block">Pesquisar</Label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
-                  <Input
-                    placeholder="Pesquisar por título, empresa, fornecedor ou valor..."
-                    value={pesquisa}
-                    onChange={(e) => setPesquisa(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Seção de Resultados */}
           <div className="bg-white rounded-lg border border-slate-200 p-6">
             <div className="flex items-center gap-2 mb-4">
