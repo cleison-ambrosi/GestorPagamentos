@@ -71,8 +71,9 @@ export default function Sidebar() {
       </nav>
       
       {/* Bottom navigation items */}
-      <div className="border-t border-slate-200">
+      <div className="border-t border-slate-200 bg-red-100">
         <div className="space-y-1 px-3 py-3">
+          <div className="text-xs text-red-500">DEBUG: Bottom section</div>
           {bottomItems.map((item) => {
             const Icon = item.icon;
             const isActive = location === item.href;
@@ -82,7 +83,7 @@ export default function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center space-x-3 px-3 py-2 rounded-md text-sm transition-colors",
+                  "flex items-center space-x-3 px-3 py-2 rounded-md text-sm transition-colors bg-yellow-100",
                   isActive 
                     ? "bg-blue-500 text-white" 
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
