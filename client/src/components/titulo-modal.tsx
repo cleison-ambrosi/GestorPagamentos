@@ -395,6 +395,10 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
     lancarBaixaMutation.mutate(baixaData);
   };
 
+  // Check if title has zero balance (can only edit observations)
+  const hasZeroBalance = currentTitulo && parseFloat(currentTitulo.saldoPagar || '0') === 0;
+  const isReadOnly = titulo?.status === 4 || hasZeroBalance;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -414,7 +418,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <Label>Empresa *</Label>
-                <Select value={dadosTitulo.idEmpresa} onValueChange={(value) => handleInputChange('idEmpresa', value)}>
+                <Select value={dadosTitulo.idEmpresa} onValueChange={(value) => handleInputChange('idEmpresa', value)} disabled={isReadOnly}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar empresa" />
                   </SelectTrigger>
@@ -433,7 +437,8 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                 <Button
                   variant="outline"
                   className="w-full justify-start h-10 px-3 text-left font-normal"
-                  onClick={() => setFornecedorModalOpen(true)}
+                  onClick={() => !isReadOnly && setFornecedorModalOpen(true)}
+                  disabled={isReadOnly}
                 >
                   {dadosTitulo.idFornecedor ? (
                     (() => {
@@ -452,6 +457,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                   value={dadosTitulo.numeroTitulo}
                   onChange={(e) => handleInputChange('numeroTitulo', e.target.value)}
                   placeholder="Número do título"
+                  readOnly={isReadOnly}
                 />
               </div>
             </div>
@@ -473,6 +479,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                   type="date"
                   value={dadosTitulo.vencimento}
                   onChange={(e) => handleInputChange('vencimento', e.target.value)}
+                  readOnly={isReadOnly}
                 />
               </div>
 
@@ -482,7 +489,8 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                   type="button"
                   variant="outline"
                   className="w-full justify-start text-left font-normal"
-                  onClick={() => setPlanoContasModalOpen(true)}
+                  onClick={() => !isReadOnly && setPlanoContasModalOpen(true)}
+                  disabled={isReadOnly}
                 >
                   {dadosTitulo.idPlanoContas ? (
                     (() => {
@@ -507,7 +515,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                     onChange={(e) => handleInputChange('valorTotal', e.target.value)}
                     placeholder="0,00"
                     required
-                    readOnly={titulo && dadosTitulo.status !== "1"}
+                    readOnly={isReadOnly || (titulo && dadosTitulo.status !== "1")}
                   />
                 </div>
               </div>
@@ -521,7 +529,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                     value={dadosTitulo.saldoPagar}
                     onChange={(e) => handleInputChange('saldoPagar', e.target.value)}
                     placeholder="0,00"
-                    readOnly={titulo && dadosTitulo.status !== "1"}
+                    readOnly={isReadOnly || (titulo && dadosTitulo.status !== "1")}
                   />
                 </div>
               </div>
@@ -545,6 +553,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                 onChange={(e) => handleInputChange('descricao', e.target.value)}
                 placeholder="Descrição do título"
                 required
+                readOnly={isReadOnly}
               />
             </div>
 
@@ -758,7 +767,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
               Cancelar
             </Button>
             <Button onClick={handleSave} disabled={titulo?.status === 4}>
-              {titulo?.status === 4 ? "Título Cancelado" : "Salvar"}
+              {titulo?.status === 4 ? "Título Cancelado" : hasZeroBalance ? "Salvar (Apenas Observações)" : "Salvar"}
             </Button>
           </div>
         )}
