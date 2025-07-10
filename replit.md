@@ -192,6 +192,13 @@ Changelog:
   * Implemented real-time synchronization between baixas tab and dados tab button state
   * For títulos with zero balance, only "Cancelar" button remains visible in dados tab
   * System maintains proper business logic preventing modifications when title is fully paid
+- July 10, 2025. Filtering tabs and business rules improvements:
+  * Added 8 filtering tabs to títulos page: Todos, Vencidos Ontem, Vencem Hoje, Vencem Amanhã, Próximos 7 dias, Até Final do Mês, Em Aberto, Pagos
+  * Set default view to "Vencem Hoje" for both títulos and relatórios pages
+  * Dashboard and listing totals now exclude cancelled titles (status ≠ 4) and use saldoPagar field
+  * Added "Gerar PDF" button to relatórios page alongside existing "Exportar CSV" 
+  * Fixed "Salvar" button logic to always appear during new título creation regardless of balance rules
+  * All counts and monetary calculations consistently exclude cancelled titles and reference saldoPagar field
 
 ## User Preferences
 

@@ -775,7 +775,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            {(!titulo || !hasZeroBalance) && (
+            {(!titulo || !hasZeroBalance || !titulo.id) && (
               <Button onClick={handleSave} disabled={titulo?.status === 4}>
                 {titulo?.status === 4 ? "Título Cancelado" : hasZeroBalance ? "Salvar (Apenas Observações)" : "Salvar"}
               </Button>

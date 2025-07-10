@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, Search, FileText } from 'lucide-react';
+import { Download, Search, FileText, FileDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -125,6 +125,10 @@ export default function Relatorios() {
               <Button className="bg-green-600 hover:bg-green-700">
                 <Download className="mr-2 h-4 w-4" />
                 Exportar CSV
+              </Button>
+              <Button className="bg-red-600 hover:bg-red-700">
+                <FileDown className="mr-2 h-4 w-4" />
+                Gerar PDF
               </Button>
             </div>
           </div>
