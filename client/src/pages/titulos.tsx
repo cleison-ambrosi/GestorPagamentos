@@ -261,8 +261,8 @@ export default function Titulos() {
                 <TableHead className="font-medium text-slate-700">Vencimento</TableHead>
                 <TableHead className="font-medium text-slate-700">Número Título</TableHead>
                 <TableHead className="font-medium text-slate-700">Fornecedor</TableHead>
-                <TableHead className="font-medium text-slate-700 text-right">Valor</TableHead>
-                <TableHead className="font-medium text-slate-700 text-right">Saldo</TableHead>
+                <TableHead className="font-medium text-slate-700 text-right">Valor Total</TableHead>
+                <TableHead className="font-medium text-slate-700 text-right">Saldo a Pagar</TableHead>
                 <TableHead className="font-medium text-slate-700">Status</TableHead>
                 <TableHead className="font-medium text-slate-700 text-center">Ações</TableHead>
               </TableRow>

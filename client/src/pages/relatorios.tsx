@@ -214,8 +214,8 @@ export default function Relatorios() {
                               <th className="w-32 px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Título</th>
                               <th className="w-48 px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Empresa</th>
                               <th className="w-48 px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Fornecedor</th>
-                              <th className="w-32 px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Valor</th>
-                              <th className="w-32 px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Saldo</th>
+                              <th className="w-32 px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Valor Total</th>
+                              <th className="w-32 px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Saldo a Pagar</th>
                               <th className="w-24 px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
                             </tr>
                           </thead>
@@ -229,8 +229,8 @@ export default function Relatorios() {
                                   <td className="w-32 px-4 py-4 text-sm font-medium text-slate-900 truncate">{titulo.numeroTitulo}</td>
                                   <td className="w-48 px-4 py-4 text-sm text-slate-600 truncate">{empresa?.nome || empresa?.apelido}</td>
                                   <td className="w-48 px-4 py-4 text-sm text-slate-600 truncate">{fornecedor?.nome}</td>
-                                  <td className="w-32 px-4 py-4 text-sm font-medium text-slate-900">{formatarMoeda(parseFloat(titulo.valorTotal))}</td>
-                                  <td className="w-32 px-4 py-4 text-sm font-medium text-slate-900">{formatarMoeda(parseFloat(titulo.saldoPagar || titulo.valorTotal))}</td>
+                                  <td className="w-32 px-4 py-4 text-sm font-medium text-slate-900 text-right">{formatarMoeda(parseFloat(titulo.valorTotal))}</td>
+                                  <td className="w-32 px-4 py-4 text-sm font-medium text-slate-900 text-right">{formatarMoeda(parseFloat(titulo.saldoPagar || titulo.valorTotal))}</td>
                                   <td className="w-24 px-4 py-4 text-sm">
                                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                                       titulo.status === 1 ? 'bg-yellow-100 text-yellow-800' :
