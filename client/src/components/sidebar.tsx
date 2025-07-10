@@ -45,7 +45,7 @@ export default function Sidebar() {
         </div>
       </div>
       
-      <nav className="mt-4 flex-1 overflow-y-auto">
+      <nav className="mt-4 flex-1 overflow-y-auto pb-4">
         <div className="space-y-1 px-3">
           {navigationItems.map((item) => {
             const Icon = item.icon;
@@ -70,8 +70,8 @@ export default function Sidebar() {
         </div>
       </nav>
       
-      {/* Bottom navigation items - FIXED AT BOTTOM */}
-      <div className="border-t border-slate-200 bg-red-500 min-h-[60px]">
+      {/* Bottom navigation items - ALWAYS VISIBLE */}
+      <div className="border-t border-slate-200 bg-red-500 flex-shrink-0">
         <div className="space-y-1 px-3 py-3">
           {bottomItems.map((item) => {
             const Icon = item.icon;
