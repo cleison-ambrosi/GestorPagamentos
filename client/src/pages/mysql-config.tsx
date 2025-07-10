@@ -21,6 +21,9 @@ export default function MySQLConfig() {
     refetchInterval: 5000, // Refresh every 5 seconds
   });
 
+  console.log("MySQL Config - Status:", status);
+  console.log("MySQL Config - Loading:", isLoading);
+
   // Type-safe access to status properties
   const connectionStatus = status as {
     connected?: boolean;
