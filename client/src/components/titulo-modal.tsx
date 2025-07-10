@@ -738,14 +738,24 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
           </TabsContent>
         </Tabs>
 
-        <div className="flex justify-end space-x-2 pt-4">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </Button>
-          <Button onClick={handleSave} disabled={titulo?.status === 4}>
-            {titulo?.status === 4 ? "Título Cancelado" : "Salvar"}
-          </Button>
-        </div>
+        {!showBaixaTab && (
+          <div className="flex justify-end space-x-2 pt-4">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSave} disabled={titulo?.status === 4}>
+              {titulo?.status === 4 ? "Título Cancelado" : "Salvar"}
+            </Button>
+          </div>
+        )}
+        
+        {showBaixaTab && (
+          <div className="flex justify-end space-x-2 pt-4">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              Fechar
+            </Button>
+          </div>
+        )}
       </DialogContent>
       
       <PlanoContasSearchModal

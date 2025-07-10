@@ -180,6 +180,9 @@ Changelog:
   * Save and "Lançar Baixa" buttons show appropriate disabled states
   * Added comprehensive validation to prevent modifications on cancelled titles
   * Confirmation dialog warns users that cancellation cannot be undone
+  * Removed "Salvar" button from baixa modal - payments save immediately
+  * Baixa modal now only shows "Fechar" button for clean workflow
+  * All payment operations (create/cancel) auto-save without user confirmation
 
 ## User Preferences
 
