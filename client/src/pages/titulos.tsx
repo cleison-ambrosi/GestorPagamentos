@@ -32,7 +32,7 @@ export default function Titulos() {
     // Recupera a última empresa selecionada do localStorage
     return localStorage.getItem('titulos-empresa-filter') || "all";
   });
-  const [activeTab, setActiveTab] = useState("todos");
+  const [activeTab, setActiveTab] = useState("vencemHoje");
 
   // Salva a empresa selecionada no localStorage sempre que mudar
   useEffect(() => {
