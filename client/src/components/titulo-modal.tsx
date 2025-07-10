@@ -767,13 +767,16 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
               Cancelar
             </Button>
             {(() => {
-              const saldoAtual = parseFloat(currentTitulo?.saldoPagar || '0');
+              const saldoString = currentTitulo?.saldoPagar?.toString() || '0';
+              const saldoAtual = parseFloat(saldoString.replace(',', '.'));
               const shouldShowButton = !titulo || saldoAtual > 0;
               console.log('Button visibility check:', { 
                 titulo: !!titulo, 
                 saldoAtual, 
                 shouldShowButton,
-                currentTitulo: currentTitulo?.saldoPagar 
+                saldoString,
+                originalSaldo: currentTitulo?.saldoPagar,
+                currentTituloId: currentTitulo?.id
               });
               return shouldShowButton;
             })() && (
