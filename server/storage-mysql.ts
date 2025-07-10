@@ -224,7 +224,7 @@ export class MySQLStorage implements IStorage {
       .from(contrato)
       .leftJoin(empresa, eq(contrato.idEmpresa, empresa.id))
       .leftJoin(fornecedor, eq(contrato.idFornecedor, fornecedor.id))
-      .orderBy(desc(contrato.id));
+      .orderBy(desc(contrato.status), asc(contrato.diaVencimento), asc(contrato.numeroTitulo));
     
     return result as any[];
   }

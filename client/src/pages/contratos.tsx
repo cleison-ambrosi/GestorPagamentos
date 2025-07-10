@@ -212,8 +212,8 @@ export default function Contratos() {
             <Table>
             <TableHeader>
               <TableRow className="bg-slate-50">
-                <TableHead className="font-medium text-slate-700">ID</TableHead>
                 <TableHead className="font-medium text-slate-700">Número Título</TableHead>
+                <TableHead className="font-medium text-slate-700">Dia Pagamento</TableHead>
                 <TableHead className="font-medium text-slate-700">Descrição</TableHead>
                 <TableHead className="font-medium text-slate-700">Nº Parcelas</TableHead>
                 <TableHead className="font-medium text-slate-700">Valor Parcela</TableHead>
@@ -225,8 +225,8 @@ export default function Contratos() {
             <TableBody>
               {filteredContratos.map((contrato: any) => (
                 <TableRow key={contrato.id} className="hover:bg-slate-50 cursor-pointer" onClick={() => handleEdit(contrato)}>
-                  <TableCell className="font-medium">{contrato.id.toString().padStart(5, '0')}</TableCell>
                   <TableCell className="font-medium">{highlightText(contrato.numeroTitulo || '-', searchTerm)}</TableCell>
+                  <TableCell className="text-center font-medium">{contrato.diaVencimento || '-'}</TableCell>
                   <TableCell>
                     <div>
                       <div>{contrato.descricao ? highlightText(contrato.descricao, searchTerm) : '-'}</div>
