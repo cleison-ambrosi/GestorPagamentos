@@ -766,7 +766,17 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            {(parseFloat(currentTitulo?.saldoPagar?.replace(',', '.') || '0') > 0 || !titulo) && (
+            {(() => {
+              const saldoAtual = parseFloat(currentTitulo?.saldoPagar || '0');
+              const shouldShowButton = !titulo || saldoAtual > 0;
+              console.log('Button visibility check:', { 
+                titulo: !!titulo, 
+                saldoAtual, 
+                shouldShowButton,
+                currentTitulo: currentTitulo?.saldoPagar 
+              });
+              return shouldShowButton;
+            })() && (
               <Button onClick={handleSave} disabled={titulo?.status === 4}>
                 {titulo?.status === 4 ? "Título Cancelado" : hasZeroBalance ? "Salvar (Apenas Observações)" : "Salvar"}
               </Button>
