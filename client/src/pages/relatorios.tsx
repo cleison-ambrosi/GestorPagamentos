@@ -8,7 +8,7 @@ import Sidebar from '@/components/sidebar';
 import { useQuery } from '@tanstack/react-query';
 
 export default function Relatorios() {
-  const [periodo, setPeriodo] = useState('emAberto');
+  const [periodo, setPeriodo] = useState('vencemHoje');
   const [pesquisa, setPesquisa] = useState('');
 
   // Buscar dados reais da API
