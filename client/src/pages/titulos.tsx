@@ -272,16 +272,18 @@ export default function Titulos() {
                     <div>
                       <div className="text-xs text-slate-600 mb-1">Títulos:</div>
                       <div className="font-semibold text-sm text-slate-800">
-                        {filteredTitulos.length}
+                        {filteredTitulos.filter(titulo => titulo.status !== 4).length}
                       </div>
                     </div>
                     <div>
                       <div className="text-xs text-slate-600 mb-1">Total Saldo:</div>
                       <div className="font-semibold text-sm text-slate-800">
                         {formatCurrency(
-                          filteredTitulos.reduce((total, titulo) => 
-                            total + parseFloat(titulo.saldoPagar || titulo.valorTotal || '0'), 0
-                          )
+                          filteredTitulos
+                            .filter(titulo => titulo.status !== 4)
+                            .reduce((total, titulo) => 
+                              total + parseFloat(titulo.saldoPagar || titulo.valorTotal || '0'), 0
+                            )
                         )}
                       </div>
                     </div>
