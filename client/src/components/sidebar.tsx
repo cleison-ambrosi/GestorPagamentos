@@ -72,7 +72,7 @@ export default function Sidebar() {
       
       {/* Bottom navigation items - ALWAYS VISIBLE */}
       <div className="border-t border-slate-200 flex-shrink-0">
-        <div className="px-3 py-3 flex justify-center">
+        <div className="px-3 py-3">
           {bottomItems.map((item) => {
             const Icon = item.icon;
             const isActive = location === item.href;
@@ -82,7 +82,7 @@ export default function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center justify-center p-2 rounded-md transition-colors",
+                  "flex items-center p-2 rounded-md transition-colors",
                   isActive 
                     ? "bg-blue-500 text-white" 
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
