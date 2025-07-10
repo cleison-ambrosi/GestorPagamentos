@@ -24,6 +24,10 @@ const navigationItems = [
   { href: "/tags", label: "Tags", icon: Tag },
 ];
 
+const bottomItems = [
+  { href: "/mysql-config", label: "Configurações", icon: Settings },
+];
+
 export default function Sidebar() {
   const [location] = useLocation();
   
@@ -66,20 +70,30 @@ export default function Sidebar() {
         </div>
       </nav>
       
-      {/* MySQL Config Button */}
-      <div className="p-3 border-t border-slate-200">
-        <Link
-          href="/mysql-config"
-          className={cn(
-            "flex items-center justify-center w-full h-10 rounded-md transition-colors",
-            location === "/mysql-config" 
-              ? "bg-blue-500 text-white" 
-              : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
-          )}
-          title="Configuração MySQL"
-        >
-          <Settings className="w-4 h-4" />
-        </Link>
+      {/* Bottom navigation items */}
+      <div className="border-t border-slate-200">
+        <div className="space-y-1 px-3 py-3">
+          {bottomItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location === item.href;
+            
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center space-x-3 px-3 py-2 rounded-md text-sm transition-colors",
+                  isActive 
+                    ? "bg-blue-500 text-white" 
+                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                )}
+              >
+                <Icon className="w-4 h-4" />
+                <span className="font-medium">{item.label}</span>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </aside>
   );
