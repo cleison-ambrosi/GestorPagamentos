@@ -9,7 +9,7 @@ import {
   Building2, 
   Tag,
   DollarSign,
-  Database
+  Settings
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -78,7 +78,7 @@ export default function Sidebar() {
           )}
           title="Configuração MySQL"
         >
-          <Database className="w-4 h-4" />
+          <Settings className="w-4 h-4" />
         </Link>
       </div>
     </aside>
