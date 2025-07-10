@@ -84,6 +84,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
 
   const [planoContasModalOpen, setPlanoContasModalOpen] = useState(false);
   const [fornecedorModalOpen, setFornecedorModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState(showBaixaTab ? "baixas" : "dados");
 
   // Função para calcular valor pago automaticamente
   const calcularValorPago = (valorBaixa: string, juros: string, desconto: string) => {
@@ -203,6 +204,13 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
       });
     }
   }, [currentTitulo, titulo]);
+
+  // Update active tab when modal opens
+  useEffect(() => {
+    if (open) {
+      setActiveTab(showBaixaTab ? "baixas" : "dados");
+    }
+  }, [open, showBaixaTab]);
 
   // Focus on valor baixa input when showBaixaTab is true
   useEffect(() => {
@@ -409,7 +417,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue={showBaixaTab ? "baixas" : "dados"} className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="dados">Dados do Título</TabsTrigger>
             <TabsTrigger value="baixas">Baixas</TabsTrigger>
@@ -762,7 +770,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
           </TabsContent>
         </Tabs>
 
-        {!showBaixaTab && (
+        {activeTab === "dados" && (
           <div className="flex justify-end space-x-2 pt-4">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
@@ -775,7 +783,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
           </div>
         )}
         
-        {showBaixaTab && (
+        {activeTab === "baixas" && (
           <div className="flex justify-end space-x-2 pt-4">
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               Fechar
