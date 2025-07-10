@@ -73,14 +73,36 @@ export default function Dashboard() {
                   <button className="text-blue-600 text-sm hover:underline">Ver todos</button>
                 </div>
                 
-                <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-                  <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
+                {dashboardData?.proximosVencimentos && dashboardData.proximosVencimentos.length > 0 ? (
+                  <div className="space-y-3">
+                    {dashboardData.proximosVencimentos.map((vencimento) => (
+                      <div key={vencimento.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900">{vencimento.numeroTitulo}</p>
+                          <p className="text-sm text-gray-600">{vencimento.fornecedor}</p>
+                          <p className="text-xs text-gray-500">{new Date(vencimento.vencimento).toLocaleDateString('pt-BR')}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-semibold text-gray-900">
+                            {new Intl.NumberFormat('pt-BR', {
+                              style: 'currency',
+                              currency: 'BRL'
+                            }).format(vencimento.valor)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <p className="text-sm">Nenhum vencimento próximo</p>
-                </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+                    <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mb-4">
+                      <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <p className="text-sm">Nenhum vencimento próximo</p>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
@@ -89,102 +111,67 @@ export default function Dashboard() {
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-6">Resumo por Empresa</h3>
                 
-                <div className="space-y-6">
-                  {/* BPrint */}
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <h4 className="font-semibold text-gray-900 mb-4">BPrint</h4>
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                      <div>
-                        <p className="text-xs text-red-600 mb-1">Em Atraso</p>
-                        <p className="text-lg font-bold text-red-600">R$ 0,00</p>
+                {dashboardData?.resumoEmpresas && dashboardData.resumoEmpresas.length > 0 ? (
+                  <div className="space-y-6">
+                    {dashboardData.resumoEmpresas.map((empresa) => (
+                      <div key={empresa.id} className="border border-gray-200 rounded-lg p-4">
+                        <h4 className="font-semibold text-gray-900 mb-4">{empresa.nome}</h4>
+                        <div className="grid grid-cols-3 gap-4 text-center">
+                          <div>
+                            <p className="text-xs text-red-600 mb-1">Em Atraso</p>
+                            <p className="text-lg font-bold text-red-600">
+                              {new Intl.NumberFormat('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                              }).format(empresa.emAtraso)}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-orange-600 mb-1">Vence Hoje</p>
+                            <p className="text-lg font-bold text-orange-600">
+                              {new Intl.NumberFormat('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                              }).format(empresa.venceHoje)}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-blue-600 mb-1">Próximo Vencimento</p>
+                            <p className="text-lg font-bold text-blue-600">
+                              {new Intl.NumberFormat('pt-BR', {
+                                style: 'currency',
+                                currency: 'BRL'
+                              }).format(empresa.proximoVencimento)}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-xs text-yellow-600 mb-1">Vence Hoje</p>
-                        <p className="text-lg font-bold text-yellow-600">R$ 0,00</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-blue-600 mb-1">Amanhã - Fim do Mês</p>
-                        <p className="text-lg font-bold text-blue-600">R$ 34.444,00</p>
-                      </div>
-                    </div>
+                    ))}
                   </div>
-
-                  {/* Bremen */}
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <h4 className="font-semibold text-gray-900 mb-4">Bremen</h4>
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                      <div>
-                        <p className="text-xs text-red-600 mb-1">Em Atraso</p>
-                        <p className="text-lg font-bold text-red-600">R$ 0,00</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-yellow-600 mb-1">Vence Hoje</p>
-                        <p className="text-lg font-bold text-yellow-600">R$ 0,00</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-blue-600 mb-1">Amanhã - Fim do Mês</p>
-                        <p className="text-lg font-bold text-blue-600">R$ 0,00</p>
-                      </div>
-                    </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <p className="text-sm">Nenhuma empresa cadastrada</p>
                   </div>
-
-                  {/* CL2G */}
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <h4 className="font-semibold text-gray-900 mb-4">CL2G</h4>
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                      <div>
-                        <p className="text-xs text-red-600 mb-1">Em Atraso</p>
-                        <p className="text-lg font-bold text-red-600">R$ 0,00</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-yellow-600 mb-1">Vence Hoje</p>
-                        <p className="text-lg font-bold text-yellow-600">R$ 0,00</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-blue-600 mb-1">Amanhã - Fim do Mês</p>
-                        <p className="text-lg font-bold text-blue-600">R$ 0,00</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Wingraph */}
-                  <div className="border border-gray-200 rounded-lg p-4">
-                    <h4 className="font-semibold text-gray-900 mb-4">Wingraph</h4>
-                    <div className="grid grid-cols-3 gap-4 text-center">
-                      <div>
-                        <p className="text-xs text-red-600 mb-1">Em Atraso</p>
-                        <p className="text-lg font-bold text-red-600">R$ 0,00</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-yellow-600 mb-1">Vence Hoje</p>
-                        <p className="text-lg font-bold text-yellow-600">R$ 0,00</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-blue-600 mb-1">Amanhã - Fim do Mês</p>
-                        <p className="text-lg font-bold text-blue-600">R$ 0,00</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </div>
 
           {/* Títulos Cadastrados Recentemente */}
-          <TitulosRecentesCard 
-            titulos={[
-              {
-                id: 1,
-                titulo: 'ssss',
-                fornecedor: 'Energia SP',
-                empresa: 'BPrint',
-                vencimento: '24/07/25',
-                valor: 34444.00,
-                saldo: 34444.00,
+          {dashboardData?.proximosVencimentos && dashboardData.proximosVencimentos.length > 0 && (
+            <TitulosRecentesCard 
+              titulos={dashboardData.proximosVencimentos.slice(0, 5).map(titulo => ({
+                id: titulo.id,
+                titulo: titulo.numeroTitulo,
+                fornecedor: titulo.fornecedor,
+                empresa: '',
+                vencimento: new Date(titulo.vencimento).toLocaleDateString('pt-BR'),
+                valor: titulo.valor,
+                saldo: titulo.valor,
                 status: 'Aberto',
-              },
-            ]}
-          />
+              }))}
+            />
+          )}
         </div>
       </main>
     </div>

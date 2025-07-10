@@ -367,16 +367,127 @@ export class MySQLStorage implements IStorage {
     await db.delete(tituloBaixa).where(eq(tituloBaixa.id, id));
   }
 
-  // Dashboard específico - implementação temporária
   async getDashboardData() {
-    return {
-      titulosHoje: 0,
-      valorAtraso: 0,
-      vencimentosHoje: 0,
-      vencimentosAmanha: 0,
-      proximosVencimentos: [],
-      resumoEmpresas: []
-    };
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+    try {
+      // Get all open titles (not cancelled)
+      const titulosAbertos = await db.select({
+        id: titulo.id,
+        numeroTitulo: titulo.numeroTitulo,
+        idEmpresa: titulo.idEmpresa,
+        idFornecedor: titulo.idFornecedor,
+        vencimento: titulo.vencimento,
+        valorTotal: titulo.valorTotal,
+        saldoPagar: titulo.saldoPagar,
+        status: titulo.status
+      })
+      .from(titulo)
+      .leftJoin(empresa, eq(titulo.idEmpresa, empresa.id))
+      .leftJoin(fornecedor, eq(titulo.idFornecedor, fornecedor.id))
+      .where(ne(titulo.status, 4)); // Not cancelled
+
+      // Calculate metrics
+      const titulosHoje = titulosAbertos.filter(t => {
+        const vencimentoDate = new Date(t.vencimento).toISOString().split('T')[0];
+        return vencimentoDate === todayStr;
+      }).length;
+
+      const vencimentosHoje = titulosAbertos.filter(t => {
+        const vencimentoDate = new Date(t.vencimento).toISOString().split('T')[0];
+        return vencimentoDate === todayStr;
+      }).reduce((sum, t) => sum + parseFloat(t.saldoPagar || '0'), 0);
+
+      const vencimentosAmanha = titulosAbertos.filter(t => {
+        const vencimentoDate = new Date(t.vencimento).toISOString().split('T')[0];
+        return vencimentoDate === tomorrowStr;
+      }).reduce((sum, t) => sum + parseFloat(t.saldoPagar || '0'), 0);
+
+      const valorAtraso = titulosAbertos.filter(t => {
+        const vencimentoDate = new Date(t.vencimento);
+        return vencimentoDate < today && parseFloat(t.saldoPagar || '0') > 0;
+      }).reduce((sum, t) => sum + parseFloat(t.saldoPagar || '0'), 0);
+
+      // Get próximos vencimentos (from tomorrow onwards)
+      const proximosVencimentos = await db.select({
+        id: titulo.id,
+        numeroTitulo: titulo.numeroTitulo,
+        fornecedor: fornecedor.nome,
+        vencimento: titulo.vencimento,
+        valor: titulo.saldoPagar
+      })
+      .from(titulo)
+      .leftJoin(fornecedor, eq(titulo.idFornecedor, fornecedor.id))
+      .where(and(
+        ne(titulo.status, 4), // Not cancelled
+        gte(titulo.vencimento, tomorrowStr) // From tomorrow onwards
+      ))
+      .orderBy(titulo.vencimento)
+      .limit(10);
+
+      // Get resumo por empresa (ordered by empresa id)
+      const empresas = await db.select().from(empresa).orderBy(empresa.id);
+      const resumoEmpresas = [];
+
+      for (const emp of empresas) {
+        const titulosEmpresa = titulosAbertos.filter(t => t.idEmpresa === emp.id);
+        
+        const emAtraso = titulosEmpresa.filter(t => {
+          const vencimentoDate = new Date(t.vencimento);
+          return vencimentoDate < today && parseFloat(t.saldoPagar || '0') > 0;
+        }).reduce((sum, t) => sum + parseFloat(t.saldoPagar || '0'), 0);
+
+        const venceHoje = titulosEmpresa.filter(t => {
+          const vencimentoDate = new Date(t.vencimento).toISOString().split('T')[0];
+          return vencimentoDate === todayStr;
+        }).reduce((sum, t) => sum + parseFloat(t.saldoPagar || '0'), 0);
+
+        // Find próximo vencimento (next due date)
+        const proximoTitulo = titulosEmpresa
+          .filter(t => new Date(t.vencimento) >= today)
+          .sort((a, b) => new Date(a.vencimento).getTime() - new Date(b.vencimento).getTime())[0];
+        
+        const proximoVencimento = proximoTitulo ? parseFloat(proximoTitulo.saldoPagar || '0') : 0;
+
+        resumoEmpresas.push({
+          id: emp.id,
+          nome: emp.nome,
+          emAtraso,
+          venceHoje,
+          proximoVencimento
+        });
+      }
+
+      return {
+        titulosHoje,
+        valorAtraso,
+        vencimentosHoje,
+        vencimentosAmanha,
+        proximosVencimentos: proximosVencimentos.map(pv => ({
+          id: pv.id,
+          numeroTitulo: pv.numeroTitulo || '',
+          fornecedor: pv.fornecedor || '',
+          vencimento: pv.vencimento.toISOString().split('T')[0],
+          valor: parseFloat(pv.valor || '0')
+        })),
+        resumoEmpresas
+      };
+    } catch (error) {
+      console.error('Erro ao buscar dados do dashboard:', error);
+      return {
+        titulosHoje: 0,
+        valorAtraso: 0,
+        vencimentosHoje: 0,
+        vencimentosAmanha: 0,
+        proximosVencimentos: [],
+        resumoEmpresas: []
+      };
+    }
   }
 
   // Configurações
