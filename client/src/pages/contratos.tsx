@@ -213,7 +213,7 @@ export default function Contratos() {
             <TableHeader>
               <TableRow className="bg-slate-50">
                 <TableHead className="font-medium text-slate-700">ID</TableHead>
-                <TableHead className="font-medium text-slate-700">Número</TableHead>
+                <TableHead className="font-medium text-slate-700">Número Título</TableHead>
                 <TableHead className="font-medium text-slate-700">Descrição</TableHead>
                 <TableHead className="font-medium text-slate-700">Nº Parcelas</TableHead>
                 <TableHead className="font-medium text-slate-700">Valor Parcela</TableHead>
