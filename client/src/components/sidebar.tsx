@@ -9,7 +9,7 @@ import {
   Building2, 
   Tag,
   DollarSign,
-  Settings
+  Database
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,7 +25,7 @@ const navigationItems = [
 ];
 
 const bottomItems = [
-  { href: "/mysql-config", label: "Configurações", icon: Settings },
+  { href: "/mysql-config", label: "", icon: Database },
 ];
 
 export default function Sidebar() {
@@ -71,8 +71,8 @@ export default function Sidebar() {
       </nav>
       
       {/* Bottom navigation items - ALWAYS VISIBLE */}
-      <div className="border-t border-slate-200 bg-red-500 flex-shrink-0">
-        <div className="space-y-1 px-3 py-3">
+      <div className="border-t border-slate-200 flex-shrink-0">
+        <div className="px-3 py-3 flex justify-center">
           {bottomItems.map((item) => {
             const Icon = item.icon;
             const isActive = location === item.href;
@@ -82,14 +82,13 @@ export default function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center space-x-3 px-3 py-2 rounded-md text-sm transition-colors bg-yellow-300",
+                  "flex items-center justify-center p-2 rounded-md transition-colors",
                   isActive 
                     ? "bg-blue-500 text-white" 
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 )}
               >
                 <Icon className="w-4 h-4" />
-                <span className="font-medium">{item.label}</span>
               </Link>
             );
           })}
