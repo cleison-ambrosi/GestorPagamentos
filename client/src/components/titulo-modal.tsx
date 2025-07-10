@@ -396,7 +396,8 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
   };
 
   // Check if title has zero balance (can only edit observations)
-  const hasZeroBalance = currentTitulo && parseFloat(currentTitulo.saldoPagar || '0') === 0;
+  const saldoString = currentTitulo?.saldoPagar?.toString() || '0';
+  const hasZeroBalance = currentTitulo && parseFloat(saldoString.replace(',', '.')) === 0;
   const isReadOnly = titulo?.status === 4 || hasZeroBalance;
 
   return (
@@ -766,20 +767,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
             <Button variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            {(() => {
-              const saldoString = currentTitulo?.saldoPagar?.toString() || '0';
-              const saldoAtual = parseFloat(saldoString.replace(',', '.'));
-              const shouldShowButton = !titulo || saldoAtual > 0;
-              console.log('Button visibility check:', { 
-                titulo: !!titulo, 
-                saldoAtual, 
-                shouldShowButton,
-                saldoString,
-                originalSaldo: currentTitulo?.saldoPagar,
-                currentTituloId: currentTitulo?.id
-              });
-              return shouldShowButton;
-            })() && (
+            {(!titulo || !hasZeroBalance) && (
               <Button onClick={handleSave} disabled={titulo?.status === 4}>
                 {titulo?.status === 4 ? "Título Cancelado" : hasZeroBalance ? "Salvar (Apenas Observações)" : "Salvar"}
               </Button>
