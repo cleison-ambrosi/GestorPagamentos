@@ -154,15 +154,15 @@ export default function Titulos() {
     const numStatus = typeof status === 'string' ? parseInt(status) : status;
     switch (numStatus) {
       case 1:
-        return <Badge variant="outline" className="text-blue-600 border-blue-600">Em Aberto</Badge>;
+        return <Badge variant="default" className="bg-blue-100 text-blue-800">Em Aberto</Badge>;
       case 2:
-        return <Badge variant="outline" className="text-orange-600 border-orange-600">Parcial</Badge>;
+        return <Badge variant="default" className="bg-orange-100 text-orange-800">Parcial</Badge>;
       case 3:
-        return <Badge variant="outline" className="text-green-600 border-green-600">Pago</Badge>;
+        return <Badge variant="default" className="bg-green-100 text-green-800">Pago</Badge>;
       case 4:
-        return <Badge variant="outline" className="text-red-600 border-red-600">Cancelado</Badge>;
+        return <Badge variant="secondary" className="bg-red-100 text-red-800">Cancelado</Badge>;
       default:
-        return <Badge variant="outline" className="text-slate-600 border-slate-600">Em Aberto</Badge>;
+        return <Badge variant="default" className="bg-blue-100 text-blue-800">Em Aberto</Badge>;
     }
   };
 
