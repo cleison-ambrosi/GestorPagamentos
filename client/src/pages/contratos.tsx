@@ -213,11 +213,11 @@ export default function Contratos() {
             <TableHeader>
               <TableRow className="bg-slate-50">
                 <TableHead className="font-medium text-slate-700">Número Título</TableHead>
-                <TableHead className="font-medium text-slate-700">Dia Pagamento</TableHead>
+                <TableHead className="font-medium text-slate-700 text-center">Dia Pagamento</TableHead>
                 <TableHead className="font-medium text-slate-700">Descrição</TableHead>
-                <TableHead className="font-medium text-slate-700">Nº Parcelas</TableHead>
-                <TableHead className="font-medium text-slate-700">Valor Parcela</TableHead>
-                <TableHead className="font-medium text-slate-700">Valor Contrato</TableHead>
+                <TableHead className="font-medium text-slate-700 text-center">Nº Parcelas</TableHead>
+                <TableHead className="font-medium text-slate-700 text-right">Valor Parcela</TableHead>
+                <TableHead className="font-medium text-slate-700 text-right">Valor Contrato</TableHead>
                 <TableHead className="font-medium text-slate-700">Status</TableHead>
                 <TableHead className="font-medium text-slate-700 text-center">Ações</TableHead>
               </TableRow>
@@ -235,9 +235,9 @@ export default function Contratos() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{contrato.numParcela || '-'}</TableCell>
-                  <TableCell>{formatCurrency(contrato.valorParcela || 0)}</TableCell>
-                  <TableCell>{formatCurrency(contrato.valorContrato || 0)}</TableCell>
+                  <TableCell className="text-center">{contrato.numParcela || '-'}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(contrato.valorParcela || 0)}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(contrato.valorContrato || 0)}</TableCell>
                   <TableCell>
                     <Badge variant={contrato.status ? "default" : "secondary"} 
                            className={contrato.status ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}>

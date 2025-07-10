@@ -261,8 +261,8 @@ export default function Titulos() {
                 <TableHead className="font-medium text-slate-700">Vencimento</TableHead>
                 <TableHead className="font-medium text-slate-700">Número Título</TableHead>
                 <TableHead className="font-medium text-slate-700">Fornecedor</TableHead>
-                <TableHead className="font-medium text-slate-700">Valor</TableHead>
-                <TableHead className="font-medium text-slate-700">Saldo</TableHead>
+                <TableHead className="font-medium text-slate-700 text-right">Valor</TableHead>
+                <TableHead className="font-medium text-slate-700 text-right">Saldo</TableHead>
                 <TableHead className="font-medium text-slate-700">Status</TableHead>
                 <TableHead className="font-medium text-slate-700 text-center">Ações</TableHead>
               </TableRow>
@@ -273,8 +273,8 @@ export default function Titulos() {
                   <TableCell>{titulo.vencimento ? formatDate(new Date(titulo.vencimento)) : '-'}</TableCell>
                   <TableCell className="font-medium">{highlightText(titulo.numeroTitulo, searchTerm)}</TableCell>
                   <TableCell>{titulo.fornecedor ? highlightText(titulo.fornecedor, searchTerm) : '-'}</TableCell>
-                  <TableCell>{formatCurrency(parseFloat(titulo.valorTotal || '0'))}</TableCell>
-                  <TableCell>{formatCurrency(parseFloat(titulo.saldoPagar || titulo.valorTotal || '0'))}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(parseFloat(titulo.valorTotal || '0'))}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(parseFloat(titulo.saldoPagar || titulo.valorTotal || '0'))}</TableCell>
                   <TableCell>{getStatusBadge(titulo.status || 'Em Aberto')}</TableCell>
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center space-x-2">
