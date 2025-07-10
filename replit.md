@@ -186,6 +186,12 @@ Changelog:
   * Added auto-focus on "Valor Baixa" field when entering baixa tab
   * Real-time balance updates in "Saldo Atual" display after payment operations
   * All balance calculations now use current título data for immediate updates
+- July 10, 2025. Dynamic button visibility based on balance:
+  * "Salvar" button in título modal only appears when saldo > 0 or for new títulos
+  * Button visibility updates dynamically when balance changes through payments/cancellations
+  * Implemented real-time synchronization between baixas tab and dados tab button state
+  * For títulos with zero balance, only "Cancelar" button remains visible in dados tab
+  * System maintains proper business logic preventing modifications when title is fully paid
 
 ## User Preferences
 
