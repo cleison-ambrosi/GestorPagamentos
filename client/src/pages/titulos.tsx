@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Search, Edit, X, Copy, Receipt } from "lucide-react";
 import { fetchTitulos, fetchEmpresas } from "@/lib/api";
 import { formatCurrency, formatDate } from "@/lib/format";
@@ -31,6 +32,7 @@ export default function Titulos() {
     // Recupera a última empresa selecionada do localStorage
     return localStorage.getItem('titulos-empresa-filter') || "all";
   });
+  const [activeTab, setActiveTab] = useState("todos");
 
   // Salva a empresa selecionada no localStorage sempre que mudar
   useEffect(() => {
@@ -136,7 +138,42 @@ export default function Titulos() {
     
     const matchesEmpresa = empresaFilter === "all" || titulo.idEmpresa?.toString() === empresaFilter;
     
-    return matchesSearch && matchesEmpresa;
+    // Filtro por aba (período/status)
+    const hoje = new Date();
+    const ontem = new Date(hoje);
+    ontem.setDate(hoje.getDate() - 1);
+    const amanha = new Date(hoje);
+    amanha.setDate(hoje.getDate() + 1);
+    const proximos7Dias = new Date(hoje);
+    proximos7Dias.setDate(hoje.getDate() + 7);
+    const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+    
+    const matchesTab = (() => {
+      const vencimento = new Date(titulo.vencimento);
+      
+      switch (activeTab) {
+        case "todos":
+          return true;
+        case "vencidosOntem":
+          return vencimento.toDateString() === ontem.toDateString();
+        case "vencemHoje":
+          return vencimento.toDateString() === hoje.toDateString();
+        case "vencemAmanha":
+          return vencimento.toDateString() === amanha.toDateString();
+        case "proximos7Dias":
+          return vencimento >= hoje && vencimento <= proximos7Dias;
+        case "ateFinalMes":
+          return vencimento >= hoje && vencimento <= fimMes;
+        case "emAberto":
+          return titulo.status === 1;
+        case "pagos":
+          return titulo.status === 3;
+        default:
+          return true;
+      }
+    })();
+    
+    return matchesSearch && matchesEmpresa && matchesTab;
   });
 
   const highlightText = (text: string, term: string) => {
@@ -252,6 +289,22 @@ export default function Titulos() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Abas de Filtro */}
+          <div className="bg-white rounded-lg border border-slate-200 mb-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-8 bg-slate-50 p-1 rounded-t-lg">
+                <TabsTrigger value="todos" className="data-[state=active]:bg-white">Todos</TabsTrigger>
+                <TabsTrigger value="vencidosOntem" className="data-[state=active]:bg-white">Vencidos Ontem</TabsTrigger>
+                <TabsTrigger value="vencemHoje" className="data-[state=active]:bg-white">Vencem Hoje</TabsTrigger>
+                <TabsTrigger value="vencemAmanha" className="data-[state=active]:bg-white">Vencem Amanhã</TabsTrigger>
+                <TabsTrigger value="proximos7Dias" className="data-[state=active]:bg-white">Próximos 7 dias</TabsTrigger>
+                <TabsTrigger value="ateFinalMes" className="data-[state=active]:bg-white">Até Final do Mês</TabsTrigger>
+                <TabsTrigger value="emAberto" className="data-[state=active]:bg-white">Em Aberto</TabsTrigger>
+                <TabsTrigger value="pagos" className="data-[state=active]:bg-white">Pagos</TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
 
           <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
