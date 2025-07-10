@@ -259,7 +259,7 @@ export default function Titulos() {
               <TableHeader>
               <TableRow className="bg-slate-50">
                 <TableHead className="font-medium text-slate-700">Vencimento</TableHead>
-                <TableHead className="font-medium text-slate-700">Número do Título</TableHead>
+                <TableHead className="font-medium text-slate-700">Número Título</TableHead>
                 <TableHead className="font-medium text-slate-700">Fornecedor</TableHead>
                 <TableHead className="font-medium text-slate-700">Valor</TableHead>
                 <TableHead className="font-medium text-slate-700">Saldo</TableHead>

@@ -155,7 +155,6 @@ export default function PlanoContas() {
             <Table>
             <TableHeader>
               <TableRow className="bg-slate-50">
-                <TableHead className="font-medium text-slate-700">ID</TableHead>
                 <TableHead className="font-medium text-slate-700">Código</TableHead>
                 <TableHead className="font-medium text-slate-700">Nome</TableHead>
                 <TableHead className="font-medium text-slate-700">Conta Pai</TableHead>
@@ -165,7 +164,6 @@ export default function PlanoContas() {
             <TableBody>
               {filteredContas.map((conta: any) => (
                 <TableRow key={conta.id} className="hover:bg-slate-50 cursor-pointer" onClick={() => handleEdit(conta)}>
-                  <TableCell className="font-medium">{conta.id.toString().padStart(5, '0')}</TableCell>
                   <TableCell className="font-medium">{highlightText(conta.codigo, searchTerm)}</TableCell>
                   <TableCell>{highlightText(conta.nome, searchTerm)}</TableCell>
                   <TableCell>

@@ -33,7 +33,7 @@ import { IStorage } from "./storage";
 export class MySQLStorage implements IStorage {
   // Empresas
   async getAllEmpresas(): Promise<Empresa[]> {
-    return await db.select().from(empresa).orderBy(asc(empresa.nome));
+    return await db.select().from(empresa).orderBy(asc(empresa.id));
   }
 
   async getEmpresa(id: number): Promise<Empresa | undefined> {

@@ -199,7 +199,6 @@ export default function Fornecedores() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-slate-50">
-                  <TableHead className="font-medium text-slate-700">ID</TableHead>
                   <TableHead className="font-medium text-slate-700">Nome</TableHead>
                   <TableHead className="font-medium text-slate-700">Email</TableHead>
                   <TableHead className="font-medium text-slate-700">Telefone</TableHead>
@@ -209,20 +208,19 @@ export default function Fornecedores() {
               <TableBody>
                 {isLoading ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8">
+                    <TableCell colSpan={4} className="text-center py-8">
                       <p className="text-slate-500">Carregando...</p>
                     </TableCell>
                   </TableRow>
                 ) : filteredFornecedores.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8">
+                    <TableCell colSpan={4} className="text-center py-8">
                       <p className="text-slate-500">Nenhum fornecedor encontrado</p>
                     </TableCell>
                   </TableRow>
                 ) : (
                   filteredFornecedores.map((fornecedor: any) => (
                     <TableRow key={fornecedor.id} className="hover:bg-slate-50 cursor-pointer" onClick={() => handleEdit(fornecedor)}>
-                      <TableCell className="font-medium">{fornecedor.id.toString().padStart(5, '0')}</TableCell>
                       <TableCell className="font-medium">{highlightText(fornecedor.nome, searchTerm)}</TableCell>
                       <TableCell className="text-slate-600">{fornecedor.email ? highlightText(fornecedor.email, searchTerm) : '-'}</TableCell>
                       <TableCell className="text-slate-600">{fornecedor.telefone ? highlightText(fornecedor.telefone, searchTerm) : '-'}</TableCell>
