@@ -39,12 +39,6 @@ export default function Relatorios() {
       const vencimento = new Date(titulo.vencimento);
       
       switch (periodo) {
-        case 'todosVencidos':
-          return vencimento < hoje;
-        case 'vencidosOntem':
-          const ontem = new Date(hoje);
-          ontem.setDate(hoje.getDate() - 1);
-          return vencimento.toDateString() === ontem.toDateString();
         case 'vencemHoje':
           return vencimento.toDateString() === hoje.toDateString();
         case 'vencemAmanha':
@@ -53,6 +47,10 @@ export default function Relatorios() {
           return vencimento >= hoje && vencimento <= proximos7Dias;
         case 'ateFinalMes':
           return vencimento >= hoje && vencimento <= fimMes;
+        case 'todos':
+          return true;
+        case 'vencidos':
+          return vencimento < hoje;
         case 'emAberto':
           return titulo.status === 1; // Em Aberto
         case 'pagos':
@@ -145,12 +143,13 @@ export default function Relatorios() {
                     <SelectValue placeholder="Selecione o período" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="todosVencidos">Todos os Vencidos</SelectItem>
-                    <SelectItem value="vencidosOntem">Vencidos Ontem</SelectItem>
-                    <SelectItem value="vencemHoje">Vencem Hoje</SelectItem>
-                    <SelectItem value="vencemAmanha">Vencem Amanhã</SelectItem>
-                    <SelectItem value="proximos7Dias">Próximos 7 dias</SelectItem>
+                    <SelectItem value="vencemHoje">Hoje</SelectItem>
+                    <SelectItem value="vencemAmanha">Amanhã</SelectItem>
+                    <SelectItem value="proximos7Dias">Em 7 dias</SelectItem>
                     <SelectItem value="ateFinalMes">Até final do mês</SelectItem>
+                    <SelectItem value="separator" disabled>────────────────</SelectItem>
+                    <SelectItem value="todos">Todos</SelectItem>
+                    <SelectItem value="vencidos">Vencidos</SelectItem>
                     <SelectItem value="emAberto">Em Aberto</SelectItem>
                     <SelectItem value="pagos">Pagos</SelectItem>
                   </SelectContent>

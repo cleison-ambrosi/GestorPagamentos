@@ -152,10 +152,6 @@ export default function Titulos() {
       const vencimento = new Date(titulo.vencimento);
       
       switch (activeTab) {
-        case "todos":
-          return true;
-        case "vencidosOntem":
-          return vencimento.toDateString() === ontem.toDateString();
         case "vencemHoje":
           return vencimento.toDateString() === hoje.toDateString();
         case "vencemAmanha":
@@ -164,6 +160,10 @@ export default function Titulos() {
           return vencimento >= hoje && vencimento <= proximos7Dias;
         case "ateFinalMes":
           return vencimento >= hoje && vencimento <= fimMes;
+        case "todos":
+          return true;
+        case "vencidos":
+          return vencimento < hoje;
         case "emAberto":
           return titulo.status === 1;
         case "pagos":
@@ -297,12 +297,12 @@ export default function Titulos() {
           <div className="bg-white rounded-lg border border-slate-200 mb-6">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-8 bg-slate-50 p-1 rounded-t-lg">
+                <TabsTrigger value="vencemHoje" className="data-[state=active]:bg-white">Hoje</TabsTrigger>
+                <TabsTrigger value="vencemAmanha" className="data-[state=active]:bg-white">Amanhã</TabsTrigger>
+                <TabsTrigger value="proximos7Dias" className="data-[state=active]:bg-white">Em 7 dias</TabsTrigger>
+                <TabsTrigger value="ateFinalMes" className="data-[state=active]:bg-white">Até final do mês</TabsTrigger>
                 <TabsTrigger value="todos" className="data-[state=active]:bg-white">Todos</TabsTrigger>
-                <TabsTrigger value="vencidosOntem" className="data-[state=active]:bg-white">Vencidos Ontem</TabsTrigger>
-                <TabsTrigger value="vencemHoje" className="data-[state=active]:bg-white">Vencem Hoje</TabsTrigger>
-                <TabsTrigger value="vencemAmanha" className="data-[state=active]:bg-white">Vencem Amanhã</TabsTrigger>
-                <TabsTrigger value="proximos7Dias" className="data-[state=active]:bg-white">Próximos 7 dias</TabsTrigger>
-                <TabsTrigger value="ateFinalMes" className="data-[state=active]:bg-white">Até Final do Mês</TabsTrigger>
+                <TabsTrigger value="vencidos" className="data-[state=active]:bg-white">Vencidos</TabsTrigger>
                 <TabsTrigger value="emAberto" className="data-[state=active]:bg-white">Em Aberto</TabsTrigger>
                 <TabsTrigger value="pagos" className="data-[state=active]:bg-white">Pagos</TabsTrigger>
               </TabsList>
