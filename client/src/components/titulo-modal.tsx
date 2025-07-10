@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,6 +44,9 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
   const currentTitulo = titulosData.find((t: any) => t.id === titulo?.id) || titulo;
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  
+  // Ref for valor baixa input focus
+  const valorBaixaInputRef = useRef<HTMLInputElement>(null);
 
   // Função para converter status numérico para texto
   const getStatusLabel = (status: string | number) => {
@@ -200,6 +203,16 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
       });
     }
   }, [currentTitulo, titulo]);
+
+  // Focus on valor baixa input when showBaixaTab is true
+  useEffect(() => {
+    if (open && showBaixaTab && valorBaixaInputRef.current) {
+      // Use setTimeout to ensure the tab content is rendered
+      setTimeout(() => {
+        valorBaixaInputRef.current?.focus();
+      }, 100);
+    }
+  }, [open, showBaixaTab]);
 
   const handleSave = () => {
     // Verificar se o título está cancelado
@@ -552,20 +565,20 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                 <div>
                   <p className="text-sm text-gray-600">Saldo Atual</p>
                   <p className="text-2xl font-bold text-blue-600">
-                    {titulo ? formatCurrency(parseFloat(titulo.saldoPagar || '0')) : 'R$ 0,00'}
+                    {currentTitulo ? formatCurrency(parseFloat(currentTitulo.saldoPagar || '0')) : 'R$ 0,00'}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Valor Original</p>
                   <p className="text-2xl font-bold text-gray-700">
-                    {titulo ? formatCurrency(parseFloat(titulo.valorTotal || '0')) : 'R$ 0,00'}
+                    {currentTitulo ? formatCurrency(parseFloat(currentTitulo.valorTotal || '0')) : 'R$ 0,00'}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Total Pago</p>
                   <p className="text-2xl font-bold text-green-600">
                     {(() => {
-                      const baixasDoTitulo = titulosBaixa.filter((baixa: any) => baixa.idTitulo === titulo?.id && !baixa.cancelado);
+                      const baixasDoTitulo = titulosBaixa.filter((baixa: any) => baixa.idTitulo === currentTitulo?.id && !baixa.cancelado);
                       const totalPago = baixasDoTitulo.reduce((sum: number, baixa: any) => {
                         return sum + parseFloat(baixa.valorPago || '0');
                       }, 0);
@@ -595,6 +608,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                       <div className="relative">
                         <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">R$</span>
                         <Input
+                          ref={valorBaixaInputRef}
                           className="pl-8"
                           value={dadosBaixa.valorBaixa}
                           onChange={(e) => handleBaixaChange('valorBaixa', e.target.value)}
@@ -658,12 +672,12 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
 
                     <Button 
                       onClick={lancarBaixa} 
-                      disabled={lancarBaixaMutation.isPending || parseFloat(titulo?.saldoPagar?.replace(',', '.') || '0') === 0 || titulo?.status === 4}
+                      disabled={lancarBaixaMutation.isPending || parseFloat(currentTitulo?.saldoPagar?.replace(',', '.') || '0') === 0 || currentTitulo?.status === 4}
                       className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
                     >
                       {lancarBaixaMutation.isPending ? "Lançando..." : 
-                       titulo?.status === 4 ? "Título Cancelado" :
-                       parseFloat(titulo?.saldoPagar?.replace(',', '.') || '0') === 0 ? "Título Liquidado" : "Lançar Baixa"}
+                       currentTitulo?.status === 4 ? "Título Cancelado" :
+                       parseFloat(currentTitulo?.saldoPagar?.replace(',', '.') || '0') === 0 ? "Título Liquidado" : "Lançar Baixa"}
                     </Button>
                   </div>
                 </div>

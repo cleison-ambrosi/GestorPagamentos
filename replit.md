@@ -183,6 +183,9 @@ Changelog:
   * Removed "Salvar" button from baixa modal - payments save immediately
   * Baixa modal now only shows "Fechar" button for clean workflow
   * All payment operations (create/cancel) auto-save without user confirmation
+  * Added auto-focus on "Valor Baixa" field when entering baixa tab
+  * Real-time balance updates in "Saldo Atual" display after payment operations
+  * All balance calculations now use current título data for immediate updates
 
 ## User Preferences
 
