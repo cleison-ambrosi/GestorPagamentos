@@ -700,7 +700,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                                     })}
                                   </p>
                                   {baixa.cancelado && (
-                                    <Badge variant="destructive" className="text-xs">
+                                    <Badge variant="secondary" className="bg-red-100 text-red-800 text-xs">
                                       CANCELADA
                                     </Badge>
                                   )}
