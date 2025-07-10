@@ -33,6 +33,15 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
     queryKey: ["/api/titulos-baixa"],
     enabled: !!titulo?.id
   });
+
+  // Get the most recent titulo data
+  const { data: titulosData = [] } = useQuery({ 
+    queryKey: ["/api/titulos"],
+    enabled: !!titulo?.id
+  });
+
+  // Find the current titulo with updated data
+  const currentTitulo = titulosData.find((t: any) => t.id === titulo?.id) || titulo;
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -103,9 +112,39 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
     setDadosBaixa(newDadosBaixa);
   };
 
-  // Update form data when titulo prop changes
+  // Update form data when titulo prop changes or when currentTitulo changes
   useEffect(() => {
-    if (titulo) {
+    if (currentTitulo) {
+      const saldoAtual = currentTitulo.saldoPagar?.toString() || "";
+      setDadosTitulo(prevState => ({
+        ...prevState,
+        idEmpresa: currentTitulo.idEmpresa?.toString() || "",
+        idFornecedor: currentTitulo.idFornecedor?.toString() || "",
+        numeroTitulo: currentTitulo.numeroTitulo || "",
+        emissao: currentTitulo.emissao ? currentTitulo.emissao.split('T')[0] : new Date().toISOString().split('T')[0],
+        vencimento: currentTitulo.vencimento ? currentTitulo.vencimento.split('T')[0] : "",
+        valorTotal: currentTitulo.valorTotal?.toString() || "",
+        saldoPagar: saldoAtual,
+        idPlanoContas: currentTitulo.idPlanoContas?.toString() || "",
+        descricao: currentTitulo.descricao || "",
+        observacoes: currentTitulo.observacoes || "",
+        status: currentTitulo.status || "1"
+      }));
+      
+      // Update baixa data with current saldo and current datetime
+      const now = new Date();
+      const localDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+      setDadosBaixa(prevState => ({
+        ...prevState,
+        dataBaixa: localDateTime,
+        valorBaixa: currentTitulo.saldoPagar || "",
+        juros: "0,00",
+        desconto: "0,00",
+        valorPago: currentTitulo.saldoPagar || "",
+        observacao: ""
+      }));
+    } else if (titulo && !currentTitulo) {
+      // Fallback to original titulo if currentTitulo is not available
       const saldoAtual = titulo.saldoPagar?.toString() || "";
       setDadosTitulo({
         idEmpresa: titulo.idEmpresa?.toString() || "",
@@ -135,7 +174,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
     } else {
       // Reset form for new titulo
       setDadosTitulo({
-        idEmpresa: titulo?.idEmpresa?.toString() || "",
+        idEmpresa: "",
         idFornecedor: "",
         numeroTitulo: "",
         emissao: new Date().toISOString().split('T')[0],
@@ -160,7 +199,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
         observacao: ""
       });
     }
-  }, [titulo]);
+  }, [currentTitulo, titulo]);
 
   const handleSave = () => {
     // Validação dos campos obrigatórios
