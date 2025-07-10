@@ -32,7 +32,7 @@ export default function Sidebar() {
   const [location] = useLocation();
   
   return (
-    <aside className="w-56 bg-white shadow-sm border-r border-slate-200 fixed h-full z-10 flex flex-col">
+    <aside className="w-56 bg-white shadow-sm border-r border-slate-200 fixed h-screen z-10 flex flex-col">
       <div className="p-4 border-b border-slate-200">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
@@ -71,9 +71,8 @@ export default function Sidebar() {
       </nav>
       
       {/* Bottom navigation items */}
-      <div className="border-t border-slate-200 bg-red-100">
+      <div className="border-t border-slate-200">
         <div className="space-y-1 px-3 py-3">
-          <div className="text-xs text-red-500">DEBUG: Bottom section</div>
           {bottomItems.map((item) => {
             const Icon = item.icon;
             const isActive = location === item.href;
@@ -83,7 +82,7 @@ export default function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center space-x-3 px-3 py-2 rounded-md text-sm transition-colors bg-yellow-100",
+                  "flex items-center space-x-3 px-3 py-2 rounded-md text-sm transition-colors",
                   isActive 
                     ? "bg-blue-500 text-white" 
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
