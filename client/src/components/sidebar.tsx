@@ -66,15 +66,15 @@ export default function Sidebar() {
         </div>
       </nav>
       
-      {/* MySQL Config Button - Discreto no canto inferior */}
-      <div className="absolute bottom-4 left-4">
+      {/* MySQL Config Button */}
+      <div className="p-3 border-t border-slate-200">
         <Link
           href="/mysql-config"
           className={cn(
-            "flex items-center justify-center w-8 h-8 rounded-md transition-colors opacity-30 hover:opacity-60",
+            "flex items-center justify-center w-full h-10 rounded-md transition-colors",
             location === "/mysql-config" 
-              ? "bg-blue-500 text-white opacity-100" 
-              : "text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+              ? "bg-blue-500 text-white" 
+              : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
           )}
           title="Configuração MySQL"
         >
