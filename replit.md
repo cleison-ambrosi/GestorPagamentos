@@ -171,6 +171,15 @@ Changelog:
   * "Lançar Baixa" button disables when saldo=0 and shows "Título Liquidado" caption
   * Fixed real-time balance updates when payments are created or cancelled
   * Enhanced query invalidation to ensure immediate UI updates after payment operations
+- July 10, 2025. Título cancellation system implementation:
+  * Replaced delete functionality with título cancellation (status = 4)
+  * Cancelled titles cannot be edited or receive new payments
+  * Edit and Baixa buttons are hidden for cancelled titles in the listing
+  * Cancel button (X icon) only appears for non-cancelled titles
+  * Modal forms are disabled when título status is "Cancelado"
+  * Save and "Lançar Baixa" buttons show appropriate disabled states
+  * Added comprehensive validation to prevent modifications on cancelled titles
+  * Confirmation dialog warns users that cancellation cannot be undone
 
 ## User Preferences
 

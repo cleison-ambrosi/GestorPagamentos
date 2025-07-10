@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Search, Edit, Trash2, Copy, Receipt } from "lucide-react";
+import { Plus, Search, Edit, X, Copy, Receipt } from "lucide-react";
 import { fetchTitulos, fetchEmpresas } from "@/lib/api";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -73,14 +73,14 @@ export default function Titulos() {
     }
   });
 
-  const deleteTituloMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/titulos/${id}`, "DELETE"),
+  const cancelTituloMutation = useMutation({
+    mutationFn: (id: number) => apiRequest(`/api/titulos/${id}`, "PUT", { status: 4 }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/titulos"] });
-      toast({ description: "Título excluído com sucesso!" });
+      toast({ description: "Título cancelado com sucesso!" });
     },
     onError: () => {
-      toast({ description: "Erro ao excluir título", variant: "destructive" });
+      toast({ description: "Erro ao cancelar título", variant: "destructive" });
     }
   });
 
@@ -106,13 +106,13 @@ export default function Titulos() {
     setBaixaModalOpen(true);
   };
 
-  const handleDelete = (titulo: any) => {
+  const handleCancel = (titulo: any) => {
     setConfirmDialog({
       open: true,
-      title: "Confirmar exclusão",
-      description: `Tem certeza que deseja excluir o título "${titulo.numeroTitulo}"?`,
+      title: "Confirmar cancelamento",
+      description: `Tem certeza que deseja cancelar o título "${titulo.numeroTitulo}"? Esta ação não pode ser desfeita.`,
       onConfirm: () => {
-        deleteTituloMutation.mutate(titulo.id);
+        cancelTituloMutation.mutate(titulo.id);
         setConfirmDialog(prev => ({ ...prev, open: false }));
       }
     });
@@ -278,28 +278,34 @@ export default function Titulos() {
                   <TableCell>{getStatusBadge(titulo.status || 'Em Aberto')}</TableCell>
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEdit(titulo);
-                        }}
-                        className="h-8 w-8 p-0 hover:bg-slate-100"
-                      >
-                        <Edit className="h-4 w-4 text-slate-600" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleBaixa(titulo);
-                        }}
-                        className="h-8 w-8 p-0 hover:bg-slate-100"
-                      >
-                        <Receipt className="h-4 w-4 text-slate-600" />
-                      </Button>
+                      {titulo.status !== 4 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(titulo);
+                          }}
+                          className="h-8 w-8 p-0 hover:bg-slate-100"
+                          title="Editar título"
+                        >
+                          <Edit className="h-4 w-4 text-slate-600" />
+                        </Button>
+                      )}
+                      {titulo.status !== 4 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleBaixa(titulo);
+                          }}
+                          className="h-8 w-8 p-0 hover:bg-slate-100"
+                          title="Lançar baixa"
+                        >
+                          <Receipt className="h-4 w-4 text-slate-600" />
+                        </Button>
+                      )}
                       <Button
                         variant="ghost"
                         size="sm"
@@ -308,20 +314,24 @@ export default function Titulos() {
                           handleCopy(titulo);
                         }}
                         className="h-8 w-8 p-0 hover:bg-slate-100"
+                        title="Copiar título"
                       >
                         <Copy className="h-4 w-4 text-slate-600" />
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(titulo);
-                        }}
-                        className="h-8 w-8 p-0 hover:bg-slate-100"
-                      >
-                        <Trash2 className="h-4 w-4 text-slate-500" />
-                      </Button>
+                      {titulo.status !== 4 && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCancel(titulo);
+                          }}
+                          className="h-8 w-8 p-0 hover:bg-slate-100"
+                          title="Cancelar título"
+                        >
+                          <X className="h-4 w-4 text-slate-500" />
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

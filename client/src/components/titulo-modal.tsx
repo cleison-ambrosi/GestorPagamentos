@@ -202,6 +202,16 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
   }, [currentTitulo, titulo]);
 
   const handleSave = () => {
+    // Verificar se o título está cancelado
+    if (titulo?.status === 4) {
+      toast({
+        title: "Título cancelado",
+        description: "Não é possível salvar alterações em um título cancelado.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Validação dos campos obrigatórios
     if (!dadosTitulo.descricao.trim()) {
       alert('Descrição é obrigatória');
@@ -259,6 +269,10 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
 
   const lancarBaixaMutation = useMutation({
     mutationFn: async (baixaData: any) => {
+      // Verificar se o título está cancelado
+      if (titulo?.status === 4) {
+        throw new Error("Título cancelado");
+      }
       const response = await apiRequest("/api/titulos-baixa", "POST", baixaData);
       return response;
     },
@@ -288,11 +302,19 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
       // Don't close modal after payment creation
     },
     onError: (error) => {
-      toast({
-        title: "Erro ao lançar baixa",
-        description: "Ocorreu um erro ao registrar o pagamento.",
-        variant: "destructive",
-      });
+      if (error.message === "Título cancelado") {
+        toast({
+          title: "Título cancelado",
+          description: "Não é possível lançar baixa em um título cancelado.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Erro ao lançar baixa",
+          description: "Ocorreu um erro ao registrar o pagamento.",
+          variant: "destructive",
+        });
+      }
     }
   });
 
@@ -564,6 +586,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                         type="datetime-local"
                         value={dadosBaixa.dataBaixa}
                         onChange={(e) => handleBaixaChange('dataBaixa', e.target.value)}
+                        disabled={titulo?.status === 4}
                       />
                     </div>
 
@@ -576,6 +599,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                           value={dadosBaixa.valorBaixa}
                           onChange={(e) => handleBaixaChange('valorBaixa', e.target.value)}
                           placeholder="0,00"
+                          disabled={titulo?.status === 4}
                         />
                       </div>
                     </div>
@@ -590,6 +614,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                             value={dadosBaixa.juros}
                             onChange={(e) => handleBaixaChange('juros', e.target.value)}
                             placeholder="0,00"
+                            disabled={titulo?.status === 4}
                           />
                         </div>
                       </div>
@@ -602,6 +627,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                             value={dadosBaixa.desconto}
                             onChange={(e) => handleBaixaChange('desconto', e.target.value)}
                             placeholder="0,00"
+                            disabled={titulo?.status === 4}
                           />
                         </div>
                       </div>
@@ -626,15 +652,17 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
                         value={dadosBaixa.observacao}
                         onChange={(e) => handleBaixaChange('observacao', e.target.value)}
                         placeholder="Opcional"
+                        disabled={titulo?.status === 4}
                       />
                     </div>
 
                     <Button 
                       onClick={lancarBaixa} 
-                      disabled={lancarBaixaMutation.isPending || parseFloat(titulo?.saldoPagar?.replace(',', '.') || '0') === 0}
+                      disabled={lancarBaixaMutation.isPending || parseFloat(titulo?.saldoPagar?.replace(',', '.') || '0') === 0 || titulo?.status === 4}
                       className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
                     >
                       {lancarBaixaMutation.isPending ? "Lançando..." : 
+                       titulo?.status === 4 ? "Título Cancelado" :
                        parseFloat(titulo?.saldoPagar?.replace(',', '.') || '0') === 0 ? "Título Liquidado" : "Lançar Baixa"}
                     </Button>
                   </div>
@@ -714,8 +742,8 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button onClick={handleSave}>
-            Salvar
+          <Button onClick={handleSave} disabled={titulo?.status === 4}>
+            {titulo?.status === 4 ? "Título Cancelado" : "Salvar"}
           </Button>
         </div>
       </DialogContent>
