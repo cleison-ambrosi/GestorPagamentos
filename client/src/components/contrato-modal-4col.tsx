@@ -16,6 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import PlanoContasSearchModal from "@/components/plano-contas-search-modal";
 import FornecedorSearchModal from "@/components/fornecedor-search-modal";
 import TituloModal from "@/components/titulo-modal";
+import ConfirmDialog from "@/components/confirm-dialog";
 
 interface ContratoModalProps {
   open: boolean;
@@ -49,6 +50,8 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
   const [fornecedorModalOpen, setFornecedorModalOpen] = useState(false);
   const [tituloModalOpen, setTituloModalOpen] = useState(false);
   const [tituloSelecionado, setTituloSelecionado] = useState<any>(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [tituloParaCancelar, setTituloParaCancelar] = useState<any>(null);
   const [activeTab, setActiveTab] = useState(showTitulosTab ? "titulos" : "dados");
 
   const { data: empresas = [] } = useQuery({ queryKey: ['/api/empresas'] });
@@ -200,6 +203,34 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
       toast({
         title: "Erro ao salvar título",
         description: "Ocorreu um erro ao atualizar o título.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleAbrirConfirmacaoCancelamento = (titulo: any) => {
+    setTituloParaCancelar(titulo);
+    setConfirmDialogOpen(true);
+  };
+
+  const handleCancelarTitulo = async () => {
+    try {
+      if (tituloParaCancelar) {
+        await apiRequest(`/api/titulos/${tituloParaCancelar.id}`, "PUT", { status: 4 });
+        toast({
+          title: "Título cancelado com sucesso",
+          description: "O título foi cancelado.",
+        });
+        // Invalida as queries para atualizar as listagens
+        queryClient.invalidateQueries({ queryKey: ["/api/titulos"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/contratos"] });
+      }
+      setConfirmDialogOpen(false);
+      setTituloParaCancelar(null);
+    } catch (error) {
+      toast({
+        title: "Erro ao cancelar título",
+        description: "Ocorreu um erro ao cancelar o título.",
         variant: "destructive",
       });
     }
@@ -441,63 +472,93 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
           </TabsContent>
 
           <TabsContent value="titulos" className="space-y-4">
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Número Título</TableHead>
-                    <TableHead>Vencimento</TableHead>
-                    <TableHead className="text-right">Valor Título</TableHead>
-                    <TableHead className="text-right">Valor Pago</TableHead>
-                    <TableHead className="text-right">Saldo</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {titulosDoContrato.map((titulo: any) => {
-                    const valorTitulo = titulo.valorTotal || titulo.valorPagar || 0;
-                    const saldo = titulo.saldoPagar || 0;
-                    const valorPago = valorTitulo - saldo;
-                    
-                    return (
-                      <TableRow 
-                        key={titulo.id} 
-                        className="hover:bg-gray-50 cursor-pointer"
-                        onClick={() => handleOpenTituloModal(titulo)}
-                      >
-                        <TableCell>{titulo.numeroTitulo}</TableCell>
-                        <TableCell>{formatDate(titulo.vencimento)}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(valorTitulo)}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(valorPago)}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(saldo)}</TableCell>
-                        <TableCell>
-                          <Badge variant={titulo.status === 1 ? "default" : "secondary"}>
-                            {titulo.status === 1 ? "Em Aberto" : 
-                             titulo.status === 2 ? "Parcial" : 
-                             titulo.status === 3 ? "Pago" : "Cancelado"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell onClick={(e) => e.stopPropagation()}>
-                          <div className="flex gap-1">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleOpenTituloModal(titulo)}
-                              className="h-8 w-8 p-0"
-                            >
-                              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
+            {titulosDoContrato.length > 0 ? (
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Número Título</TableHead>
+                      <TableHead>Vencimento</TableHead>
+                      <TableHead className="text-right">Valor Título</TableHead>
+                      <TableHead className="text-right">Valor Pago</TableHead>
+                      <TableHead className="text-right">Saldo</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {titulosDoContrato.map((titulo: any) => {
+                      const valorTitulo = titulo.valorTotal || titulo.valorPagar || 0;
+                      const saldo = titulo.saldoPagar || 0;
+                      const valorPago = valorTitulo - saldo;
+                      
+                      return (
+                        <TableRow 
+                          key={titulo.id} 
+                          className="hover:bg-gray-50 cursor-pointer"
+                          onClick={() => handleOpenTituloModal(titulo)}
+                        >
+                          <TableCell>{titulo.numeroTitulo}</TableCell>
+                          <TableCell>{formatDate(titulo.vencimento)}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(valorTitulo)}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(valorPago)}</TableCell>
+                          <TableCell className="text-right">{formatCurrency(saldo)}</TableCell>
+                          <TableCell>
+                            <Badge variant={titulo.status === 1 ? "default" : "secondary"}>
+                              {titulo.status === 1 ? "Em Aberto" : 
+                               titulo.status === 2 ? "Parcial" : 
+                               titulo.status === 3 ? "Pago" : "Cancelado"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell onClick={(e) => e.stopPropagation()}>
+                            <div className="flex gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleOpenTituloModal(titulo)}
+                                className="h-8 w-8 p-0"
+                                title="Editar título"
+                              >
+                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </Button>
+                              {titulo.status !== 4 && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleAbrirConfirmacaoCancelamento(titulo)}
+                                  className="h-8 w-8 p-0 text-slate-600 hover:text-slate-800"
+                                  title="Cancelar título"
+                                >
+                                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                  </svg>
+                                </Button>
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <div className="mb-4">
+                  <svg className="w-16 h-16 text-gray-400 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Nenhum título encontrado
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Clique em "Gerar Títulos" para criar os títulos automaticamente.
+                </p>
+              </div>
+            )}
             
             {/* Botões de ação para a aba de títulos */}
             <div className="flex justify-between items-center pt-4">
@@ -582,6 +643,14 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
         onOpenChange={setTituloModalOpen}
         titulo={tituloSelecionado}
         onSave={handleSaveTitulo}
+      />
+      
+      <ConfirmDialog
+        open={confirmDialogOpen}
+        onOpenChange={setConfirmDialogOpen}
+        title="Cancelar Título"
+        description={`Tem certeza que deseja cancelar o título ${tituloParaCancelar?.numeroTitulo}? Esta ação não pode ser desfeita.`}
+        onConfirm={handleCancelarTitulo}
       />
     </Dialog>
   );
