@@ -60,6 +60,7 @@ export const titulo = mysqlTable("titulo", {
   id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
   idEmpresa: bigint("id_empresa", { mode: "number" }).notNull(),
   idFornecedor: bigint("id_fornecedor", { mode: "number" }).notNull(),
+  idContrato: bigint("id_contrato", { mode: "number" }),
   numeroTitulo: text("numero_titulo").notNull(),
   emissao: timestamp("emissao").notNull(),
   vencimento: date("vencimento").notNull(),
@@ -128,6 +129,7 @@ export const contratoRelations = relations(contrato, ({ one, many }) => ({
     fields: [contrato.idPlanoContas],
     references: [planoContas.id],
   }),
+  titulos: many(titulo),
   tags: many(contratoTag),
 }));
 
@@ -139,6 +141,10 @@ export const tituloRelations = relations(titulo, ({ one, many }) => ({
   fornecedor: one(fornecedor, {
     fields: [titulo.idFornecedor],
     references: [fornecedor.id],
+  }),
+  contrato: one(contrato, {
+    fields: [titulo.idContrato],
+    references: [contrato.id],
   }),
   planoContas: one(planoContas, {
     fields: [titulo.idPlanoContas],
