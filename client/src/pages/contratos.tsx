@@ -102,6 +102,12 @@ export default function Contratos() {
     setModalOpen(true);
   };
 
+  const handleOpenTitulos = (contrato: any) => {
+    setEditingContrato(contrato);
+    setShowTitulosTab(true);
+    setModalOpen(true);
+  };
+
   const handleViewTitulos = (contrato: any) => {
     setEditingContrato(contrato);
     setShowTitulosTab(true);

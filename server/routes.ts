@@ -348,6 +348,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Gerar títulos do contrato
+  app.post("/api/contratos/:id/gerar-titulos", async (req, res) => {
+    try {
+      const contratoId = parseInt(req.params.id);
+      const contrato = await storage.getContrato(contratoId);
+      
+      if (!contrato) {
+        return res.status(404).json({ error: "Contrato não encontrado" });
+      }
+
+      // Verificar se já existem títulos para este contrato
+      const titulosExistentes = await storage.getAllTitulos();
+      const titulosDoContrato = titulosExistentes.filter(titulo => titulo.idContrato === contratoId);
+      
+      if (titulosDoContrato.length > 0) {
+        return res.status(400).json({ error: "Já existem títulos gerados para este contrato" });
+      }
+
+      // Gerar títulos baseados no contrato
+      const titulos = [];
+      const numParcelas = contrato.numParcela || 1;
+      const valorParcela = parseFloat(contrato.valorParcela || '0');
+      const diaVencimento = contrato.diaVencimento || 1;
+      const parcelaInicial = contrato.parcelaInicial || 1;
+      const mascara = contrato.mascara || 1;
+      const dataInicio = new Date(contrato.dataInicio);
+
+      for (let i = 0; i < numParcelas; i++) {
+        const numeroParcela = parcelaInicial + i;
+        const dataVencimento = new Date(dataInicio);
+        dataVencimento.setMonth(dataVencimento.getMonth() + i);
+        dataVencimento.setDate(diaVencimento);
+
+        // Gerar número do título baseado na máscara
+        let numeroTitulo = '';
+        const parcelaDigitos = numParcelas.toString().length;
+        const parcelaFormatada = numeroParcela.toString().padStart(parcelaDigitos, '0');
+        const totalFormatado = numParcelas.toString().padStart(parcelaDigitos, '0');
+
+        switch (mascara) {
+          case 1:
+            numeroTitulo = `${contrato.numeroTitulo} - ${parcelaFormatada}/${totalFormatado}`;
+            break;
+          case 2:
+            numeroTitulo = `${contrato.numeroTitulo} - ${parcelaFormatada}`;
+            break;
+          case 3:
+            numeroTitulo = contrato.numeroTitulo;
+            break;
+          default:
+            numeroTitulo = `${contrato.numeroTitulo} - ${parcelaFormatada}/${totalFormatado}`;
+        }
+
+        const tituloData = {
+          idEmpresa: contrato.idEmpresa,
+          idFornecedor: contrato.idFornecedor,
+          idContrato: contratoId,
+          numeroTitulo: numeroTitulo,
+          emissao: new Date(),
+          vencimento: dataVencimento,
+          valorTotal: valorParcela.toFixed(2),
+          saldoPagar: valorParcela.toFixed(2),
+          idPlanoContas: contrato.idPlanoContas,
+          descricao: contrato.descricao,
+          observacoes: contrato.observacoes || null,
+          status: 1 // Em aberto
+        };
+
+        const titulo = await storage.createTitulo(tituloData);
+        titulos.push(titulo);
+      }
+
+      res.status(201).json({ 
+        message: `${titulos.length} títulos gerados com sucesso`,
+        titulos: titulos 
+      });
+    } catch (error) {
+      console.error('Erro ao gerar títulos:', error);
+      res.status(500).json({ error: "Erro ao gerar títulos do contrato" });
+    }
+  });
+
   // Títulos
   app.get("/api/titulos", async (req, res) => {
     try {

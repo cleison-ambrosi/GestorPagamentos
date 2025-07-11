@@ -9,7 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/format";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 import PlanoContasSearchModal from "@/components/plano-contas-search-modal";
 import FornecedorSearchModal from "@/components/fornecedor-search-modal";
@@ -23,6 +25,8 @@ interface ContratoModalProps {
 }
 
 export default function ContratoModal({ open, onOpenChange, contrato, onSave, showTitulosTab = false }: ContratoModalProps) {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [dadosContrato, setDadosContrato] = useState({
     idEmpresa: '',
     idFornecedor: '',
@@ -118,6 +122,34 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
   };
 
   const titulosDoContrato = titulos.filter((titulo: any) => titulo.idContrato === contrato?.id);
+
+  // Mutation para gerar títulos
+  const gerarTitulosMutation = useMutation({
+    mutationFn: async (contratoId: number) => {
+      const response = await apiRequest(`/api/contratos/${contratoId}/gerar-titulos`, "POST");
+      return response;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Títulos gerados com sucesso",
+        description: "Os títulos foram criados conforme os parâmetros do contrato.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/titulos"] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao gerar títulos",
+        description: "Ocorreu um erro ao criar os títulos do contrato.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const handleGerarTitulos = () => {
+    if (contrato?.id) {
+      gerarTitulosMutation.mutate(contrato.id);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -386,12 +418,10 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
               <div className="flex space-x-2">
                 <Button 
                   className="bg-green-600 hover:bg-green-700 text-white"
-                  onClick={() => {
-                    // Implementar lógica para gerar títulos
-                    console.log("Gerar Títulos clicado para contrato:", contrato?.id);
-                  }}
+                  onClick={handleGerarTitulos}
+                  disabled={titulosDoContrato.length > 0 || gerarTitulosMutation.isPending}
                 >
-                  Gerar Títulos
+                  {gerarTitulosMutation.isPending ? "Gerando..." : "Gerar Títulos"}
                 </Button>
                 <Button 
                   variant="outline"
@@ -414,21 +444,16 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                   Cancelar Contrato
                 </Button>
               </div>
+              <div className="flex space-x-2">
+                <Button variant="outline" onClick={() => onOpenChange(false)}>
+                  Fechar
+                </Button>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
 
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </Button>
-          <Button onClick={handleSave}>
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            {contrato ? 'Atualizar' : 'Salvar'}
-          </Button>
-        </div>
+        {/* Botões removidos conforme solicitado - apenas na aba de títulos */}
       </DialogContent>
       
       <PlanoContasSearchModal
