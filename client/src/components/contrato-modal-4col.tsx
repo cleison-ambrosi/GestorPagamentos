@@ -504,11 +504,18 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                           <TableCell className="text-right">{formatCurrency(valorPago)}</TableCell>
                           <TableCell className="text-right">{formatCurrency(saldo)}</TableCell>
                           <TableCell>
-                            <Badge variant={titulo.status === 1 ? "default" : "secondary"}>
-                              {titulo.status === 1 ? "Em Aberto" : 
-                               titulo.status === 2 ? "Parcial" : 
-                               titulo.status === 3 ? "Pago" : "Cancelado"}
-                            </Badge>
+                            {titulo.status === 1 && (
+                              <Badge variant="default" className="bg-blue-100 text-blue-800">Em Aberto</Badge>
+                            )}
+                            {titulo.status === 2 && (
+                              <Badge variant="default" className="bg-orange-100 text-orange-800">Parcial</Badge>
+                            )}
+                            {titulo.status === 3 && (
+                              <Badge variant="default" className="bg-green-100 text-green-800">Pago</Badge>
+                            )}
+                            {titulo.status === 4 && (
+                              <Badge variant="secondary" className="bg-red-100 text-red-800">Cancelado</Badge>
+                            )}
                           </TableCell>
                           <TableCell onClick={(e) => e.stopPropagation()}>
                             <div className="flex gap-1">
