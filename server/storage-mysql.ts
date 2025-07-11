@@ -630,7 +630,7 @@ export class MySQLStorage implements IStorage {
         } else if (saldoAtual > 0) {
           // Título com baixa parcial - criar baixa de liquidação
           const valorBaixa = 0.01; // 1 centavo
-          const desconto = saldoAtual - valorBaixa;
+          const desconto = saldoAtual - valorBaixa; // Desconto = saldo restante - 1 centavo
 
           const novaBaixa = {
             idTitulo: tituloItem.id,
@@ -655,7 +655,7 @@ export class MySQLStorage implements IStorage {
             .where(eq(titulo.id, tituloItem.id));
 
           titulosLiquidados++;
-          console.log(`Título ${tituloItem.id} liquidado (baixa parcial)`);
+          console.log(`Título ${tituloItem.id} liquidado (baixa parcial) - valorBaixa: ${valorBaixa}, desconto: ${desconto.toFixed(2)}`);
         } else {
           // Título já pago - não fazer nada
           console.log(`Título ${tituloItem.id} já estava pago`);
