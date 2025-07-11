@@ -531,6 +531,64 @@ export class MySQLStorage implements IStorage {
       await this.createConfiguracao({ idEmpresaTitulos: idEmpresa });
     }
   }
+
+  async updateTitulosFromContrato(idContrato: number, contratoData: any): Promise<void> {
+    try {
+      // Buscar títulos do contrato que não têm baixas (saldo = valorPagar)
+      const titulosParaAtualizar = await this.db
+        .select()
+        .from(titulo)
+        .where(
+          and(
+            eq(titulo.idContrato, idContrato),
+            eq(titulo.saldoPagar, titulo.valorPagar) // Títulos sem baixas
+          )
+        );
+
+      // Campos editáveis que podem ser atualizados
+      const camposEditaveis = {
+        descricao: contratoData.descricao,
+        valorPagar: contratoData.valorParcela,
+        numeroTitulo: contratoData.numeroTitulo,
+        idPlanoContas: contratoData.idPlanoContas,
+        observacoes: contratoData.observacoes
+      };
+
+      // Atualizar cada título
+      for (const tituloAtual of titulosParaAtualizar) {
+        const dadosAtualizacao: any = {};
+        
+        // Só atualizar campos que mudaram
+        if (camposEditaveis.descricao && camposEditaveis.descricao !== tituloAtual.descricao) {
+          dadosAtualizacao.descricao = camposEditaveis.descricao;
+        }
+        if (camposEditaveis.valorPagar && camposEditaveis.valorPagar !== tituloAtual.valorPagar) {
+          dadosAtualizacao.valorPagar = camposEditaveis.valorPagar;
+          dadosAtualizacao.saldoPagar = camposEditaveis.valorPagar; // Atualizar saldo também
+        }
+        if (camposEditaveis.numeroTitulo && camposEditaveis.numeroTitulo !== tituloAtual.numeroTitulo) {
+          dadosAtualizacao.numeroTitulo = camposEditaveis.numeroTitulo;
+        }
+        if (camposEditaveis.idPlanoContas && camposEditaveis.idPlanoContas !== tituloAtual.idPlanoContas) {
+          dadosAtualizacao.idPlanoContas = camposEditaveis.idPlanoContas;
+        }
+        if (camposEditaveis.observacoes && camposEditaveis.observacoes !== tituloAtual.observacoes) {
+          dadosAtualizacao.observacoes = camposEditaveis.observacoes;
+        }
+
+        // Só executar update se houver mudanças
+        if (Object.keys(dadosAtualizacao).length > 0) {
+          await this.db
+            .update(titulo)
+            .set(dadosAtualizacao)
+            .where(eq(titulo.id, tituloAtual.id));
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar títulos do contrato:', error);
+      throw error;
+    }
+  }
 }
 
 export const storage = new MySQLStorage();

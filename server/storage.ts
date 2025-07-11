@@ -74,6 +74,7 @@ export interface IStorage {
   updateConfiguracao(id: number, data: Partial<InsertConfiguracao>): Promise<Configuracao>;
   updateEmpresaContratos(idEmpresa: number): Promise<void>;
   updateEmpresaTitulos(idEmpresa: number): Promise<void>;
+  updateTitulosFromContrato(idContrato: number, contratoData: any): Promise<void>;
 
   // Dashboard specific queries
   getDashboardData(): Promise<{

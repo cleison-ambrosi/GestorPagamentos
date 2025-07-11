@@ -327,14 +327,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/contratos/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const result = customContratoSchema.partial().safeParse(req.body);
+      const { atualizarTitulos, ...contratoData } = req.body;
+      
+      const result = customContratoSchema.partial().safeParse(contratoData);
       if (!result.success) {
         return res.status(400).json({ error: "Dados inválidos", details: JSON.stringify(result.error.issues, null, 2) });
       }
+      
       const contrato = await storage.updateContrato(id, result.data);
+      
+      // Se deve atualizar títulos relacionados (cascata)
+      if (atualizarTitulos) {
+        await storage.updateTitulosFromContrato(id, result.data);
+      }
+      
       res.json(contrato);
     } catch (error) {
-      res.status(400).json({ error: "Dados inválidos" });
+      console.error('Erro ao atualizar contrato:', error);
+      res.status(400).json({ error: "Dados inválidos", details: (error as any).message });
     }
   });
 

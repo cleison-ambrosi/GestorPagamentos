@@ -199,6 +199,13 @@ Changelog:
   * Added "Gerar PDF" button to relatórios page alongside existing "Exportar CSV" 
   * Fixed "Salvar" button logic to always appear during new título creation regardless of balance rules
   * All counts and monetary calculations consistently exclude cancelled titles and reference saldoPagar field
+- July 11, 2025. Conditional contract field locking and cascade updates:
+  * Implemented conditional field locking for contract editing based on título existence
+  * When contract has generated títulos, locked fields: empresa, fornecedor, valor do contrato, nro de parcelas, data de inicio, iniciar na parcela, mascara
+  * Editable fields (descrição, valor da parcela, numero do titulo, plano de contas, observações) cascade updates to all títulos with zero baixas
+  * Added backend cascade update logic that only updates changed fields in related títulos
+  * Implemented business rule validation to prevent data integrity issues
+  * Added updateTitulosFromContrato method for efficient título synchronization
 
 ## User Preferences
 

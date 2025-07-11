@@ -117,11 +117,23 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
       dataInicio: dadosContrato.dataInicio,
     };
 
+    // Se é edição com títulos gerados, enviar flag para atualizar títulos relacionados
+    if (isEdicao && temTitulosGerados) {
+      dataFormatada.atualizarTitulos = true;
+    }
+
     onSave(dataFormatada);
     onOpenChange(false);
   };
 
   const titulosDoContrato = titulos.filter((titulo: any) => titulo.idContrato === contrato?.id);
+  
+  // Detectar se contrato tem títulos gerados (bloqueio condicional)
+  const temTitulosGerados = titulosDoContrato.length > 0;
+  const isEdicao = !!contrato;
+  
+  // Campos que devem ser bloqueados quando há títulos gerados
+  const camposBloqueados = isEdicao && temTitulosGerados;
 
   // Mutation para gerar títulos
   const gerarTitulosMutation = useMutation({
@@ -175,7 +187,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
             <div className="grid grid-cols-4 gap-4">
               <div>
                 <Label>Empresa *</Label>
-                <Select value={dadosContrato.idEmpresa} onValueChange={(value) => handleInputChange('idEmpresa', value)}>
+                <Select value={dadosContrato.idEmpresa} onValueChange={(value) => handleInputChange('idEmpresa', value)} disabled={camposBloqueados}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecionar empresa" />
                   </SelectTrigger>
@@ -196,6 +208,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                   variant="outline"
                   className="w-full justify-start text-left font-normal"
                   onClick={() => setFornecedorModalOpen(true)}
+                  disabled={camposBloqueados}
                 >
                   {dadosContrato.idFornecedor ? (
                     (() => {
@@ -229,6 +242,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                     value={dadosContrato.valorContrato}
                     onChange={(e) => handleInputChange('valorContrato', e.target.value)}
                     placeholder="0,00"
+                    disabled={camposBloqueados}
                   />
                 </div>
               </div>
@@ -239,6 +253,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                   value={dadosContrato.numParcela}
                   onChange={(e) => handleInputChange('numParcela', e.target.value)}
                   placeholder="12"
+                  disabled={camposBloqueados}
                 />
               </div>
 
@@ -273,6 +288,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                   type="date"
                   value={dadosContrato.dataInicio}
                   onChange={(e) => handleInputChange('dataInicio', e.target.value)}
+                  disabled={camposBloqueados}
                 />
               </div>
 
@@ -291,6 +307,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                   value={dadosContrato.parcelaInicial}
                   onChange={(e) => handleInputChange('parcelaInicial', e.target.value)}
                   placeholder="1"
+                  disabled={camposBloqueados}
                 />
               </div>
 
@@ -298,7 +315,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label>Máscara *</Label>
-                    <Select value={dadosContrato.mascara} onValueChange={(value) => handleInputChange('mascara', value)}>
+                    <Select value={dadosContrato.mascara} onValueChange={(value) => handleInputChange('mascara', value)} disabled={camposBloqueados}>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecionar máscara" />
                       </SelectTrigger>
