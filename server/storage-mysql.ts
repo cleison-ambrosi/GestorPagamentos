@@ -539,14 +539,18 @@ export class MySQLStorage implements IStorage {
       console.log('Iniciando atualização em cascata para contrato:', idContrato);
       console.log('Dados recebidos:', contratoData);
       
-      // Buscar títulos do contrato que não têm baixas (saldo = valorPagar)
-      const titulosParaAtualizar = await this.getAllTitulos()
-        .then(titulos => titulos.filter(t => 
-          t.idContrato === idContrato && 
-          t.saldoPagar === t.valorPagar
-        ));
+      // Buscar títulos do contrato que têm saldo maior que zero
+      const todosTitulos = await this.getAllTitulos();
+      const titulosDoContrato = todosTitulos.filter(t => t.idContrato === idContrato);
+      const titulosParaAtualizar = titulosDoContrato.filter(t => parseFloat(t.saldoPagar) > 0);
       
-      console.log('Títulos encontrados para atualização:', titulosParaAtualizar.length);
+      console.log('Títulos do contrato:', titulosDoContrato.length);
+      console.log('Títulos com saldo > 0:', titulosParaAtualizar.length);
+      
+      // Log dos títulos encontrados
+      titulosDoContrato.forEach(t => {
+        console.log(`Título ID: ${t.id}, Número: ${t.numeroTitulo}, Saldo: ${t.saldoPagar}`);
+      });
 
       // Campos editáveis que podem ser atualizados
       const camposEditaveis = {
