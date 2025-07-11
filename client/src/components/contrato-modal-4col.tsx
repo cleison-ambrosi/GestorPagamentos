@@ -445,12 +445,13 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Número</TableHead>
+                    <TableHead>Número Título</TableHead>
                     <TableHead>Vencimento</TableHead>
                     <TableHead className="text-right">Valor Título</TableHead>
                     <TableHead className="text-right">Valor Pago</TableHead>
                     <TableHead className="text-right">Saldo</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -460,15 +461,12 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                     const valorPago = valorTitulo - saldo;
                     
                     return (
-                      <TableRow key={titulo.id}>
-                        <TableCell>
-                          <button
-                            onClick={() => handleOpenTituloModal(titulo)}
-                            className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
-                          >
-                            {titulo.numeroTitulo}
-                          </button>
-                        </TableCell>
+                      <TableRow 
+                        key={titulo.id} 
+                        className="hover:bg-gray-50 cursor-pointer"
+                        onClick={() => handleOpenTituloModal(titulo)}
+                      >
+                        <TableCell>{titulo.numeroTitulo}</TableCell>
                         <TableCell>{formatDate(titulo.vencimento)}</TableCell>
                         <TableCell className="text-right">{formatCurrency(valorTitulo)}</TableCell>
                         <TableCell className="text-right">{formatCurrency(valorPago)}</TableCell>
@@ -479,6 +477,20 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                              titulo.status === 2 ? "Parcial" : 
                              titulo.status === 3 ? "Pago" : "Cancelado"}
                           </Badge>
+                        </TableCell>
+                        <TableCell onClick={(e) => e.stopPropagation()}>
+                          <div className="flex gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleOpenTituloModal(titulo)}
+                              className="h-8 w-8 p-0"
+                            >
+                              <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
