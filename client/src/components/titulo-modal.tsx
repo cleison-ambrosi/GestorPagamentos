@@ -126,6 +126,19 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
 
   // Handler para atualizar dados da baixa com cálculo automático
   const handleBaixaChange = (field: string, value: string) => {
+    // Validar se o valor não é negativo para campos específicos
+    if (field === 'valorBaixa' || field === 'juros' || field === 'desconto') {
+      const numericValue = parseFloat(value.replace(',', '.')) || 0;
+      if (numericValue < 0) {
+        toast({
+          title: "Valor inválido",
+          description: `${field === 'valorBaixa' ? 'Valor da baixa' : field === 'juros' ? 'Juros' : 'Desconto'} não pode ser negativo.`,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+    
     const newDadosBaixa = { ...dadosBaixa, [field]: value };
     
     // Se alterou valor baixa, juros ou desconto, recalcular valor pago
