@@ -564,7 +564,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => {
-                                    setTituloSelecionado(titulo);
+                                    setTituloSelecionado({ ...titulo, fromBaixaButton: true });
                                     setTituloModalOpen(true);
                                   }}
                                   className="h-8 w-8 p-0 hover:bg-slate-100"
@@ -697,6 +697,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
         onOpenChange={setTituloModalOpen}
         titulo={tituloSelecionado}
         onSave={handleSaveTitulo}
+        showBaixaTab={tituloSelecionado?.fromBaixaButton || false}
       />
       
       <ConfirmDialog
