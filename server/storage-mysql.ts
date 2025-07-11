@@ -31,9 +31,11 @@ import { IStorage } from "./storage";
 
 // Simple MySQL storage implementation
 export class MySQLStorage implements IStorage {
+  private db = db;
+  
   // Empresas
   async getAllEmpresas(): Promise<Empresa[]> {
-    return await db.select().from(empresa).orderBy(asc(empresa.id));
+    return await this.db.select().from(empresa).orderBy(asc(empresa.id));
   }
 
   async getEmpresa(id: number): Promise<Empresa | undefined> {

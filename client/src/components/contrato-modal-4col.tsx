@@ -12,6 +12,7 @@ import { formatCurrency, formatDate } from "@/lib/format";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { Edit, Receipt, X } from "lucide-react";
 
 import PlanoContasSearchModal from "@/components/plano-contas-search-modal";
 import FornecedorSearchModal from "@/components/fornecedor-search-modal";
@@ -546,17 +547,17 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                           </TableCell>
                           <TableCell onClick={(e) => e.stopPropagation()}>
                             <div className="flex gap-1">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleOpenTituloModal(titulo)}
-                                className="h-8 w-8 p-0"
-                                title="Editar título"
-                              >
-                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                </svg>
-                              </Button>
+                              {titulo.status !== 4 && (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleOpenTituloModal(titulo)}
+                                  className="h-8 w-8 p-0 hover:bg-slate-100"
+                                  title="Editar título"
+                                >
+                                  <Edit className="h-4 w-4 text-slate-600" />
+                                </Button>
+                              )}
                               {titulo.status !== 4 && titulo.saldoPagar > 0 && (
                                 <Button
                                   variant="ghost"
@@ -565,12 +566,10 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                                     setTituloSelecionado(titulo);
                                     setTituloModalOpen(true);
                                   }}
-                                  className="h-8 w-8 p-0 text-slate-600 hover:text-slate-800"
+                                  className="h-8 w-8 p-0 hover:bg-slate-100"
                                   title="Lançar baixa"
                                 >
-                                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                  </svg>
+                                  <Receipt className="h-4 w-4 text-slate-600" />
                                 </Button>
                               )}
                               {titulo.status !== 4 && (
@@ -578,12 +577,10 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => handleAbrirConfirmacaoCancelamento(titulo)}
-                                  className="h-8 w-8 p-0 text-slate-600 hover:text-slate-800"
+                                  className="h-8 w-8 p-0 hover:bg-slate-100"
                                   title="Cancelar título"
                                 >
-                                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                  </svg>
+                                  <X className="h-4 w-4 text-slate-500" />
                                 </Button>
                               )}
                             </div>
