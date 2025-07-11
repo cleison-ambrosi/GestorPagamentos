@@ -126,7 +126,14 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
     onOpenChange(false);
   };
 
-  const titulosDoContrato = titulos.filter((titulo: any) => titulo.idContrato === contrato?.id);
+  const titulosDoContrato = titulos
+    .filter((titulo: any) => titulo.idContrato === contrato?.id)
+    .sort((a: any, b: any) => {
+      // Ordenar por vencimento (mais antigo primeiro)
+      const dataA = new Date(a.vencimento);
+      const dataB = new Date(b.vencimento);
+      return dataA.getTime() - dataB.getTime();
+    });
   
   // Detectar se contrato tem títulos gerados (bloqueio condicional)
   const temTitulosGerados = titulosDoContrato.length > 0;
