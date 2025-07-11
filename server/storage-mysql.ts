@@ -534,16 +534,17 @@ export class MySQLStorage implements IStorage {
 
   async updateTitulosFromContrato(idContrato: number, contratoData: any): Promise<void> {
     try {
+      console.log('Iniciando atualização em cascata para contrato:', idContrato);
+      console.log('Dados recebidos:', contratoData);
+      
       // Buscar títulos do contrato que não têm baixas (saldo = valorPagar)
-      const titulosParaAtualizar = await this.db
-        .select()
-        .from(titulo)
-        .where(
-          and(
-            eq(titulo.idContrato, idContrato),
-            eq(titulo.saldoPagar, titulo.valorPagar) // Títulos sem baixas
-          )
-        );
+      const titulosParaAtualizar = await this.getAllTitulos()
+        .then(titulos => titulos.filter(t => 
+          t.idContrato === idContrato && 
+          t.saldoPagar === t.valorPagar
+        ));
+      
+      console.log('Títulos encontrados para atualização:', titulosParaAtualizar.length);
 
       // Campos editáveis que podem ser atualizados
       const camposEditaveis = {
@@ -566,8 +567,8 @@ export class MySQLStorage implements IStorage {
           dadosAtualizacao.valorPagar = camposEditaveis.valorPagar;
           dadosAtualizacao.saldoPagar = camposEditaveis.valorPagar; // Atualizar saldo também
         }
-        if (camposEditaveis.numeroTitulo && camposEditaveis.numeroTitulo !== tituloAtual.numeroTitulo) {
-          dadosAtualizacao.numeroTitulo = camposEditaveis.numeroTitulo;
+        if (camposEditaveis.numeroTitulo && String(camposEditaveis.numeroTitulo) !== String(tituloAtual.numeroTitulo)) {
+          dadosAtualizacao.numeroTitulo = String(camposEditaveis.numeroTitulo);
         }
         if (camposEditaveis.idPlanoContas && camposEditaveis.idPlanoContas !== tituloAtual.idPlanoContas) {
           dadosAtualizacao.idPlanoContas = camposEditaveis.idPlanoContas;
@@ -578,10 +579,8 @@ export class MySQLStorage implements IStorage {
 
         // Só executar update se houver mudanças
         if (Object.keys(dadosAtualizacao).length > 0) {
-          await this.db
-            .update(titulo)
-            .set(dadosAtualizacao)
-            .where(eq(titulo.id, tituloAtual.id));
+          console.log('Atualizando título:', tituloAtual.id, 'com dados:', dadosAtualizacao);
+          await this.updateTitulo(tituloAtual.id, dadosAtualizacao);
         }
       }
     } catch (error) {
