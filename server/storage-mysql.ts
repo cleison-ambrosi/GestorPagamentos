@@ -643,7 +643,8 @@ export class MySQLStorage implements IStorage {
             cancelado: false
           };
 
-          await this.db.insert(tituloBaixa).values(novaBaixa);
+          const result = await this.db.insert(tituloBaixa).values(novaBaixa);
+          console.log('Baixa automática inserida:', result);
 
           // Atualizar saldo do título para zero e status para pago
           await this.db

@@ -253,6 +253,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
         // Invalida as queries para atualizar as listagens
         queryClient.invalidateQueries({ queryKey: ["/api/titulos"] });
         queryClient.invalidateQueries({ queryKey: ["/api/contratos"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/titulos-baixa"] });
       }
       setConfirmCancelarContratoOpen(false);
     } catch (error) {
