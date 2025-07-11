@@ -52,6 +52,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
   const [tituloSelecionado, setTituloSelecionado] = useState<any>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [tituloParaCancelar, setTituloParaCancelar] = useState<any>(null);
+  const [confirmCancelarContratoOpen, setConfirmCancelarContratoOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(showTitulosTab ? "titulos" : "dados");
 
   const { data: empresas = [] } = useQuery({ queryKey: ['/api/empresas'] });
@@ -231,6 +232,32 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
       toast({
         title: "Erro ao cancelar título",
         description: "Ocorreu um erro ao cancelar o título.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleAbrirConfirmacaoCancelamentoContrato = () => {
+    setConfirmCancelarContratoOpen(true);
+  };
+
+  const handleCancelarContrato = async () => {
+    try {
+      if (contrato) {
+        const response = await apiRequest(`/api/contratos/${contrato.id}/cancelar`, "POST");
+        toast({
+          title: "Contrato cancelado com sucesso",
+          description: `${response.titulosCancelados} títulos cancelados, ${response.titulosLiquidados} títulos liquidados.`,
+        });
+        // Invalida as queries para atualizar as listagens
+        queryClient.invalidateQueries({ queryKey: ["/api/titulos"] });
+        queryClient.invalidateQueries({ queryKey: ["/api/contratos"] });
+      }
+      setConfirmCancelarContratoOpen(false);
+    } catch (error) {
+      toast({
+        title: "Erro ao cancelar contrato",
+        description: "Ocorreu um erro ao cancelar o contrato.",
         variant: "destructive",
       });
     }
@@ -597,10 +624,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                     <Button 
                       variant="outline"
                       className="border-red-600 text-red-600 hover:bg-red-50"
-                      onClick={() => {
-                        // Implementar lógica para cancelar contrato
-                        console.log("Cancelar Contrato clicado para contrato:", contrato?.id);
-                      }}
+                      onClick={handleAbrirConfirmacaoCancelamentoContrato}
                     >
                       Cancelar Contrato
                     </Button>
@@ -667,6 +691,14 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
         title="Cancelar Título"
         description={`Tem certeza que deseja cancelar o título ${tituloParaCancelar?.numeroTitulo}? Esta ação não pode ser desfeita.`}
         onConfirm={handleCancelarTitulo}
+      />
+      
+      <ConfirmDialog
+        open={confirmCancelarContratoOpen}
+        onOpenChange={setConfirmCancelarContratoOpen}
+        title="Cancelar Contrato"
+        description="Tem certeza que deseja cancelar este contrato? Todos os títulos com zero baixas serão cancelados e títulos com baixa parcial serão liquidados automaticamente. Esta ação não pode ser desfeita."
+        onConfirm={handleCancelarContrato}
       />
     </Dialog>
   );

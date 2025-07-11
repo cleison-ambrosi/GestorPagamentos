@@ -358,6 +358,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Cancelar contrato
+  app.post("/api/contratos/:id/cancelar", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const result = await storage.cancelarContrato(id);
+      res.json(result);
+    } catch (error) {
+      console.error('Erro ao cancelar contrato:', error);
+      res.status(500).json({ error: "Erro ao cancelar contrato", details: (error as any).message });
+    }
+  });
+
   // Gerar títulos do contrato
   app.post("/api/contratos/:id/gerar-titulos", async (req, res) => {
     try {

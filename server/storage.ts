@@ -53,6 +53,7 @@ export interface IStorage {
   createContrato(data: InsertContrato): Promise<Contrato>;
   updateContrato(id: number, data: Partial<InsertContrato>): Promise<Contrato>;
   deleteContrato(id: number): Promise<void>;
+  cancelarContrato(id: number): Promise<{ message: string; titulosCancelados: number; titulosLiquidados: number }>;
 
   // Títulos
   getAllTitulos(): Promise<Titulo[]>;

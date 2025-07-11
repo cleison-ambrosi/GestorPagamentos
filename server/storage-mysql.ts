@@ -588,6 +588,92 @@ export class MySQLStorage implements IStorage {
       throw error;
     }
   }
+
+  async cancelarContrato(idContrato: number): Promise<{ message: string; titulosCancelados: number; titulosLiquidados: number }> {
+    try {
+      console.log("Iniciando cancelamento de contrato:", idContrato);
+
+      // Buscar todos os títulos do contrato
+      const titulos = await this.db
+        .select()
+        .from(titulo)
+        .where(eq(titulo.idContrato, idContrato));
+
+      console.log(`Encontrados ${titulos.length} títulos para o contrato`);
+
+      let titulosCancelados = 0;
+      let titulosLiquidados = 0;
+
+      for (const tituloItem of titulos) {
+        // Verificar se o título tem baixas
+        const baixas = await this.db
+          .select()
+          .from(tituloBaixa)
+          .where(and(
+            eq(tituloBaixa.idTitulo, tituloItem.id),
+            eq(tituloBaixa.cancelado, false)
+          ));
+
+        const totalBaixas = baixas.reduce((sum, baixa) => sum + parseFloat(baixa.valorPago), 0);
+        const saldoAtual = parseFloat(tituloItem.saldoPagar || '0');
+
+        if (totalBaixas === 0) {
+          // Título com zero baixas - cancelar
+          await this.db
+            .update(titulo)
+            .set({ status: 4 }) // Status 4 = Cancelado
+            .where(eq(titulo.id, tituloItem.id));
+          
+          titulosCancelados++;
+          console.log(`Título ${tituloItem.id} cancelado (zero baixas)`);
+        } else if (saldoAtual > 0) {
+          // Título com baixa parcial - criar baixa de liquidação
+          const valorBaixa = 0.01; // 1 centavo
+          const desconto = saldoAtual - valorBaixa;
+
+          const novaBaixa = {
+            idTitulo: tituloItem.id,
+            dataBaixa: new Date(),
+            valorBaixa: valorBaixa.toFixed(2),
+            valorPago: valorBaixa.toFixed(2),
+            juros: '0.00',
+            desconto: desconto.toFixed(2),
+            observacao: 'Baixa automática por cancelamento de contrato',
+            cancelado: false
+          };
+
+          await this.db.insert(tituloBaixa).values(novaBaixa);
+
+          // Atualizar saldo do título para zero e status para pago
+          await this.db
+            .update(titulo)
+            .set({ 
+              saldoPagar: '0.00',
+              status: 3 // Status 3 = Pago
+            })
+            .where(eq(titulo.id, tituloItem.id));
+
+          titulosLiquidados++;
+          console.log(`Título ${tituloItem.id} liquidado (baixa parcial)`);
+        } else {
+          // Título já pago - não fazer nada
+          console.log(`Título ${tituloItem.id} já estava pago`);
+        }
+      }
+
+      console.log(`Cancelamento concluído: ${titulosCancelados} cancelados, ${titulosLiquidados} liquidados`);
+
+      return {
+        message: "Contrato cancelado com sucesso",
+        titulosCancelados,
+        titulosLiquidados
+      };
+
+    } catch (error) {
+      console.error("Erro ao cancelar contrato:", error);
+      throw error;
+    }
+  }
 }
 
 export const storage = new MySQLStorage();
