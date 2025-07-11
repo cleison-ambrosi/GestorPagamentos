@@ -609,12 +609,11 @@ export class MySQLStorage implements IStorage {
         const baixas = await this.db
           .select()
           .from(tituloBaixa)
-          .where(and(
-            eq(tituloBaixa.idTitulo, tituloItem.id),
-            eq(tituloBaixa.cancelado, false)
-          ));
+          .where(eq(tituloBaixa.idTitulo, tituloItem.id));
 
-        const totalBaixas = baixas.reduce((sum, baixa) => sum + parseFloat(baixa.valorPago), 0);
+        const totalBaixas = baixas
+          .filter(baixa => !baixa.cancelado)
+          .reduce((sum, baixa) => sum + parseFloat(baixa.valorPago), 0);
         const saldoAtual = parseFloat(tituloItem.saldoPagar || '0');
 
         if (totalBaixas === 0) {

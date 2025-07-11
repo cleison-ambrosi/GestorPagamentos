@@ -415,6 +415,19 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
       return;
     }
 
+    // Validate that valorPago doesn't exceed saldo
+    const valorPago = parseFloat(dadosBaixa.valorPago.replace(',', '.'));
+    const saldoAtual = parseFloat(titulo?.saldoPagar || '0');
+    
+    if (valorPago > saldoAtual) {
+      toast({
+        title: "Erro",
+        description: "Valor pago não pode ser maior que o saldo atual.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const parseValor = (valor: string) => {
       return parseFloat(valor.replace(',', '.')) || 0;
     };
