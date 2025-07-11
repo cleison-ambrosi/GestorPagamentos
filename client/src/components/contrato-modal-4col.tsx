@@ -19,9 +19,10 @@ interface ContratoModalProps {
   onOpenChange: (open: boolean) => void;
   contrato?: any;
   onSave: (contrato: any) => void;
+  showTitulosTab?: boolean;
 }
 
-export default function ContratoModal({ open, onOpenChange, contrato, onSave }: ContratoModalProps) {
+export default function ContratoModal({ open, onOpenChange, contrato, onSave, showTitulosTab = false }: ContratoModalProps) {
   const [dadosContrato, setDadosContrato] = useState({
     idEmpresa: '',
     idFornecedor: '',
@@ -41,11 +42,19 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
 
   const [planoContasModalOpen, setPlanoContasModalOpen] = useState(false);
   const [fornecedorModalOpen, setFornecedorModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState(showTitulosTab ? "titulos" : "dados");
 
   const { data: empresas = [] } = useQuery({ queryKey: ['/api/empresas'] });
   const { data: fornecedores = [] } = useQuery({ queryKey: ['/api/fornecedores'] });
   const { data: planoContas = [] } = useQuery({ queryKey: ['/api/plano-contas'] });
   const { data: titulos = [] } = useQuery({ queryKey: ['/api/titulos'] });
+
+  // Update active tab when modal opens or showTitulosTab changes
+  useEffect(() => {
+    if (open) {
+      setActiveTab(showTitulosTab ? "titulos" : "dados");
+    }
+  }, [open, showTitulosTab]);
 
   useEffect(() => {
     if (contrato) {
@@ -119,7 +128,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="dados" className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="dados">Dados do Contrato</TabsTrigger>
             <TabsTrigger value="titulos">Títulos</TabsTrigger>
@@ -370,6 +379,41 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave }: 
                   ))}
                 </TableBody>
               </Table>
+            </div>
+            
+            {/* Botões de ação para a aba de títulos */}
+            <div className="flex justify-between items-center pt-4">
+              <div className="flex space-x-2">
+                <Button 
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                  onClick={() => {
+                    // Implementar lógica para gerar títulos
+                    console.log("Gerar Títulos clicado para contrato:", contrato?.id);
+                  }}
+                >
+                  Gerar Títulos
+                </Button>
+                <Button 
+                  variant="outline"
+                  className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                  onClick={() => {
+                    // Implementar lógica para liquidar contrato
+                    console.log("Liquidar Contrato clicado para contrato:", contrato?.id);
+                  }}
+                >
+                  Liquidar Contrato
+                </Button>
+                <Button 
+                  variant="outline"
+                  className="border-red-600 text-red-600 hover:bg-red-50"
+                  onClick={() => {
+                    // Implementar lógica para cancelar contrato
+                    console.log("Cancelar Contrato clicado para contrato:", contrato?.id);
+                  }}
+                >
+                  Cancelar Contrato
+                </Button>
+              </div>
             </div>
           </TabsContent>
         </Tabs>

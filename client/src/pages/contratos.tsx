@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Search, Edit, Trash2, Copy } from "lucide-react";
+import { Plus, Search, Edit, Trash2, Copy, FileText } from "lucide-react";
 import { fetchContratos, fetchEmpresas } from "@/lib/api";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -38,6 +38,7 @@ export default function Contratos() {
   }, [empresaFilter]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingContrato, setEditingContrato] = useState<any>(null);
+  const [showTitulosTab, setShowTitulosTab] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<{
     open: boolean;
     title: string;
@@ -97,6 +98,13 @@ export default function Contratos() {
 
   const handleEdit = (contrato: any) => {
     setEditingContrato(contrato);
+    setShowTitulosTab(false);
+    setModalOpen(true);
+  };
+
+  const handleViewTitulos = (contrato: any) => {
+    setEditingContrato(contrato);
+    setShowTitulosTab(true);
     setModalOpen(true);
   };
 
@@ -262,6 +270,18 @@ export default function Contratos() {
                         size="sm"
                         onClick={(e) => {
                           e.stopPropagation();
+                          handleViewTitulos(contrato);
+                        }}
+                        className="h-8 w-8 p-0 hover:bg-slate-100"
+                        title="Ver Títulos"
+                      >
+                        <FileText className="h-4 w-4 text-slate-600" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
                           handleCopy(contrato);
                         }}
                         className="h-8 w-8 p-0 hover:bg-slate-100"
@@ -293,6 +313,7 @@ export default function Contratos() {
           onOpenChange={setModalOpen}
           contrato={editingContrato}
           onSave={handleSave}
+          showTitulosTab={showTitulosTab}
         />
 
         <ConfirmDialog
