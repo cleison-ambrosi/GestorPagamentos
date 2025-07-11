@@ -416,7 +416,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           status: 1 // Em aberto
         };
 
+        console.log('Criando título com dados:', tituloData);
         const titulo = await storage.createTitulo(tituloData);
+        console.log('Título criado:', titulo);
         titulos.push(titulo);
       }
 
