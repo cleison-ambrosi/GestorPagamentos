@@ -134,7 +134,9 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
         title: "Títulos gerados com sucesso",
         description: "Os títulos foram criados conforme os parâmetros do contrato.",
       });
+      // Invalida as queries para atualizar a listagem de títulos
       queryClient.invalidateQueries({ queryKey: ["/api/titulos"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/contratos"] });
     },
     onError: (error) => {
       toast({
