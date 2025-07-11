@@ -307,8 +307,9 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
     setDadosTitulo(prev => {
       const updated = { ...prev, [field]: value };
       
-      // Auto-fill saldoPagar when valorTotal changes se status = em aberto (1)
-      if (field === 'valorTotal' && value && (updated.status === "1" || updated.status === 1)) {
+      // Auto-fill saldoPagar when valorTotal changes para títulos novos ou em aberto (status 1)
+      if (field === 'valorTotal' && value && 
+          (!titulo?.id || updated.status === "1" || updated.status === 1)) {
         updated.saldoPagar = value;
       }
       
