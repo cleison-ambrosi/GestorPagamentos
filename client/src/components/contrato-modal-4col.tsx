@@ -563,33 +563,42 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
             {/* Botões de ação para a aba de títulos */}
             <div className="flex justify-between items-center pt-4">
               <div className="flex space-x-2">
-                <Button 
-                  className="bg-green-600 hover:bg-green-700 text-white"
-                  onClick={handleGerarTitulos}
-                  disabled={titulosDoContrato.length > 0 || gerarTitulosMutation.isPending}
-                >
-                  {gerarTitulosMutation.isPending ? "Gerando..." : "Gerar Títulos"}
-                </Button>
-                <Button 
-                  variant="outline"
-                  className="border-blue-600 text-blue-600 hover:bg-blue-50"
-                  onClick={() => {
-                    // Implementar lógica para liquidar contrato
-                    console.log("Liquidar Contrato clicado para contrato:", contrato?.id);
-                  }}
-                >
-                  Liquidar Contrato
-                </Button>
-                <Button 
-                  variant="outline"
-                  className="border-red-600 text-red-600 hover:bg-red-50"
-                  onClick={() => {
-                    // Implementar lógica para cancelar contrato
-                    console.log("Cancelar Contrato clicado para contrato:", contrato?.id);
-                  }}
-                >
-                  Cancelar Contrato
-                </Button>
+                {/* Botão "Gerar Títulos" - só aparece se não há títulos gerados */}
+                {!temTitulosGerados && (
+                  <Button 
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                    onClick={handleGerarTitulos}
+                    disabled={gerarTitulosMutation.isPending}
+                  >
+                    {gerarTitulosMutation.isPending ? "Gerando..." : "Gerar Títulos"}
+                  </Button>
+                )}
+                
+                {/* Botões "Liquidar" e "Cancelar" - só aparecem se há títulos gerados */}
+                {temTitulosGerados && (
+                  <>
+                    <Button 
+                      variant="outline"
+                      className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                      onClick={() => {
+                        // Implementar lógica para liquidar contrato
+                        console.log("Liquidar Contrato clicado para contrato:", contrato?.id);
+                      }}
+                    >
+                      Liquidar Contrato
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      className="border-red-600 text-red-600 hover:bg-red-50"
+                      onClick={() => {
+                        // Implementar lógica para cancelar contrato
+                        console.log("Cancelar Contrato clicado para contrato:", contrato?.id);
+                      }}
+                    >
+                      Cancelar Contrato
+                    </Button>
+                  </>
+                )}
               </div>
               <div className="flex space-x-2">
                 <Button variant="outline" onClick={() => onOpenChange(false)}>
