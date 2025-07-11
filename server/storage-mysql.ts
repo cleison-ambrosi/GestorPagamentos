@@ -257,6 +257,7 @@ export class MySQLStorage implements IStorage {
       id: titulo.id,
       idEmpresa: titulo.idEmpresa,
       idFornecedor: titulo.idFornecedor,
+      idContrato: titulo.idContrato,
       numeroTitulo: titulo.numeroTitulo,
       emissao: titulo.emissao,
       vencimento: titulo.vencimento,

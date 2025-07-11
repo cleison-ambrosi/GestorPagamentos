@@ -121,15 +121,7 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
     onOpenChange(false);
   };
 
-  const titulosDoContrato = titulos.filter((titulo: any) => {
-    console.log('Comparando:', titulo.idContrato, 'com', contrato?.id, 'tipos:', typeof titulo.idContrato, typeof contrato?.id);
-    return titulo.idContrato === contrato?.id;
-  });
-  
-  // Debug: Log para verificar os títulos
-  console.log('Contrato ID:', contrato?.id);
-  console.log('Todos os títulos:', titulos);
-  console.log('Títulos do contrato:', titulosDoContrato);
+  const titulosDoContrato = titulos.filter((titulo: any) => titulo.idContrato === contrato?.id);
 
   // Mutation para gerar títulos
   const gerarTitulosMutation = useMutation({
