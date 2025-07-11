@@ -417,7 +417,7 @@ export default function TituloModal({ open, onOpenChange, titulo, onSave, showBa
 
     // Validate that valorPago doesn't exceed saldo
     const valorPago = parseFloat(dadosBaixa.valorPago.replace(',', '.'));
-    const saldoAtual = parseFloat(titulo?.saldoPagar || '0');
+    const saldoAtual = parseFloat(currentTitulo?.saldoPagar || '0');
     
     if (valorPago > saldoAtual) {
       toast({
