@@ -457,7 +457,20 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
           </TabsContent>
         </Tabs>
 
-        {/* Botões removidos conforme solicitado - apenas na aba de títulos */}
+        {/* Botões apenas na aba de dados */}
+        {activeTab === 'dados' && (
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
+              Fechar
+            </Button>
+            <Button onClick={handleSave}>
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              {contrato ? 'Salvar' : 'Criar'}
+            </Button>
+          </div>
+        )}
       </DialogContent>
       
       <PlanoContasSearchModal
