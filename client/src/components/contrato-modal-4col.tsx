@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 
 import PlanoContasSearchModal from "@/components/plano-contas-search-modal";
 import FornecedorSearchModal from "@/components/fornecedor-search-modal";
+import TituloModal from "@/components/titulo-modal";
 
 interface ContratoModalProps {
   open: boolean;
@@ -46,6 +47,8 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
 
   const [planoContasModalOpen, setPlanoContasModalOpen] = useState(false);
   const [fornecedorModalOpen, setFornecedorModalOpen] = useState(false);
+  const [tituloModalOpen, setTituloModalOpen] = useState(false);
+  const [tituloSelecionado, setTituloSelecionado] = useState<any>(null);
   const [activeTab, setActiveTab] = useState(showTitulosTab ? "titulos" : "dados");
 
   const { data: empresas = [] } = useQuery({ queryKey: ['/api/empresas'] });
@@ -171,6 +174,34 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
   const handleGerarTitulos = () => {
     if (contrato?.id) {
       gerarTitulosMutation.mutate(contrato.id);
+    }
+  };
+
+  const handleOpenTituloModal = (titulo: any) => {
+    setTituloSelecionado(titulo);
+    setTituloModalOpen(true);
+  };
+
+  const handleSaveTitulo = async (dadosTitulo: any) => {
+    try {
+      if (tituloSelecionado) {
+        await apiRequest(`/api/titulos/${tituloSelecionado.id}`, "PUT", dadosTitulo);
+        toast({
+          title: "Título atualizado com sucesso",
+          description: "As alterações foram salvas.",
+        });
+      }
+      // Invalida as queries para atualizar as listagens
+      queryClient.invalidateQueries({ queryKey: ["/api/titulos"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/contratos"] });
+      setTituloModalOpen(false);
+      setTituloSelecionado(null);
+    } catch (error) {
+      toast({
+        title: "Erro ao salvar título",
+        description: "Ocorreu um erro ao atualizar o título.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -430,7 +461,14 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                     
                     return (
                       <TableRow key={titulo.id}>
-                        <TableCell>{titulo.numeroTitulo}</TableCell>
+                        <TableCell>
+                          <button
+                            onClick={() => handleOpenTituloModal(titulo)}
+                            className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer"
+                          >
+                            {titulo.numeroTitulo}
+                          </button>
+                        </TableCell>
                         <TableCell>{formatDate(titulo.vencimento)}</TableCell>
                         <TableCell className="text-right">{formatCurrency(valorTitulo)}</TableCell>
                         <TableCell className="text-right">{formatCurrency(valorPago)}</TableCell>
@@ -525,6 +563,13 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
           setFornecedorModalOpen(false);
         }}
         selectedId={dadosContrato.idFornecedor}
+      />
+      
+      <TituloModal
+        open={tituloModalOpen}
+        onOpenChange={setTituloModalOpen}
+        titulo={tituloSelecionado}
+        onSave={handleSaveTitulo}
       />
     </Dialog>
   );
