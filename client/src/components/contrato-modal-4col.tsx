@@ -416,27 +416,35 @@ export default function ContratoModal({ open, onOpenChange, contrato, onSave, sh
                   <TableRow>
                     <TableHead>Número</TableHead>
                     <TableHead>Vencimento</TableHead>
-                    <TableHead>Valor</TableHead>
-                    <TableHead>Saldo</TableHead>
+                    <TableHead className="text-right">Valor Título</TableHead>
+                    <TableHead className="text-right">Valor Pago</TableHead>
+                    <TableHead className="text-right">Saldo</TableHead>
                     <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {titulosDoContrato.map((titulo: any) => (
-                    <TableRow key={titulo.id}>
-                      <TableCell>{titulo.numeroTitulo}</TableCell>
-                      <TableCell>{formatDate(titulo.vencimento)}</TableCell>
-                      <TableCell>{formatCurrency(titulo.valorTotal)}</TableCell>
-                      <TableCell>{formatCurrency(titulo.saldoPagar)}</TableCell>
-                      <TableCell>
-                        <Badge variant={titulo.status === 1 ? "default" : "secondary"}>
-                          {titulo.status === 1 ? "Em Aberto" : 
-                           titulo.status === 2 ? "Parcial" : 
-                           titulo.status === 3 ? "Pago" : "Cancelado"}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {titulosDoContrato.map((titulo: any) => {
+                    const valorTitulo = titulo.valorTotal || titulo.valorPagar || 0;
+                    const saldo = titulo.saldoPagar || 0;
+                    const valorPago = valorTitulo - saldo;
+                    
+                    return (
+                      <TableRow key={titulo.id}>
+                        <TableCell>{titulo.numeroTitulo}</TableCell>
+                        <TableCell>{formatDate(titulo.vencimento)}</TableCell>
+                        <TableCell className="text-right">{formatCurrency(valorTitulo)}</TableCell>
+                        <TableCell className="text-right">{formatCurrency(valorPago)}</TableCell>
+                        <TableCell className="text-right">{formatCurrency(saldo)}</TableCell>
+                        <TableCell>
+                          <Badge variant={titulo.status === 1 ? "default" : "secondary"}>
+                            {titulo.status === 1 ? "Em Aberto" : 
+                             titulo.status === 2 ? "Parcial" : 
+                             titulo.status === 3 ? "Pago" : "Cancelado"}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </div>
