@@ -1,0 +1,17 @@
+node_modules
+npm-debug.log
+.git
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+dist
+.vite
+.replit
+replit.nix
+.DS_Store
+*.log
+attached_assets
+*.md
+!README.md
